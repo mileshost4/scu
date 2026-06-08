@@ -1,9 +1,9 @@
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const ejs = require("ejs");
-const websiteName = 'Crednora'
-const websiteLink = 'crednora.com'
-const websiteSupportMail = 'info@crednora.com';
+const websiteName = 'Sterling Crest Union'
+const websiteLink = 'sterlingcrestunion.org'
+const websiteSupportMail = 'info@sterlingcrestunion.org';
 const { Resend } = require("resend");
 const resend = new Resend(process.env.RESEND_API_KEY);
 
