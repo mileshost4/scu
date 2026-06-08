@@ -114,9 +114,9 @@
                 <tr>
                   <th>Date</th>
                   <th>User</th>
-                  <th>Ref Code</th>
-                  <th>Type</th>
-                  <th>Description</th>
+                  <!-- <th>Ref Code</th> -->
+                  <th>Type / Ref Code</th>
+                  <!-- <th>Description</th> -->
                   <th>Receiver</th>
                   <th class="col-amount">Amount</th>
                   <th>Actions</th>
@@ -159,15 +159,16 @@
                           </div>
                         </div>
                       </td>
-                      <td><span class="ref-code"><%= tx.refCode || '—' %></span></td>
+                      <!-- <td><span class="ref-code"><%= tx.refCode || '—' %></span></td> -->
                       <td>
                         <span class="tx-type <%= typeClass %>">
                           <%= tx.transactionType %><% if (tx.transferType) { %> · <%= tx.transferType %><% } %>
                         </span>
+                        <span class="ref-code"><%= tx.refCode || '—' %></span>
                       </td>
-                      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary);font-size:0.82rem;">
+                      <!-- <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary);font-size:0.82rem;">
                         <%= tx.description || '—' %>
-                      </td>
+                      </td> -->
                       <td>
                         <div style="font-size:0.82rem;color:var(--text-secondary);">
                           <div><%= tx.receiverAccountName || '—' %></div>

@@ -226,7 +226,7 @@ router.get('/dashboard', isUserLoggedIn, onlyUser, isUserVerified, async(req, re
     const today = new Date();
     const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
     const hours = today.getHours() > 12 ? today.getHours() - 12 : today.getHours();
-    const transactions = await Transaction.findOne({validateUser: user}).sort({date: -1});
+    const transactions = await Transaction.find({validateUser: user}).sort({date: -1});
     const recentransactions = await Transaction.find({validateUser: user}).sort({date: -1}).limit(5);
 
     const unreadmsg = await Notification.find({validateUser: user, status: 'Unread'}).limit(10).lean()

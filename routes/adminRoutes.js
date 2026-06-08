@@ -24,7 +24,7 @@ const {welcomeMail, emailActMail, passwordResetMail, verifyMail, acctVerifiedMai
 const { faker } = require('@faker-js/faker');
 const realBanks = [ 'Chase Bank', 'Wells Fargo', 'Bank of America', 'Woodforest National Bank', 'US Bank', 'Citibank', 'PNC Bank', 'TD Bank', 'Capital One', 'Ally Bank', 'BB&T (Truist)', 'SunTrust Bank (Truist)', 'Fifth Third Bank', 'Regions Bank', 'M&T Bank', 'KeyBank', 'Santander Bank', 'Huntington National Bank', 'Citizens Bank', 'BNY Mellon', 'Barclays Bank', 'HSBC Bank', 'Deutsche Bank', 'Goldman Sachs', 'Morgan Stanley', 'Credit Suisse', 'UBS Bank', 'Royal Bank of Canada', 'Toronto-Dominion Bank', 'Bank of Montreal', 'Scotiabank', 'Canadian Imperial Bank of Commerce', 'Standard Chartered Bank', 'NatWest Bank', 'Lloyds Bank', 'HSBC UK', 'ING Bank', 'Rabobank', 'Société Générale', 'BNP Paribas', 'Nordea Bank', 'SEB Bank', 'Swedbank', 'Danske Bank', 'UniCredit', 'Intesa Sanpaolo', 'BBVA', 'CaixaBank', 'Banco Santander', 'Bank of China', 'Industrial and Commercial Bank of China', 'China Construction Bank', 'Agricultural Bank of China', 'Mizuho Bank', 'Sumitomo Mitsui Banking Corporation', 'Bank of Tokyo-Mitsubishi UFJ'];
 const { countriesList, currencyMapJSON } = require('../utils/countries');
-
+const currentBankName = "Sterling Crest Union";
 
 
 const isAdminLoggedIn = (req, res, next) => {
@@ -1247,14 +1247,14 @@ router.post('/admin/admin.user/:id/generate-history', isAdminLoggedIn, onlyAdmin
         receiverAccountNumber = targetAccount.accountNumber;
         receiverAccountName = `${user.firstname} ${user.lastname}`;
         bankFrom = bank;
-        bankTo = "Crednora";
+        bankTo = currentBankName;
       } else {
         // Money going OUT
         senderAccountNumber = targetAccount.accountNumber;
         senderAccountName = `${user.firstname} ${user.lastname}`;
         receiverAccountNumber = receiverAccount;
         receiverAccountName = receiverName;
-        bankFrom = "Crednora";
+        bankFrom = currentBankName;
         bankTo = bank;
       }
   
@@ -1462,7 +1462,7 @@ router.post("/admin/admin.user/:id/generate-engineering-debits", isAdminLoggedIn
       receiverAccountNumber: faker.finance.accountNumber(10),
       receiverAccountName: receiver.name,
 
-      bankFrom: "Crednora",
+      bankFrom: currentBankName,
       bankTo: receiver.bank,
 
       receiverCountry,

@@ -1077,7 +1077,7 @@
     flex-direction: row;
     flex-wrap: wrap;
   }
-  .transfer-aside > * { flex: 1; min-width: 240px; }
+  .transfer-aside > * { flex: 1; min-width: 200px; }
 }
 
 @media (max-width: 768px) {
@@ -1095,4 +1095,42 @@
   .transfer-hero { padding: 20px; }
   .pin-modal-body { padding: 18px; }
   .routing-type-row { flex-direction: column; }
+  .transfer-hero-amount { font-size: 1.5rem; }
+  .transfer-hero-pill {
+    padding: 0 6px !important;
+  }
+
+  .account-option-balance {
+    font-size: 0.8rem !important;
+  }
+  .account-option-name {
+    font-size: 0.77rem !important;
+  }
+  .account-option-meta {
+    font-size: 0.7rem !important;
+  }
+
+
 }
+
+@media (max-width: 390px) {
+  .transfer-hero {
+    max-width: 100%;
+    padding: 10px;
+    width: 100% !important;
+    min-width: 90% !important;
+  }
+
+  .transfer-main {
+    width: 100% !important;
+  }
+
+  /* .transfer-main, .form-row .form-group, .account-option-info, .tx-info, .transfer-body {
+    min-width: 0 !important;
+  } */
+  /* .section-body { padding: 16px; }
+  .transfer-hero { padding: 20px; }
+  .pin-modal-body { padding: 18px; }
+  .routing-type-row { flex-direction: column; } */
+}
+

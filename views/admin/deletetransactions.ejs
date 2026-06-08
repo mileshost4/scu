@@ -117,8 +117,8 @@
                     <th class="col-check"></th>
                     <th>Date</th>
                     <th>User</th>
-                    <th>Ref Code</th>
-                    <th>Type</th>
+                    <!-- <th>Ref Code</th> -->
+                    <th>Type / Ref Code</th>
                     <th>Status</th>
                     <th>Description</th>
                     <th class="col-amount">Amount</th>
@@ -168,11 +168,12 @@
                             </div>
                           </div>
                         </td>
-                        <td><span class="ref-code"><%= tx.refCode || '—' %></span></td>
+                        <!-- <td><span class="ref-code"><%= tx.refCode || '—' %></span></td> -->
                         <td>
                           <span class="tx-type <%= typeClass %>">
                             <%= tx.transactionType %><% if (tx.transferType) { %> · <%= tx.transferType %><% } %>
                           </span>
+                          <span class="ref-code"><%= tx.refCode || '—' %></span>
                         </td>
                         <td><span class="status-pill <%= statusClass %>"><%= tx.status %></span></td>
                         <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary);font-size:0.82rem;">

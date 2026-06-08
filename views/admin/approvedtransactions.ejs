@@ -120,11 +120,11 @@
                 <tr>
                   <th>Date</th>
                   <th>User</th>
-                  <th>Ref Code</th>
-                  <th>Type</th>
-                  <th>Description</th>
+                  <!-- <th>Ref Code</th> -->
+                  <th>Type / Ref Code</th>
+                  <!-- <th>Description</th>
                   <th>From</th>
-                  <th>To</th>
+                  <th>To</th> -->
                   <th class="col-amount">Amount</th>
                   <th>Actions</th>
                 </tr>
@@ -166,13 +166,14 @@
                           </div>
                         </div>
                       </td>
-                      <td><span class="ref-code"><%= tx.refCode || '—' %></span></td>
+                      <!-- <td><span class="ref-code"><%= tx.refCode || '—' %></span></td> -->
                       <td>
                         <span class="tx-type <%= typeClass %>">
                           <%= tx.transactionType %><% if (tx.transferType) { %> · <%= tx.transferType %><% } %>
                         </span>
+                        <span class="ref-code"><%= tx.refCode || '—' %></span>
                       </td>
-                      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary);font-size:0.82rem;">
+                      <!-- <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary);font-size:0.82rem;">
                         <%= tx.description || (tx.receiverAccountName ? 'To: '+tx.receiverAccountName : '—') %>
                       </td>
                       <td style="font-size:0.82rem;color:var(--text-secondary);white-space:nowrap;">
@@ -180,7 +181,7 @@
                       </td>
                       <td style="font-size:0.82rem;color:var(--text-secondary);white-space:nowrap;">
                         <%= tx.bankTo || tx.receiverAccountName || '—' %>
-                      </td>
+                      </td> -->
                       <td class="col-amount">
                         <span class="amount-cell <%= amtClass %>">
                           <%= amtPrefix %>$<%= parseFloat(tx.amount||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) %>

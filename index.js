@@ -98,7 +98,7 @@ app.use((req, res, next) => {
   res.locals.websiteName = "Sterling Crest Union";
   res.locals.websiteMail = "info@sterlingcrestunion.org";
   res.locals.websiteUrl = "sterlingcrestunion.org";
-  res.locals.websiteNumber = "1234567890"
+  res.locals.websiteNumber = ""
   next();
 });
 
