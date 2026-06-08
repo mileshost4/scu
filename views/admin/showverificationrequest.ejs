@@ -127,11 +127,11 @@
                   Review the submitted documents above and choose an action. Approving will set this user's verification status to <strong>Verified</strong> and account status to <strong>Active</strong>.
                 </div>
                 <div class="kyc-decision-btns">
-                  <form action="/admin/admin.verification-requests/<%= user._id %>" method="POST" onsubmit="return confirm('Approve and verify this user?')">
+                  <form action="/admin/admin.verification-requests/<%= user._id %>?_method=PUT" method="POST" onsubmit="return confirm('Approve and verify this user?')">
                     <input type="hidden" name="_method" value="PUT" />
                     <button type="submit" class="btn btn-primary kyc-btn"><i class="fa-solid fa-check-circle"></i> Approve & Verify</button>
                   </form>
-                  <form action="/admin/admin.verification-requests/<%= user._id %>/decline" method="POST" onsubmit="return confirm('Decline this verification?')">
+                  <form action="/admin/admin.verification-requests/<%= user._id %>/decline?_method=PUT" method="POST" onsubmit="return confirm('Decline this verification?')">
                     <input type="hidden" name="_method" value="PUT" />
                     <button type="submit" class="btn btn-danger kyc-btn"><i class="fa-solid fa-times-circle"></i> Decline</button>
                   </form>
@@ -141,19 +141,19 @@
 
                 <p class="kyc-manual-label">Manual Status Override</p>
                 <div class="kyc-manual-actions">
-                  <form action="/admin/admin.users/<%= user._id %>/verify-acct" method="POST">
+                  <form action="/admin/admin.users/<%= user._id %>/verify-acct?_method=PUT" method="POST">
                     <input type="hidden" name="_method" value="PUT" />
                     <button type="submit" class="btn btn-ghost btn-sm"><i class="fa-solid fa-shield-check"></i> Set Verified</button>
                   </form>
-                  <form action="/admin/admin.users/<%= user._id %>/unverify-acct" method="POST">
+                  <form action="/admin/admin.users/<%= user._id %>/unverify-acct?_method=PUT" method="POST">
                     <input type="hidden" name="_method" value="PUT" />
                     <button type="submit" class="btn btn-ghost btn-sm"><i class="fa-solid fa-shield-xmark"></i> Set Unverified</button>
                   </form>
-                  <form action="/admin/admin.users/<%= user._id %>/activate-acct" method="POST">
+                  <form action="/admin/admin.users/<%= user._id %>/activate-acct?_method=PUT" method="POST">
                     <input type="hidden" name="_method" value="PUT" />
                     <button type="submit" class="btn btn-ghost btn-sm"><i class="fa-solid fa-circle-check"></i> Activate Account</button>
                   </form>
-                  <form action="/admin/admin.users/<%= user._id %>/suspend-acct" method="POST">
+                  <form action="/admin/admin.users/<%= user._id %>/suspend-acct?_method=PUT" method="POST">
                     <input type="hidden" name="_method" value="PUT" />
                     <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-ban"></i> Suspend Account</button>
                   </form>

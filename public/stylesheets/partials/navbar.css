@@ -386,58 +386,74 @@
 
 .theme-option i { width: 16px; text-align: center; }
 
-/* ── Sidebar ─────────────────────────────────────────────────── */
+
+/* ═══════════════════════════════════════════════════════════
+   SIDEBAR
+   Key fixes:
+   1. Use flex column with min-height 0 so the scrollable middle
+      doesn't overflow its container — the footer stays pinned.
+   2. The scrollable area is a middle <div class="sidebar-scroll">
+      that grows and scrolls; the footer is outside it.
+   3. On mobile, sidebar slides in and uses the full safe viewport
+      height so nothing is hidden behind the navbar.
+═══════════════════════════════════════════════════════════ */
 .sidebar {
   position: fixed;
   top: var(--nav-height);
   left: 0;
   width: var(--sidebar-width);
-  height: calc(100vh - var(--nav-height));
+
+  /* Fill exactly the remaining viewport below the navbar */
+  height: calc(100dvh - var(--nav-height));  /* dvh = dynamic viewport height (mobile-safe) */
+
   background: var(--bg-sidebar);
   border-right: 1px solid var(--border);
+  z-index: 900;
+
+  /* Flex column: scrollable middle + sticky footer */
   display: flex;
   flex-direction: column;
-  /* overflow-y: auto;
-  overflow-x: hidden; */
-  overflow: auto;   /* ← fixes the overflow-x cancelling scroll */
-  scroll-behavior: smooth;
-  
-  transition: width 0.3s cubic-bezier(0.4,0,0.2,1);
-  z-index: 900;
-  /* scrollbar-width: none; */
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;                          /* Firefox */
-  scrollbar-color: var(--border-strong) transparent;
-}
+  overflow: hidden;             /* hide overflow on the shell; scrolling done inside */
 
-/* .sidebar::-webkit-scrollbar { display: none; } */
-.sidebar::-webkit-scrollbar {
-  width: 4px; /* Webkit — thin but visible */
-}
-
-.sidebar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.sidebar::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: var(--radius-full);
-}
-
-.sidebar::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar.collapsed {
   width: var(--sidebar-width-collapsed);
 }
 
-/* Sidebar section label */
+/* ── Scrollable content area (everything except footer) ── */
+.sidebar-scroll {
+  flex: 1 1 0;                  /* grow to fill, shrink to 0 — enables proper scroll */
+  min-height: 0;                /* critical: allows flex child to shrink below content size */
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
+}
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Padding inside the scrollable area */
+.sidebar-scroll-inner {
+  padding: 8px 0 12px;
+}
+
+/* ── Section label ── */
 .sidebar-section-label {
-  padding: 20px 20px 10px;
-  padding-top: 10px !important;
-  padding-bottom: 15px !important;
+  padding: 10px 20px 6px;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.1em;
@@ -450,16 +466,16 @@
 
 .sidebar.collapsed .sidebar-section-label {
   opacity: 0;
-  padding: 20px 0 6px;
+  padding: 10px 0 6px;
   pointer-events: none;
 }
 
-/* Sidebar nav item */
+/* ── Sidebar nav item ── */
 .sidebar-item {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 20px;
+  padding: 10px 20px;
   margin: 1px 8px;
   border-radius: var(--radius-md);
   color: var(--text-secondary);
@@ -509,7 +525,10 @@
   transition: opacity 0.2s ease;
 }
 
-.sidebar.collapsed .item-label { opacity: 0; pointer-events: none; }
+.sidebar.collapsed .item-label {
+  opacity: 0;
+  pointer-events: none;
+}
 
 .sidebar-item .item-badge {
   background: var(--danger);
@@ -524,7 +543,7 @@
 
 .sidebar.collapsed .item-badge { opacity: 0; }
 
-/* Tooltip for collapsed items */
+/* Tooltip for collapsed state */
 .sidebar.collapsed .sidebar-item:hover::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -543,9 +562,7 @@
   z-index: 1100;
 }
 
-/* Accordion sub-menu */
-.sidebar-group {}
-
+/* ── Accordion sub-menu ── */
 .sidebar-group-toggle {
   display: flex;
   align-items: center;
@@ -590,10 +607,9 @@
 
 .sidebar-group-toggle .toggle-caret {
   font-size: 0.7rem;
-  transition: transform 0.25s ease;
   color: var(--text-muted);
   flex-shrink: 0;
-  transition: opacity 0.2s, transform 0.25s;
+  transition: opacity 0.2s ease, transform 0.25s ease;
 }
 
 .sidebar.collapsed .toggle-caret { opacity: 0; }
@@ -605,7 +621,7 @@
 .sidebar-sub {
   overflow: hidden;
   max-height: 0;
-  transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1);
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-sub.open {
@@ -617,9 +633,7 @@
 }
 
 .sidebar-sub .sidebar-item {
-  padding: 0 !important;
-  padding: 5px !important;
-  padding-left: 48px !important;
+  padding: 5px 5px 5px 48px;
   font-size: 0.84rem;
 }
 
@@ -627,95 +641,108 @@
   font-size: 0.75rem;
 }
 
-/* Sidebar footer */
+/* ── Sidebar footer — always pinned at bottom ── */
 .sidebar-footer {
-  margin-top: auto;
+  flex-shrink: 0;               /* never compressed by the scroll area */
   border-top: 1px solid var(--border);
-  padding: 12px 8px;
+  padding: 10px 8px;
+  background: var(--bg-sidebar); /* match sidebar bg so it covers scrolled content */
 }
 
-/* ── Mobile overlay ──────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════
+   MOBILE — sidebar slides in as overlay
+═══════════════════════════════════════════════════════════ */
 .sidebar-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 850;
   backdrop-filter: blur(2px);
 }
 
 @media (max-width: 768px) {
   .sidebar {
+    /* Slide off-screen; width stays full so labels are visible when open */
     width: var(--sidebar-width) !important;
     transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* On mobile the navbar height may vary; dvh is mobile-browser-safe */
+    top: var(--nav-height);
+    height: calc(100dvh - var(--nav-height));
   }
+
   .sidebar.mobile-open {
     transform: translateX(0);
   }
+
   .sidebar-overlay.visible {
     display: block;
   }
+
+  /* Compact toggle button on mobile — just show hamburger, no wide sidebar-width */
   .sidebar-toggle {
     width: 64px !important;
     justify-content: center;
     padding: 0;
     gap: 5px;
-    margin-left: 5px;
+    border-right: none;
   }
 
-  .sidebar-toggle .navbar-logo .logo-text { display: none; }
+  .sidebar-toggle .navbar-logo .logo-text {
+    display: none;
+  }
 
-  .navbar-left .sidebar-toggle {
-    width: 64px;
+  /* Keep theme label hidden on very small screens to save space */
+  .theme-toggle-btn span#themeLabel {
+    display: none;
   }
 }
 
-/* ── Bug 3: Navbar wraps gracefully below ~390px ── */
+/* ── Extra-small screens (< 400px) — prevent navbar wrapping ── */
 @media (max-width: 399px) {
   .navbar {
-    height: auto;
-    min-height: var(--nav-height);
-    flex-wrap: wrap;
-    padding: 8px 12px;
-    gap: 8px;
+    padding: 0 12px 0 0;
   }
 
-  .navbar-left {
-    flex: 1 1 auto;
+  /* Shrink the right-side controls slightly */
+  .theme-toggle-btn {
+    padding: 7px 10px;
+    gap: 5px;
   }
 
-  .navbar-right {
-    flex: 0 0 100%;          /* push to its own row */
-    justify-content: flex-end;
-    padding-bottom: 4px;
-  }
-}
-
-/* Compensate main content offset when navbar is taller on tiny screens */
-@media (max-width: 399px) {
-  /* Sidebar top also needs to shift down — use JS or a generous fixed offset */
-  .sidebar {
-    top: auto;
-    margin-top: 0;
+  .nav-user-info {
+    display: none; /* show only avatar on tiny screens */
   }
 
-  /* If your --nav-height CSS var is used for main content offset, 
-     override the body/main padding-top to prevent content hiding under navbar */
-  #mainContent,
-  .main-content {
-    padding-top: 100px; /* safe fallback for two-row navbar */
+  .nav-caret {
+    display: none;
+  }
+
+  .nav-user-btn {
+    padding: 5px;
+    gap: 0;
   }
 }
 
-/* ── Balance visibility toggle ───────────────────────── */
-.balance-hidden { filter: blur(6px) !important; user-select: none; pointer-events: none; }
+
+/* ═══════════════════════════════════════════════════════════
+   BALANCE VISIBILITY TOGGLE
+═══════════════════════════════════════════════════════════ */
+.balance-hidden {
+  filter: blur(6px) !important;
+  user-select: none;
+  pointer-events: none;
+}
 
 .balance-toggle-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px; height: 32px;
+  width: 32px;
+  height: 32px;
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
   background: transparent;
@@ -724,14 +751,22 @@
   transition: var(--transition);
   flex-shrink: 0;
 }
-.balance-toggle-btn:hover { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
 
-/* ── Custom modals (no Bootstrap modal JS dependency issues) ── */
+.balance-toggle-btn:hover {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   CUSTOM MODALS
+═══════════════════════════════════════════════════════════ */
 .custom-modal-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.65);
+  background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(4px);
   z-index: 9000;
   align-items: center;
@@ -739,6 +774,7 @@
   padding: 20px;
   overflow-y: auto;
 }
+
 .custom-modal-overlay.open { display: flex; }
 
 .custom-modal {
@@ -747,13 +783,11 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   width: 100%;
-  /* max-width: 460px; */
   max-width: 620px;
-  max-height: calc(100vh - 40px); /* never exceed viewport */
+  max-height: calc(100dvh - 40px);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-
   animation: fadeIn 0.25s ease both;
 }
 
@@ -776,7 +810,8 @@
 }
 
 .custom-modal-title i {
-  width: 32px; height: 32px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-md);
   background: var(--accent-dim);
   color: var(--accent);
@@ -787,7 +822,8 @@
 }
 
 .custom-modal-close {
-  width: 30px; height: 30px;
+  width: 30px;
+  height: 30px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
   background: transparent;
@@ -799,7 +835,12 @@
   font-size: 0.8rem;
   transition: var(--transition);
 }
-.custom-modal-close:hover { background: var(--danger-dim); color: var(--danger); border-color: var(--danger); }
+
+.custom-modal-close:hover {
+  background: var(--danger-dim);
+  color: var(--danger);
+  border-color: var(--danger);
+}
 
 .custom-modal-body {
   padding: 20px 24px;
@@ -816,5 +857,8 @@
   border-top: 1px solid var(--border);
 }
 
-/* ── Logout confirm modal ── */
-.logout-modal .custom-modal-title i { background: var(--danger-dim); color: var(--danger); }
+/* Logout confirm modal icon colour */
+.logout-modal .custom-modal-title i {
+  background: var(--danger-dim);
+  color: var(--danger);
+}

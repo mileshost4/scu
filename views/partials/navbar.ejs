@@ -126,98 +126,107 @@ const _active = (p) => _path === p ? 'active' : '';
 <!-- ═══════════════════════════════════════════════════════════
      SIDEBAR
 ════════════════════════════════════════════════════════════ -->
+
+
 <aside class="sidebar" id="sidebar">
 
-  <div class="sidebar-section-label">Overview</div>
+  <!-- SCROLLABLE MIDDLE — all nav items go here -->
+  <div class="sidebar-scroll">
+    <div class="sidebar-scroll-inner">
 
-  <a href="/dashboard"                class="sidebar-item <%= _active('/dashboard') %>"                data-tooltip="Dashboard">
-    <i class="fa-solid fa-gauge-high"></i>
-    <span class="item-label">Dashboard</span>
-  </a>
+      <div class="sidebar-section-label">Overview</div>
 
-  <a href="/user/transaction-history" class="sidebar-item <%= _active('/user/transaction-history') %>" data-tooltip="Transactions">
-    <i class="fa-solid fa-arrow-right-arrow-left"></i>
-    <span class="item-label">Transaction History</span>
-  </a>
-
-  <a href="/user/notification"        class="sidebar-item <%= _active('/user/notification') %>"        data-tooltip="Notifications">
-    <i class="fa-regular fa-bell"></i>
-    <span class="item-label">Notifications</span>
-    <% if (_unread > 0) { %>
-      <span class="item-badge"><%= _unread > 9 ? '9+' : _unread %></span>
-    <% } %>
-  </a>
-
-  <div class="sidebar-section-label">Transfers</div>
-
-  <a href="/user/transactions"        class="sidebar-item <%= _active('/user/transactions') %>"        data-tooltip="All Transfers">
-    <i class="fa-solid fa-paper-plane"></i>
-    <span class="item-label">All Transfers</span>
-  </a>
-
-  <div class="sidebar-group">
-    <button class="sidebar-group-toggle" id="transferGroupToggle" data-tooltip="Transfer Types">
-      <i class="fa-solid fa-money-bill-transfer"></i>
-      <span class="toggle-label">Transfer Types</span>
-      <i class="fa-solid fa-chevron-right toggle-caret"></i>
-    </button>
-    <div class="sidebar-sub" id="transferSub">
-      <a href="/user/intrabank-transfer"     class="sidebar-item <%= _active('/user/intrabank-transfer') %>"    data-tooltip="Intra-Bank">
-        <i class="fa-solid fa-building-columns"></i><span class="item-label">Intra-Bank</span>
+      <a href="/dashboard" class="sidebar-item <%= _active('/dashboard') %>" data-tooltip="Dashboard">
+        <i class="fa-solid fa-gauge-high"></i>
+        <span class="item-label">Dashboard</span>
       </a>
-      <a href="/user/interbank-transfer"     class="sidebar-item <%= _active('/user/interbank-transfer') %>"    data-tooltip="Inter-Bank">
-        <i class="fa-solid fa-right-left"></i><span class="item-label">Inter-Bank</span>
+
+      <a href="/user/transaction-history" class="sidebar-item <%= _active('/user/transaction-history') %>" data-tooltip="Transactions">
+        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+        <span class="item-label">Transaction History</span>
       </a>
-      <a href="/user/international-transfer" class="sidebar-item <%= _active('/user/international-transfer') %>" data-tooltip="International">
-        <i class="fa-solid fa-earth-americas"></i><span class="item-label">International Wire</span>
+
+      <a href="/user/notification" class="sidebar-item <%= _active('/user/notification') %>" data-tooltip="Notifications">
+        <i class="fa-regular fa-bell"></i>
+        <span class="item-label">Notifications</span>
+        <% if (_unread > 0) { %>
+          <span class="item-badge"><%= _unread > 9 ? '9+' : _unread %></span>
+        <% } %>
       </a>
-    </div>
-  </div>
 
-  <div class="sidebar-section-label">Banking</div>
+      <div class="sidebar-section-label">Transfers</div>
 
-  <a href="/user/deposit"        class="sidebar-item <%= _active('/user/deposit') %>"        data-tooltip="Deposit">
-    <i class="fa-solid fa-circle-down"></i><span class="item-label">Deposit (Bank)</span>
-  </a>
-  <a href="/user/deposit-crypto" class="sidebar-item <%= _active('/user/deposit-crypto') %>" data-tooltip="Crypto Deposit">
-    <i class="fa-brands fa-bitcoin"></i><span class="item-label">Crypto Deposit</span>
-  </a>
-  <a href="/user/my-accounts"    class="sidebar-item <%= _active('/user/my-accounts') %>"    data-tooltip="My Accounts">
-    <i class="fa-solid fa-building-columns"></i><span class="item-label">My Accounts</span>
-  </a>
-  <a href="/user/cards"          class="sidebar-item <%= _active('/user/cards') %>"          data-tooltip="Cards">
-    <i class="fa-regular fa-credit-card"></i><span class="item-label">My Cards</span>
-  </a>
-  <a href="/user/pay-bills"      class="sidebar-item <%= _active('/user/pay-bills') %>"      data-tooltip="Pay Bills">
-    <i class="fa-solid fa-file-invoice-dollar"></i><span class="item-label">Pay Bills</span>
-  </a>
+      <a href="/user/transactions" class="sidebar-item <%= _active('/user/transactions') %>" data-tooltip="All Transfers">
+        <i class="fa-solid fa-paper-plane"></i>
+        <span class="item-label">All Transfers</span>
+      </a>
 
-  <div class="sidebar-section-label">Grow</div>
+      <div class="sidebar-group">
+        <button class="sidebar-group-toggle" id="transferGroupToggle" data-tooltip="Transfer Types">
+          <i class="fa-solid fa-money-bill-transfer"></i>
+          <span class="toggle-label">Transfer Types</span>
+          <i class="fa-solid fa-chevron-right toggle-caret"></i>
+        </button>
+        <div class="sidebar-sub" id="transferSub">
+          <a href="/user/intrabank-transfer" class="sidebar-item <%= _active('/user/intrabank-transfer') %>" data-tooltip="Intra-Bank">
+            <i class="fa-solid fa-building-columns"></i><span class="item-label">Intra-Bank</span>
+          </a>
+          <a href="/user/interbank-transfer" class="sidebar-item <%= _active('/user/interbank-transfer') %>" data-tooltip="Inter-Bank">
+            <i class="fa-solid fa-right-left"></i><span class="item-label">Inter-Bank</span>
+          </a>
+          <a href="/user/international-transfer" class="sidebar-item <%= _active('/user/international-transfer') %>" data-tooltip="International">
+            <i class="fa-solid fa-earth-americas"></i><span class="item-label">International Wire</span>
+          </a>
+        </div>
+      </div>
 
-  <a href="/user/investments"     class="sidebar-item <%= _active('/user/investments') %>"     data-tooltip="Investments">
-    <i class="fa-solid fa-chart-line"></i><span class="item-label">Investments</span>
-  </a>
-  <a href="/user/loan"            class="sidebar-item <%= _active('/user/loan') %>"            data-tooltip="Loans">
-    <i class="fa-solid fa-hand-holding-dollar"></i><span class="item-label">Loans</span>
-  </a>
-  <a href="/user/upgrade-account" class="sidebar-item <%= _active('/user/upgrade-account') %>" data-tooltip="Upgrade">
-    <i class="fa-solid fa-star"></i><span class="item-label">Upgrade Account</span>
-  </a>
+      <div class="sidebar-section-label">Banking</div>
 
-  <div class="sidebar-section-label">Account</div>
+      <a href="/user/deposit"        class="sidebar-item <%= _active('/user/deposit') %>"        data-tooltip="Deposit">
+        <i class="fa-solid fa-circle-down"></i><span class="item-label">Deposit (Bank)</span>
+      </a>
+      <a href="/user/deposit-crypto" class="sidebar-item <%= _active('/user/deposit-crypto') %>" data-tooltip="Crypto Deposit">
+        <i class="fa-brands fa-bitcoin"></i><span class="item-label">Crypto Deposit</span>
+      </a>
+      <a href="/user/my-accounts"    class="sidebar-item <%= _active('/user/my-accounts') %>"    data-tooltip="My Accounts">
+        <i class="fa-solid fa-building-columns"></i><span class="item-label">My Accounts</span>
+      </a>
+      <a href="/user/cards"          class="sidebar-item <%= _active('/user/cards') %>"          data-tooltip="Cards">
+        <i class="fa-regular fa-credit-card"></i><span class="item-label">My Cards</span>
+      </a>
+      <a href="/user/pay-bills"      class="sidebar-item <%= _active('/user/pay-bills') %>"      data-tooltip="Pay Bills">
+        <i class="fa-solid fa-file-invoice-dollar"></i><span class="item-label">Pay Bills</span>
+      </a>
 
-  <a href="/user/profile"  class="sidebar-item <%= _active('/user/profile') %>"  data-tooltip="Profile">
-    <i class="fa-regular fa-user"></i><span class="item-label">Profile</span>
-  </a>
-  <a href="/user/security" class="sidebar-item <%= _active('/user/security') %>" data-tooltip="Security">
-    <i class="fa-solid fa-shield-halved"></i><span class="item-label">Security</span>
-  </a>
-  <a href="/user/support"  class="sidebar-item <%= _active('/user/support') %>"  data-tooltip="Support">
-    <i class="fa-regular fa-circle-question"></i><span class="item-label">Support</span>
-  </a>
+      <div class="sidebar-section-label">Grow</div>
 
+      <a href="/user/investments"     class="sidebar-item <%= _active('/user/investments') %>"     data-tooltip="Investments">
+        <i class="fa-solid fa-chart-line"></i><span class="item-label">Investments</span>
+      </a>
+      <a href="/user/loan"            class="sidebar-item <%= _active('/user/loan') %>"            data-tooltip="Loans">
+        <i class="fa-solid fa-hand-holding-dollar"></i><span class="item-label">Loans</span>
+      </a>
+      <a href="/user/upgrade-account" class="sidebar-item <%= _active('/user/upgrade-account') %>" data-tooltip="Upgrade">
+        <i class="fa-solid fa-star"></i><span class="item-label">Upgrade Account</span>
+      </a>
+
+      <div class="sidebar-section-label">Account</div>
+
+      <a href="/user/profile"  class="sidebar-item <%= _active('/user/profile') %>"  data-tooltip="Profile">
+        <i class="fa-regular fa-user"></i><span class="item-label">Profile</span>
+      </a>
+      <a href="/user/security" class="sidebar-item <%= _active('/user/security') %>" data-tooltip="Security">
+        <i class="fa-solid fa-shield-halved"></i><span class="item-label">Security</span>
+      </a>
+      <a href="/user/support"  class="sidebar-item <%= _active('/user/support') %>"  data-tooltip="Support">
+        <i class="fa-regular fa-circle-question"></i><span class="item-label">Support</span>
+      </a>
+
+    </div><!-- /.sidebar-scroll-inner -->
+  </div><!-- /.sidebar-scroll -->
+
+  <!-- PINNED FOOTER — outside the scroll area, always visible -->
   <div class="sidebar-footer">
-    <!-- Logout triggers confirmation modal -->
     <button type="button" class="sidebar-item" data-tooltip="Sign Out"
       style="color:var(--danger); border:none; background:transparent; width:100%; text-align:left; cursor:pointer;"
       onclick="openLogoutModal()">
