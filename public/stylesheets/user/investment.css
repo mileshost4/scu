@@ -1,0 +1,365 @@
+/* investment.css — Investment Plans & History Page */
+
+.inv-page { padding-bottom: 48px; }
+
+/* ── Page Header ─────────────────────────────────────── */
+.inv-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+.inv-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+.inv-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 4px 0 0;
+}
+.inv-balance-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 18px;
+}
+.inv-bal-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.inv-bal-amount {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+/* ── Section ─────────────────────────────────────────── */
+.inv-section { margin-bottom: 36px; }
+.inv-section-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+/* Pulsing dot for active */
+.pulse-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 0 var(--success);
+  animation: pulse-ring 1.8s ease infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(0,212,170,0.5); }
+  70%  { box-shadow: 0 0 0 8px rgba(0,212,170,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,212,170,0); }
+}
+
+/* ── Active Investment Cards ─────────────────────────── */
+.inv-active-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.inv-active-card {
+  display: block;
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  text-decoration: none;
+  transition: var(--transition);
+  box-shadow: 0 0 0 0 var(--accent-glow);
+}
+.inv-active-card:hover {
+  background: var(--bg-card-hover);
+  box-shadow: var(--shadow-accent);
+  transform: translateY(-2px);
+}
+.inv-active-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.inv-active-icon {
+  width: 42px; height: 42px;
+  border-radius: var(--radius-md);
+  background: var(--accent-dim);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.inv-active-info { flex: 1; }
+.inv-active-name {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.inv-active-date {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.inv-active-stats {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.inv-stat { display: flex; flex-direction: column; gap: 3px; }
+.inv-stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.inv-stat-val {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Progress bar */
+.inv-active-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.inv-progress-bar {
+  flex: 1;
+  height: 5px;
+  background: var(--border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.inv-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  border-radius: var(--radius-full);
+  transition: width 0.6s ease;
+  min-width: 4px;
+}
+.inv-progress-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.inv-card-arrow {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-size: 0.85rem;
+  opacity: 0;
+  transition: opacity 0.2s, right 0.2s;
+}
+.inv-active-card:hover .inv-card-arrow { opacity: 1; right: 20px; }
+
+/* ── Plans ───────────────────────────────────────────── */
+.inv-plans-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.inv-plan-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  flex: 1;
+  min-width: 240px;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: var(--transition);
+}
+.inv-plan-card:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-accent);
+  transform: translateY(-2px);
+}
+.inv-plan-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.inv-plan-img {
+  width: 48px; height: 48px;
+  border-radius: var(--radius-md);
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+.inv-plan-icon {
+  width: 48px; height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--gold-dim);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+.inv-plan-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.inv-plan-roi {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.inv-roi-value {
+  font-family: var(--font-mono);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.03em;
+}
+.inv-roi-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+}
+.inv-plan-meta { display: flex; flex-direction: column; gap: 8px; }
+.inv-plan-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+}
+.inv-plan-row i { width: 14px; color: var(--text-muted); font-size: 0.78rem; }
+.inv-plan-row strong { color: var(--text-primary); }
+.inv-plan-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+.inv-plan-card .w-full { width: 100%; justify-content: center; }
+.inv-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  color: var(--text-muted);
+  width: 100%;
+}
+.inv-empty i { font-size: 2.5rem; opacity: 0.4; }
+
+/* ── History ─────────────────────────────────────────── */
+.inv-history-list {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.inv-history-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  transition: var(--transition);
+}
+.inv-history-row:last-child { border-bottom: none; }
+.inv-history-row:hover { background: var(--bg-card-hover); }
+.inv-hist-icon {
+  width: 38px; height: 38px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.inv-hist-icon.completed { background: var(--success-dim); color: var(--success); }
+.inv-hist-icon.pending   { background: var(--warning-dim); color: var(--warning); }
+.inv-hist-info { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.inv-hist-name { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
+.inv-hist-date { font-size: 0.75rem; color: var(--text-muted); }
+.inv-hist-amount { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; margin-right: 12px; }
+.inv-hist-invested { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
+.inv-hist-roi { font-size: 0.72rem; color: var(--accent); }
+.inv-hist-caret { color: var(--text-muted); font-size: 0.72rem; }
+
+/* ── Zero state ──────────────────────────────────────── */
+.inv-zero-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-secondary);
+}
+.inv-zero-icon {
+  width: 72px; height: 72px;
+  border-radius: var(--radius-xl);
+  background: var(--accent-dim);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin: 0 auto 20px;
+}
+.inv-zero-state h3 { font-size: 1.1rem; color: var(--text-primary); margin-bottom: 8px; }
+.inv-zero-state p  { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+
+/* ── Modal plan badge ────────────────────────────────── */
+.modal-plan-badge {
+  background: var(--accent-dim);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+.inv-modal-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .inv-header { flex-direction: column; }
+  .inv-balance-pill { align-items: flex-start; }
+  .inv-active-stats { gap: 16px; }
+  .inv-plans-list { flex-direction: column; }
+  .inv-plan-card { max-width: 100%; }
+  .inv-history-row { flex-wrap: wrap; }
+  .inv-hist-amount { align-items: flex-start; }
+}

@@ -1,0 +1,82 @@
+<%
+  const currentPath = locals.currentPath || '';
+  const navLinks = [
+    { href: '/', label: 'Home', icon: 'fa-home' },
+    { href: '/about', label: 'About', icon: 'fa-building-columns' },
+    { href: '/services', label: 'Services', icon: 'fa-briefcase' },
+    { href: '/contact', label: 'Contact', icon: 'fa-envelope' },
+  ];
+%>
+
+<nav class="scu-nav" id="mainNav">
+  <div class="nav-inner">
+
+    <!-- Logo -->
+    <a href="/" class="nav-logo">
+      <img src="/images/logo.png" alt="<%= websiteName %> Logo" class="nav-logo-img" />
+      <div class="logo-text">
+        <span class="logo-primary"><%= websiteName %></span>
+        <span class="logo-tagline">Private Banking</span>
+      </div>
+    </a>
+
+    <!-- Desktop Links -->
+    <ul class="nav-links" id="navLinks">
+      <% navLinks.forEach(link => { %>
+        <li>
+          <a href="<%= link.href %>" class="nav-link <%= currentPath === link.href ? 'active' : '' %>">
+            <i class="fa-solid <%= link.icon %> nav-icon"></i>
+            <span><%= link.label %></span>
+            <span class="link-underline"></span>
+          </a>
+        </li>
+      <% }) %>
+    </ul>
+
+    <!-- CTA Buttons -->
+    <div class="nav-actions">
+      <a href="/login" class="btn-ghost">
+        <i class="fa-solid fa-right-to-bracket"></i> Sign In
+      </a>
+      <a href="/register" class="btn-gold">
+        Open Account <i class="fa-solid fa-arrow-right"></i>
+      </a>
+    </div>
+
+    <!-- Hamburger -->
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile Drawer -->
+  <div class="mobile-drawer" id="mobileDrawer">
+    <ul class="mobile-links">
+      <% navLinks.forEach(link => { %>
+        <li>
+          <a href="<%= link.href %>" class="mobile-link <%= currentPath === link.href ? 'active' : '' %>">
+            <i class="fa-solid <%= link.icon %>"></i> <%= link.label %>
+          </a>
+        </li>
+      <% }) %>
+      <li class="mobile-divider"></li>
+      <li><a href="/login" class="mobile-link"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a></li>
+      <li><a href="/register" class="mobile-link mobile-cta"><i class="fa-solid fa-user-plus"></i> Open Account</a></li>
+    </ul>
+  </div>
+</nav>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  const hamburger = document.getElementById('hamburger');
+  const drawer = document.getElementById('mobileDrawer');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    drawer.classList.toggle('open');
+    document.body.classList.toggle('nav-open');
+  });
+</script>

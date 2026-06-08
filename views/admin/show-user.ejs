@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= user.firstname %> <%= user.lastname %> | Admin</title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/show-user.css" />
+</head>
+<body>
+  <% locals.currentPath = '/admin/admin.users'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <a href="/admin/admin.users"><i class="fa-solid fa-users"></i> Users</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span><%= user.firstname %> <%= user.lastname %></span>
+        </div>
+
+        <!-- Profile Hero -->
+        <div class="profile-hero card">
+          <div class="profile-hero-left">
+            <div class="profile-avatar-lg">
+              <% if (user.profilepicture && user.profilepicture.length > 0) { %>
+                <img src="<%= user.profilepicture[user.profilepicture.length - 1].url %>" alt="Profile" />
+              <% } else { %>
+                <%= (user.firstname || '?')[0].toUpperCase() %><%= (user.lastname || '')[0] ? user.lastname[0].toUpperCase() : '' %>
+              <% } %>
+            </div>
+            <div class="profile-hero-info">
+              <h2 class="profile-hero-name"><%= user.firstname %> <%= user.middlename || '' %> <%= user.lastname %></h2>
+              <div class="profile-hero-email"><i class="fa-solid fa-envelope"></i> <%= user.email %></div>
+              <div class="profile-hero-meta">
+                <% if (user.accountStatus === 'Active') { %>
+                  <span class="badge badge-success"><span class="status-dot active"></span> Active</span>
+                <% } else if (user.accountStatus === 'Suspended') { %>
+                  <span class="badge badge-danger"><span class="status-dot danger"></span> Suspended</span>
+                <% } else { %>
+                  <span class="badge badge-info">Not Active</span>
+                <% } %>
+                <% if (user.verificationstatus === 'Verified') { %>
+                  <span class="badge badge-success"><i class="fa-solid fa-shield-check"></i> Verified</span>
+                <% } else if (user.verificationstatus === 'Pending') { %>
+                  <span class="badge badge-warning"><i class="fa-solid fa-clock"></i> Pending KYC</span>
+                <% } else { %>
+                  <span class="badge badge-danger"><i class="fa-solid fa-shield-xmark"></i> Unverified</span>
+                <% } %>
+                <span class="badge badge-gold"><i class="fa-solid fa-star"></i> Credit: <%= user.creditscore %></span>
+              </div>
+            </div>
+          </div>
+          <div class="profile-hero-actions">
+            <button class="btn btn-outline btn-sm" onclick="openModal('notifModal')"><i class="fa-solid fa-bell"></i> Notify</button>
+            <a href="/admin/admin.verification-requests/<%= user._id %>" class="btn btn-ghost btn-sm"><i class="fa-solid fa-id-card"></i> KYC Review</a>
+            <button class="btn btn-danger btn-sm" onclick="openModal('deleteModal')"><i class="fa-solid fa-trash"></i> Delete</button>
+          </div>
+        </div>
+
+        <!-- Summary Stat Cards -->
+        <div class="summary-cards">
+          <% if (mainaccount) { %>
+          <div class="summary-card">
+            <div class="summary-card-icon accent"><i class="fa-solid fa-wallet"></i></div>
+            <div class="summary-card-body">
+              <div class="summary-card-val"><%= user.basecurrencysymbol || '$' %><%= (mainaccount.accountWallet || 0).toLocaleString('en-US', {minimumFractionDigits:2,maximumFractionDigits:2}) %></div>
+              <div class="summary-card-lbl">Main Balance</div>
+            </div>
+          </div>
+          <% } %>
+          <div class="summary-card">
+            <div class="summary-card-icon info"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+            <div class="summary-card-body">
+              <div class="summary-card-val"><%= transactions.length %></div>
+              <div class="summary-card-lbl">Transactions</div>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-card-icon warning"><i class="fa-solid fa-credit-card"></i></div>
+            <div class="summary-card-body">
+              <div class="summary-card-val"><%= cards.length %></div>
+              <div class="summary-card-lbl">Cards</div>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-card-icon success"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="summary-card-body">
+              <div class="summary-card-val"><%= totalinvestments.length %></div>
+              <div class="summary-card-lbl">Investments</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Main Two-Column Layout -->
+        <div class="profile-layout">
+
+          <!-- LEFT COLUMN -->
+          <div class="profile-col-left">
+
+            <!-- Personal Details -->
+            <div class="card section-card">
+              <div class="section-card-header">
+                <h3><i class="fa-solid fa-circle-user"></i> Personal Details</h3>
+                <button class="btn btn-ghost btn-sm" onclick="openModal('editProfileModal')"><i class="fa-solid fa-pen"></i> Edit</button>
+              </div>
+              <div class="detail-grid">
+                <div class="detail-item"><span class="detail-lbl">First Name</span><span class="detail-val"><%= user.firstname || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Middle Name</span><span class="detail-val"><%= user.middlename || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Last Name</span><span class="detail-val"><%= user.lastname || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Email</span><span class="detail-val"><%= user.email %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Phone</span><span class="detail-val"><%= user.phonenumber || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Gender</span><span class="detail-val"><%= user.gender || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">DOB</span><span class="detail-val"><%= user.dob || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Country</span><span class="detail-val"><%= user.country || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">State</span><span class="detail-val"><%= user.state || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">City</span><span class="detail-val"><%= user.city || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Zip Code</span><span class="detail-val"><%= user.zipcode || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Address</span><span class="detail-val"><%= user.address || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Employment</span><span class="detail-val"><%= user.employmentstatus || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Currency</span><span class="detail-val"><%= user.basecurrency %> (<%= user.basecurrencysymbol %>)</span></div>
+              </div>
+            </div>
+
+            <!-- Account Info -->
+            <div class="card section-card">
+              <div class="section-card-header">
+                <h3><i class="fa-solid fa-building-columns"></i> Account Info</h3>
+              </div>
+              <div class="detail-grid">
+                <div class="detail-item"><span class="detail-lbl">UID</span><span class="detail-val mono-text"><%= user.uid || '—' %></span></div>
+                <div cladetail-item"><span class="detail-lbl">Account #</span><span class="detail-val mono-text"><%= user.accountNumber || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Routing #</span><span class="detail-val mono-text"><%= user.routingNumber || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Transfer Code</span><span class="detail-val mono-text"><%= user.transferCode || '—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Role</span><span class="detail-val"><span class="badge badge-info"><%= user.role %></span></span></div>
+                <div class="detail-item"><span class="detail-lbl">Registered</span><span class="detail-val"><%= user.accountcreatedat ? new Date(user.accountcreatedat).toDateString() : '—' %></span></div>
+              </div>
+            </div>
+
+            <!-- Accounts List -->
+            <div class="card section-card">
+              <div class="section-card-header">
+                <h3><i class="fa-solid fa-vault"></i> Accounts (<%= allaccounts.length %>)</h3>
+              </div>
+              <% if (allaccounts.length === 0) { %>
+                <p class="empty-msg">No accounts found.</p>
+              <% } %>
+              <% allaccounts.forEach(acct => { %>
+              <div class="account-row">
+                <div class="account-row-left">
+                  <div class="account-row-icon"><i class="fa-solid fa-building-columns"></i></div>
+                  <div>
+                    <div class="account-row-name"><%= acct.displayName || 'Account' %> <% if(acct.isDefault) { %><span class="badge badge-accent" style="font-size:0.65rem;">Default</span><% } %></div>
+                    <div class="account-row-sub mono-text"><%= acct.accountNumber %> &middot; <%= acct.accountType %></div>
+                  </div>
+                </div>
+                <div class="account-row-right">
+                  <div class="account-row-bal"><%= user.basecurrencysymbol || '$' %><%= (acct.accountWallet || 0).toLocaleString('en-US',{minimumFractionDigits:2}) %></div>
+                  <% if(acct.status === 'Active') { %><span class="badge badge-success">Active</span><% } else { %><span class="badge badge-warning"><%= acct.status %></span><% } %>
+                  <button type="button" class="btn btn-danger btn-sm" onclick="confirmDeleteAccount('<%= acct._id %>', '<%= user._id %>', '<%= acct.displayName || 'Account' %>')" title="Remove Account"><i class="fa-solid fa-trash"></i></button>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+
+          </div><!-- /left col -->
+
+          <!-- RIGHT COLUMN -->
+          <div class="profile-col-right">
+
+            <!-- Admin Actions -->
+            <div class="card section-card">
+              <div class="section-card-header">
+                <h3><i class="fa-solid fa-sliders"></i> Admin Controls</h3>
+              </div>
+              <div class="actions-grid">
+
+                <!-- Account Status -->
+                <div class="action-group">
+                  <div class="action-group-label">
+                    Account Status —
+                    <strong style="color:
+                      <%= user.accountStatus === 'Active' ? 'var(--success)' :
+                          user.accountStatus === 'Suspended' ? 'var(--danger)' : 'var(--text-muted)' %>">
+                      <%= user.accountStatus %>
+                    </strong>
+                  </div>
+                  <div class="action-group-btns">
+                    <% if (user.accountStatus !== 'Active') { %>
+                      <button type="button" class="btn btn-ghost btn-sm" onclick="confirmAction('activate-acct', 'Activate this account?', 'The account will be set to Active.')">
+                        <i class="fa-solid fa-circle-check"></i> Activate
+                      </button>
+                    <% } %>
+                    <% if (user.accountStatus === 'Active') { %>
+                      <button type="button" class="btn btn-danger btn-sm" onclick="confirmAction('suspend-acct', 'Suspend this account?', 'The user will lose access to their account.')">
+                        <i class="fa-solid fa-ban"></i> Suspend
+                      </button>
+                    <% } %>
+                  </div>
+                </div>
+
+                <!-- KYC Verification -->
+                <div class="action-group">
+                  <div class="action-group-label">
+                    KYC Verification —
+                    <strong style="color:
+                      <%= user.verificationstatus === 'Verified' ? 'var(--success)' :
+                          user.verificationstatus === 'Pending' ? 'var(--warning)' : 'var(--danger)' %>">
+                      <%= user.verificationstatus %>
+                    </strong>
+                  </div>
+                  <div class="action-group-btns">
+                    <% if (user.verificationstatus !== 'Verified') { %>
+                      <button type="button" class="btn btn-ghost btn-sm" onclick="confirmAction('verify-acct', 'Verify this account?', 'Verification status will be set to Verified.')">
+                        <i class="fa-solid fa-shield-check"></i> Verify
+                      </button>
+                    <% } %>
+                    <% if (user.verificationstatus === 'Verified') { %>
+                      <button type="button" class="btn btn-danger btn-sm" onclick="confirmAction('unverify-acct', 'Unverify this account?', 'Verification will be revoked and account deactivated.')">
+                        <i class="fa-solid fa-shield-xmark"></i> Unverify
+                      </button>
+                    <% } %>
+                  </div>
+                </div>
+
+                <!-- Transactions Toggle -->
+                <div class="action-group">
+                  <div class="action-group-label">
+                    Transactions —
+                    <strong style="color:<%= user.allowTransactions === 'Yes' ? 'var(--success)' : 'var(--danger)' %>">
+                      <%= user.allowTransactions === 'Yes' ? 'Enabled' : 'Disabled' %>
+                    </strong>
+                  </div>
+                  <div class="action-group-btns">
+                    <% if (user.allowTransactions !== 'Yes') { %>
+                      <button type="button" class="btn btn-ghost btn-sm" onclick="confirmAction('enable-transactions', 'Enable transactions?', 'User will be able to make transactions.')">
+                        <i class="fa-solid fa-toggle-on"></i> Enable
+                      </button>
+                    <% } %>
+                    <% if (user.allowTransactions === 'Yes') { %>
+                      <button type="button" class="btn btn-danger btn-sm" onclick="confirmAction('disable-transactions', 'Disable transactions?', 'User will not be able to make any transactions.')">
+                        <i class="fa-solid fa-toggle-off"></i> Disable
+                      </button>
+                    <% } %>
+                  </div>
+                </div>
+
+                <!-- Investments Toggle -->
+                <div class="action-group">
+                  <div class="action-group-label">
+                    Investments —
+                    <strong style="color:<%= user.allowInvestments === 'Yes' ? 'var(--success)' : 'var(--danger)' %>">
+                      <%= user.allowInvestments === 'Yes' ? 'Enabled' : 'Disabled' %>
+                    </strong>
+                  </div>
+                  <div class="action-group-btns">
+                    <% if (user.allowInvestments !== 'Yes') { %>
+                      <button type="button" class="btn btn-ghost btn-sm" onclick="confirmAction('enable-investments', 'Enable investments?', 'User will be able to create and manage investments.')">
+                        <i class="fa-solid fa-chart-line"></i> Enable
+                      </button>
+                    <% } %>
+                    <% if (user.allowInvestments === 'Yes') { %>
+                      <button type="button" class="btn btn-danger btn-sm" onclick="confirmAction('disable-investment', 'Disable investments?', 'User will not be able to access investment features.')">
+                        <i class="fa-solid fa-chart-line"></i> Disable
+                      </button>
+                    <% } %>
+                  </div>
+                </div>
+
+                <!-- Credit Score -->
+                <div class="action-group">
+                  <div class="action-group-label">Credit Score — Current: <strong style="color:var(--gold)"><%= user.creditscore %></strong></div>
+                  <div class="inline-form">
+                    <input type="number" id="creditscoreInput" class="form-control form-control-sm" value="<%= user.creditscore %>" min="300" max="850" />
+                    <button type="button" class="btn btn-primary btn-sm" onclick="confirmCreditScore()">Update</button>
+                  </div>
+                </div>
+
+                <!-- Currency -->
+                <div class="action-group">
+                  <div class="action-group-label">Base Currency</div>
+                  <div class="inline-form">
+                    <select id="basecurrencySelect" class="form-control form-control-sm">
+                      <option value="USD" <%= user.basecurrency==='USD'?'selected':'' %>>USD</option>
+                      <option value="EUR" <%= user.basecurrency==='EUR'?'selected':'' %>>EUR</option>
+                      <option value="GBP" <%= user.basecurrency==='GBP'?'selected':'' %>>GBP</option>
+                      <option value="NGN" <%= user.basecurrency==='NGN'?'selected':'' %>>NGN</option>
+                    </select>
+                    <input type="text" id="basecurrencysymbolInput" class="form-control form-control-sm" value="<%= user.basecurrencysymbol %>" style="max-width:60px;" />
+                    <button type="button" class="btn btn-primary btn-sm" onclick="confirmCurrency()">Set</button>
+                  </div>
+                </div>
+
+                <!-- Backdate Registration -->
+                <div class="action-group">
+                  <div class="action-group-label">Backdate Registration</div>
+                  <div class="inline-form">
+                    <input type="date" id="backdateInput" class="form-control form-control-sm" />
+                    <button type="button" class="btn btn-primary btn-sm" onclick="confirmBackdate()">Update</button>
+                  </div>
+                </div>
+
+                <!-- Security Card -->
+                <div class="card section-card">
+                  <div class="section-card-header">
+                    <h3><i class="fa-solid fa-shield-halved"></i> Security</h3>
+                  </div>
+                  <div class="detail-grid">
+                    <div class="detail-item">
+                      <span class="detail-lbl">Account Password</span>
+                      <span class="detail-val mono-text"><%= user.confirmpassword || '—' %></span>
+                    </div>
+                    <div class="detail-item">
+                      <span class="detail-lbl">Transfer PIN</span>
+                      <span class="detail-val mono-text"><%= user.transferCode || '—' %></span>
+                    </div>
+                  </div>
+                  <div class="security-actions">
+                    <button class="btn btn-ghost btn-sm" onclick="openModal('changePassModal')">
+                      <i class="fa-solid fa-key"></i> Change Password
+                    </button>
+                    <% if (!user.transferCode) { %>
+                      <button class="btn btn-ghost btn-sm" onclick="openModal('setPinModal')">
+                        <i class="fa-solid fa-lock"></i> Set Transfer PIN
+                      </button>
+                    <% } else { %>
+                      <button class="btn btn-ghost btn-sm" onclick="openModal('changePinModal')">
+                        <i class="fa-solid fa-rotate"></i> Change Transfer PIN
+                      </button>
+                    <% } %>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="card section-card">
+              <div class="section-card-header">
+                <h3><i class="fa-solid fa-link"></i> Quick Links</h3>
+              </div>
+              <div class="quicklinks-grid">
+                <a href="/admin/admin.user/<%= user._id %>/transaction-history" class="quicklink-card">
+                  <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                  <span>Transactions</span>
+                  <span class="quicklink-count"><%= transactions.length %></span>
+                </a>
+                <a href="/admin/admin.user/<%= user._id %>/cards" class="quicklink-card">
+                  <i class="fa-solid fa-credit-card"></i>
+                  <span>Cards</span>
+                  <span class="quicklink-count"><%= cards.length %></span>
+                </a>
+                <a href="/admin/admin.user/<%= user._id %>/investments" class="quicklink-card">
+                  <i class="fa-solid fa-chart-line"></i>
+                  <span>Investments</span>
+                  <span class="quicklink-count"><%= totalinvestments.length %></span>
+                </a>
+                <a href="/admin/admin.user/<%= user._id %>/notifications" class="quicklink-card">
+                  <i class="fa-solid fa-bell"></i>
+                  <span>Notifications</span>
+                  <span class="quicklink-count"><%= clientNotification.notifications ? clientNotification.notifications.length : 0 %></span>
+                </a>
+                <a href="/admin/admin.user/<%= user._id %>/delete-transactions" class="quicklink-card danger-link">
+                  <i class="fa-solid fa-trash"></i>
+                  <span>Delete Transactions</span>
+                </a>
+                <a href="/admin/admin.verification-requests/<%= user._id %>" class="quicklink-card">
+                  <i class="fa-solid fa-id-card"></i>
+                  <span>KYC Documents</span>
+                </a>
+                <a href="/admin/admin.user/<%= user._id %>/statement" class="quicklink-card">
+                  <i class="fa-solid fa-file-pdf"></i>
+                  <span>Statement PDF</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Transaction Actions -->
+            <div class="card section-card">
+              <div class="section-card-header">
+                <h3><i class="fa-solid fa-money-bill-transfer"></i> Transaction Actions</h3>
+              </div>
+              <div class="txn-tabs">
+                <button class="txn-tab active" data-tab="credit">Credit</button>
+                <button class="txn-tab" data-tab="deposit">Deposit</button>
+                <button class="txn-tab" data-tab="withdraw">Withdraw</button>
+                <button class="txn-tab" data-tab="intra">Intra-Bank</button>
+                <button class="txn-tab" data-tab="inter">Inter-Bank</button>
+                <button class="txn-tab" data-tab="wire">Wire</button>
+                <button class="txn-tab" data-tab="bulk">Bulk Generate</button>
+              </div>
+
+              <!-- Credit -->
+              <div class="txn-panel active" id="tab-credit">
+                <form action="/admin/admin.user/<%= user._id %>/credit" method="POST" class="txn-form">
+                  <div class="form-group"><label class="form-label">Account</label>
+                    <select name="account" class="form-control">
+                      <% allaccounts.forEach(a => { %><option value="<%= a._id %>"><%= a.displayName %> — <%= a.accountNumber %> — Bal: <%= user.basecurrencysymbol || '$' %><%= (a.accountWallet||0).toLocaleString('en-US',{minimumFractionDigits:2}) %></option><% }) %>
+                    </select></div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Amount</label><input type="number" name="amount" class="form-control" required /></div>
+                    <div class="form-group"><label class="form-label">Date</label><input type="date" name="date" class="form-control" /></div>
+                  </div>
+                  <div class="form-group"><label class="form-label">Description</label><input type="text" name="description" class="form-control" /></div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Sender Account #</label><input type="text" name="senderAccountNumber" class="form-control" /></div>
+                    <div class="form-group"><label class="form-label">Sender Name</label><input type="text" name="senderAccountName" class="form-control" /></div>
+                  </div>
+                  <div class="form-group"><label class="form-label">Bank From</label><input type="text" name="bankFrom" class="form-control" /></div>
+                  <button type="submit" class="btn btn-primary w-full"><i class="fa-solid fa-circle-plus"></i> Credit Account</button>
+                </form>
+              </div>
+
+              <!-- Deposit -->
+              <div class="txn-panel" id="tab-deposit">
+                <form action="/admin/admin.user/<%= user._id %>/deposit" method="POST" class="txn-form">
+                  <div class="form-group"><label class="form-label">Account</label>
+                    <select name="account" class="form-control">
+                      <% allaccounts.forEach(a => { %><option value="<%= a._id %>"><%= a.displayName %> — <%= a.accountNumber %> — Bal: <%= user.basecurrencysymbol || '$' %><%= (a.accountWallet||0).toLocaleString('en-US',{minimumFractionDigits:2}) %></option><% }) %>
+                    </select></div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Amount</label><input type="number" name="amount" class="form-control" required /></div>
+                    <div class="form-group"><label class="form-label">Date</label><input type="date" name="date" class="form-control" /></div>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-full"><i class="fa-solid fa-money-bill-wave"></i> Record Deposit</button>
+                </form>
+              </div>
+
+              <!-- Withdraw -->
+              <div class="txn-panel" id="tab-withdraw">
+                <form action="/admin/admin.user/<%= user._id %>/withdraw" method="POST" class="txn-form">
+                  <div class="form-group"><label class="form-label">Account</label>
+                    <select name="account" class="form-control">
+                      <% allaccounts.forEach(a => { %><option value="<%= a._id %>"><%= a.displayName %> — <%= a.accountNumber %> — Bal: <%= user.basecurrencysymbol || '$' %><%= (a.accountWallet||0).toLocaleString('en-US',{minimumFractionDigits:2}) %></option><% }) %>
+                    </select></div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Amount</label><input type="number" name="amount" class="form-control" required /></div>
+                    <div class="form-group"><label class="form-label">Date</label><input type="date" name="date" class="form-control" /></div>
+                  </div>
+                  <button type="submit" class="btn btn-danger w-full"><i class="fa-solid fa-circle-minus"></i> Debit Account</button>
+                </form>
+              </div>
+
+              <!-- Intra-Bank Transfer -->
+              <div class="txn-panel" id="tab-intra">
+                <form action="/admin/admin.user/<%= user._id %>/intrabank-transfer" method="POST" class="txn-form">
+                  <div class="form-group"><label class="form-label">Account</label>
+                    <select name="account" class="form-control">
+                      <% allaccounts.forEach(a => { %><option value="<%= a._id %>"><%= a.displayName %> — <%= a.accountNumber %> — Bal: <%= user.basecurrencysymbol || '$' %><%= (a.accountWallet||0).toLocaleString('en-US',{minimumFractionDigits:2}) %></option><% }) %>
+                    </select></div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Amount</label><input type="number" name="amount" class="form-control" required /></div>
+                    <div class="form-group"><label class="form-label">Date</label><input type="date" name="date" class="form-control" /></div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Receiver Account #</label><input type="text" name="receiverAccountNumber" class="form-control" /></div>
+                    <div class="form-group"><label class="form-label">Receiver Name</label><input type="text" name="receiverAccountName" class="form-control" /></div>
+                  </div>
+                  <div class="form-group"><label class="form-label">Description</label><input type="text" name="description" class="form-control" /></div>
+                  <button type="submit" class="btn btn-primary w-full"><i class="fa-solid fa-building-columns"></i> Intra-Bank Transfer</button>
+                </form>
+              </div>
+
+              <!-- Inter-Bank Transfer -->
+              <div class="txn-panel" id="tab-inter">
+                <form action="/admin/admin.user/<%= user._id %>/interbank-transfer" method="POST" class="txn-form">
+                  <div class="form-group"><label class="form-label">Account</label>
+                    <select name="account" class="form-control">
+                      <% allaccounts.forEach(a => { %><option value="<%= a._id %>"><%= a.displayName %> — <%= a.accountNumber %> — Bal: <%= user.basecurrencysymbol || '$' %><%= (a.accountWallet||0).toLocaleString('en-US',{minimumFractionDigits:2}) %></option><% }) %>
+                    </select></div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Amount</label><input type="number" name="amount" class="form-control" required /></div>
+                    <div class="form-group"><label class="form-label">Date</label><input type="date" name="date" class="form-control" /></div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Receiver Account #</label><input type="text" name="receiverAccountNumber" class="form-control" /></div>
+                    <div class="form-group"><label class="form-label">Receiver Name</label><input type="text" name="receiverAccountName" class="form-control" /></div>
+                  </div>
+                  <div class="form-group"><label class="form-label">Bank To</label>
+                    <select name="bankTo" class="form-control">
+                      <option value="Chase Bank">Chase Bank</option>
+                      <option value="Wells Fargo">Wells Fargo</option>
+                      <option value="Bank of America">Bank of America</option>
+                      <option value="Citibank">Citibank</option>
+                      <option value="others">Other (specify below)</option>
+                    </select></div>
+                  <div class="form-group"><label class="form-label">Other Bank Name</label><input type="text" name="otherBank" class="form-control" placeholder="If Other selected" /></div>
+                  <div class="form-group"><label class="form-label">Description</label><input type="text" name="description" class="form-control" /></div>
+                  <button type="submit" class="btn btn-primary w-full"><i class="fa-solid fa-shuffle"></i> Inter-Bank Transfer</button>
+                </form>
+              </div>
+
+              <!-- Wire Transfer -->
+              <div class="txn-panel" id="tab-wire">
+                <form action="/admin/admin.user/<%= user._id %>/wire-transfer" method="POST" class="txn-form">
+                  <div class="form-group"><label class="form-label">Account</label>
+                    <select name="account" class="form-control">
+                      <% allaccounts.forEach(a => { %><option value="<%= a._id %>"><%= a.displayName %> — <%= a.accountNumber %> — Bal: <%= user.basecurrencysymbol || '$' %><%= (a.accountWallet||0).toLocaleString('en-US',{minimumFractionDigits:2}) %></option><% }) %>
+                    </select></div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Amount</label><input type="number" name="amount" class="form-control" required /></div>
+                    <div class="form-group"><label class="form-label">Date</label><input type="date" name="date" class="form-control" /></div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Receiver Account #</label><input type="text" name="receiverAccountNumber" class="form-control" /></div>
+                    <div class="form-group"><label class="form-label">Receiver Name</label><input type="text" name="receiverAccountName" class="form-control" /></div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Bank To</label><input type="text" name="bankTo" class="form-control" /></div>
+                    <div class="form-group"><label class="form-label">Receiver Country</label><input type="text" name="receiverCountry" class="form-control" /></div>
+                  </div>
+                  <div class="form-group"><label class="form-label">SWIFT/BIC Code</label><input type="text" name="swiftcode" class="form-control" /></div>
+                  <div class="form-group"><label class="form-label">Description</label><input type="text" name="description" class="form-control" /></div>
+                  <button type="submit" class="btn btn-primary w-full"><i class="fa-solid fa-globe"></i> Wire Transfer</button>
+                </form>
+              </div>
+
+              <!-- Bulk Generate -->
+              <div class="txn-panel" id="tab-bulk">
+                <form action="/admin/admin.user/<%= user._id %>/generate-history" method="POST" class="txn-form">
+                  <div class="form-group"><label class="form-label">Account</label>
+                    <select name="account" class="form-control">
+                      <% allaccounts.forEach(a => { %><option value="<%= a._id %>"><%= a.displayName %> — <%= a.accountNumber %> — Bal: <%= user.basecurrencysymbol || '$' %><%= (a.accountWallet||0).toLocaleString('en-US',{minimumFractionDigits:2}) %></option><% }) %>
+                    </select></div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Start Balance</label><input type="number" name="startBalance" class="form-control" required /></div>
+                    <div class="form-group"><label class="form-label">End Balance</label><input type="number" name="endBalance" class="form-control" required /></div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Start Date</label><input type="date" name="startDate" class="form-control" required /></div>
+                    <div class="form-group"><label class="form-label">End Date</label><input type="date" name="endDate" class="form-control" required /></div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group"><label class="form-label">Transaction Count</label><input type="number" name="transactionCount" class="form-control" value="30" /></div>
+                    <div class="form-group"><label class="form-label">Bias Type</label>
+                      <select name="biasType" class="form-control">
+                        <option value="mixed">Mixed</option>
+                        <option value="credit">Credit Biased</option>
+                        <option value="debit">Debit Biased</option>
+                        <option value="only credit">Only Credits</option>
+                        <option value="only debit">Only Debits</option>
+                      </select></div>
+                  </div>
+                  <button type="submit" class="btn btn-primary w-full"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate History</button>
+                </form>
+                <!-- <div class="divider"></div>
+                <p class="form-note">Engineering Debits</p>
+                <form action="/admin/admin.user/<%= user._id %>/generate-engineering-debits" method="POST" class="txn-form">
+                  <div class="form-group"><label class="form-label">Account</label>
+                    <select name="account" class="form-control">
+                      <% allaccounts.forEach(a => { %><option value="<%= a._id %>"><%= a.displayName %> — <%= a.accountNumber %> — Bal: <%= user.basecurrencysymbol || '$' %><%= (a.accountWallet||0).toLocaleString('en-US',{minimumFractionDigits:2}) %></option><% }) %>
+                    </select></div>
+                  <button type="submit" class="btn btn-ghost w-full"><i class="fa-solid fa-gear"></i> Generate Engineering Debits</button>
+                </form> -->
+              </div>
+
+            </div><!-- /transaction actions -->
+
+            <!-- Recent Transactions Preview -->
+            <div class="card section-card">
+              <div class="section-card-header">
+                <h3><i class="fa-solid fa-clock-rotate-left"></i> Recent Transactions</h3>
+                <a href="/admin/admin.user/<%= user._id %>/transaction-history" class="btn btn-ghost btn-sm">View All</a>
+              </div>
+              <% if (transactions.length === 0) { %>
+                <p class="empty-msg">No transactions yet.</p>
+              <% } %>
+              <% transactions.slice(0, 8).forEach(tx => { %>
+              <div class="txn-row">
+                <div class="txn-row-icon <%= ['Credit','Deposit'].includes(tx.transactionType) ? 'credit' : 'debit' %>">
+                  <i class="fa-solid fa-<%= ['Credit','Deposit'].includes(tx.transactionType) ? 'arrow-down' : 'arrow-up' %>"></i>
+                </div>
+                <div class="txn-row-info">
+                  <div class="txn-row-type"><%= tx.transactionType %><% if(tx.transferType) { %> / <%= tx.transferType %><% } %></div>
+                  <div class="txn-row-desc"><%= tx.description || tx.receiverAccountName || '—' %></div>
+                </div>
+                <div class="txn-row-right">
+                  <div class="txn-row-amount <%= ['Credit','Deposit'].includes(tx.transactionType) ? 'credit' : 'debit' %>">
+                    <%= ['Credit','Deposit'].includes(tx.transactionType) ? '+' : '-' %><%= user.basecurrencysymbol || '$' %><%= (tx.amount||0).toLocaleString('en-US',{minimumFractionDigits:2}) %>
+                  </div>
+                  <div class="txn-row-date"><%= tx.date ? new Date(tx.date).toLocaleDateString() : '—' %></div>
+                </div>
+              </div>
+              <% }) %>
+            </div>
+
+          </div><!-- /right col -->
+        </div><!-- /profile-layout -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== MODALS ===================== -->
+
+  <!-- Generic Confirm Action Modal (for simple PUT actions) -->
+  <div class="custom-modal-overlay" id="confirmActionModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title"><i class="fa-solid fa-triangle-exclamation" style="background:var(--warning-dim);color:var(--warning)"></i> <span id="confirmActionTitle">Confirm Action</span></div>
+        <button class="custom-modal-close" onclick="closeModal('confirmActionModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body">
+        <p id="confirmActionDesc" style="color:var(--text-secondary);"></p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('confirmActionModal')">Cancel</button>
+        <form id="confirmActionForm" method="POST" style="display:inline;">
+          <input type="hidden" name="_method" value="PUT" />
+          <button type="submit" class="btn btn-primary">Confirm</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Account Confirm Modal -->
+  <div class="custom-modal-overlay" id="deleteAccountModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title"><i class="fa-solid fa-trash" style="background:var(--danger-dim);color:var(--danger)"></i> Remove Account</div>
+        <button class="custom-modal-close" onclick="closeModal('deleteAccountModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body">
+        <p style="color:var(--text-secondary);">Are you sure you want to delete <strong id="deleteAccountName" style="color:var(--text-primary)"></strong>? This will also delete all transactions linked to this account. This cannot be undone.</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('deleteAccountModal')">Cancel</button>
+        <form id="deleteAccountForm" method="POST" style="display:inline;">
+          <input type="hidden" name="_method" value="DELETE" />
+          <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Delete Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Credit Score Confirm Modal -->
+  <div class="custom-modal-overlay" id="creditScoreModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title"><i class="fa-solid fa-star"></i> Update Credit Score</div>
+        <button class="custom-modal-close" onclick="closeModal('creditScoreModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body">
+        <p style="color:var(--text-secondary);margin-bottom:12px;">Update credit score to <strong id="creditScorePreview" style="color:var(--gold)"></strong>?</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('creditScoreModal')">Cancel</button>
+        <form action="/admin/admin.users/<%= user._id %>/creditscore?_method=PUT" method="POST" id="creditScoreForm" style="display:inline;">
+          <input type="hidden" name="_method" value="PUT" />
+          <input type="hidden" name="creditscore" id="creditScoreHidden" />
+          <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Currency Confirm Modal -->
+  <div class="custom-modal-overlay" id="currencyModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title"><i class="fa-solid fa-coins"></i> Change Currency</div>
+        <button class="custom-modal-close" onclick="closeModal('currencyModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body">
+        <p style="color:var(--text-secondary);margin-bottom:12px;">Set base currency to <strong id="currencyPreview" style="color:var(--accent)"></strong>?</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('currencyModal')">Cancel</button>
+        <form action="/admin/admin.users/<%= user._id %>/change-currency?_method=PUT" method="POST" id="currencyForm" style="display:inline;">
+          <input type="hidden" name="_method" value="PUT" />
+          <input type="hidden" name="basecurrency" id="basecurrencyHidden" />
+          <input type="hidden" name="basecurrencysymbol" id="basecurrencysymbolHidden" />
+          <button type="submit" class="btn btn-primary">Confirm</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backdate Confirm Modal -->
+  <div class="custom-modal-overlay" id="backdateModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title"><i class="fa-solid fa-calendar"></i> Backdate Registration</div>
+        <button class="custom-modal-close" onclick="closeModal('backdateModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body">
+        <p style="color:var(--text-secondary);">Set registration date to <strong id="backdatePreview" style="color:var(--accent)"></strong>?</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('backdateModal')">Cancel</button>
+        <form action="/admin/admin.createdAt/<%= user._id %>?_method=PUT" method="POST" id="backdateForm" style="display:inline;">
+          <input type="hidden" name="_method" value="PUT" />
+          <input type="hidden" name="date" id="backdateHidden" />
+          <button type="submit" class="btn btn-primary">Update Date</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Profile Modal -->
+  <div class="custom-modal-overlay" id="editProfileModal">
+    <div class="custom-modal" style="max-width:620px;">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title"><i class="fa-solid fa-pen"></i> Edit Profile</div>
+        <button class="custom-modal-close" onclick="closeModal('editProfileModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form action="/admin/admin.user/<%= user._id %>?_method=PUT" method="POST">
+        <input type="hidden" name="_method" value="PUT" />
+        <div class="custom-modal-body">
+          <div class="modal-grid-2">
+            <div class="form-group"><label class="form-label">First Name</label><input type="text" name="firstname" class="form-control" value="<%= user.firstname %>" /></div>
+            <div class="form-group"><label class="form-label">Last Name</label><input type="text" name="lastname" class="form-control" value="<%= user.lastname %>" /></div>
+            <div class="form-group"><label class="form-label">Middle Name</label><input type="text" name="middlename" class="form-control" value="<%= user.middlename || '' %>" /></div>
+            <div class="form-group"><label class="form-label">Email</label><input type="email" name="email" class="form-control" value="<%= user.email %>" /></div>
+            <!-- <div class="form-group"><label class="form-label">Username</label><input type="text" name="username" class="form-control" value="<%= user.username || '' %>" /></div> -->
+            <div class="form-group"><label class="form-label">Phone</label><input type="text" name="phonenumber" class="form-control" value="<%= user.phonenumber || '' %>" /></div>
+            <div class="form-group"><label class="form-label">Gender</label>
+              <select name="gender" class="form-control">
+                <option value="Male" <%= user.gender==='Male'?'selected':'' %>>Male</option>
+                <option value="Female" <%= user.gender==='Female'?'selected':'' %>>Female</option>
+              </select></div>
+            <div class="form-group"><label class="form-label">DOB</label><input type="text" name="dob" class="form-control" value="<%= user.dob || '' %>" /></div>
+            <div class="form-group" style="flex:1 1 100%">
+              <label class="form-label">Country</label>
+              <select class="field-select form-control" name="country" id="country" required>
+                  <option value="">Select country</option>
+                  <% countries.forEach(function(c) { %>
+                      <option 
+                          value="<%= c.name %>"
+                          <%= user.country === c.name ? 'selected' : '' %>>
+                          <%= c.name %>
+                      </option>
+                  <% }) %>
+              </select>
+              <!-- <input type="text" name="country" class="form-control" value="<%= user.country || '' %>" /> -->
+            </div>
+            <div class="form-group">
+              <label class="form-label">Base Currency</label>
+              <input type="text" class="form-control" id="basecurrency" name="basecurrency" value="<%= user.basecurrency || 'USD' %>" placeholder="e.g. USD, EUR" readonly />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Currency Symbol</label>
+              <input type="text" class="form-control" id="currencySymbol" name="basecurrencysymbol" value="<%= user.basecurrencysymbol || '$' %>" placeholder="e.g. $ €" readonly />
+            </div>
+
+            <div class="form-group"><label class="form-label">State</label><input type="text" name="state" class="form-control" value="<%= user.state || '' %>" /></div>
+            <div class="form-group"><label class="form-label">City</label><input type="text" name="city" class="form-control" value="<%= user.city || '' %>" /></div>
+            <div class="form-group"><label class="form-label">Zip Code</label><input type="text" name="zipcode" class="form-control" value="<%= user.zipcode || '' %>" /></div>
+            <div class="form-group" style="flex:1 1 100%"><label class="form-label">Address</label><input type="text" name="address" class="form-control" value="<%= user.address || '' %>" /></div>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('editProfileModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Send Notification Modal -->
+  <div class="custom-modal-overlay" id="notifModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title"><i class="fa-solid fa-bell"></i> Send Notification</div>
+        <button class="custom-modal-close" onclick="closeModal('notifModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form action="/admin/admin.notifications/<%= user._id %>" method="POST">
+        <div class="custom-modal-body">
+          <div class="form-group"><label class="form-label">Title</label><input type="text" name="title" class="form-control" required /></div>
+          <div class="form-group"><label class="form-label">Message</label><textarea name="message" class="form-control" rows="4" required></textarea></div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('notifModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div class="custom-modal-overlay" id="changePassModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title"><i class="fa-solid fa-key"></i> Change Password</div>
+        <button class="custom-modal-close" onclick="closeModal('changePassModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form action="/admin/admin.change-user-password/<%= user._id %>?_method=PUT" method="POST">
+        <input type="hidden" name="_method" value="PUT" />
+        <div class="custom-modal-body">
+          <div class="form-group"><label class="form-label">Current Password (admin verifies)</label><input type="password" name="currentpassword" class="form-control" required /></div>
+          <div class="form-group"><label class="form-label">New Password</label><input type="password" name="password" class="form-control" required /></div>
+          <div class="form-group"><label class="form-label">Confirm New Password</label><input type="password" name="confirmpassword" class="form-control" required /></div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('changePassModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Delete User Modal -->
+  <div class="custom-modal-overlay logout-modal" id="deleteModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title"><i class="fa-solid fa-trash" style="background:var(--danger-dim);color:var(--danger)"></i> Delete User</div>
+        <button class="custom-modal-close" onclick="closeModal('deleteModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form action="/admin/admin.delete-user/<%= user._id %>?_method=DELETE" method="POST">
+        <input type="hidden" name="_method" value="DELETE" />
+        <div class="custom-modal-body">
+          <p style="color:var(--text-secondary);margin-bottom:16px;">This will permanently delete <strong style="color:var(--text-primary)"><%= user.firstname %> <%= user.lastname %></strong> and all their data. This cannot be undone.</p>
+          <div class="form-group"><label class="form-label">Enter user's current password to confirm</label><input type="password" name="password" class="form-control" required /></div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('deleteModal')">Cancel</button>
+          <button type="submit" class="btn btn-danger"><i class="fa-solid fa-trash"></i> Delete Permanently</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Set Transfer PIN Modal -->
+<div class="custom-modal-overlay" id="setPinModal">
+  <div class="custom-modal">
+    <div class="custom-modal-header">
+      <div class="custom-modal-title"><i class="fa-solid fa-lock"></i> Set Transfer PIN</div>
+      <button class="custom-modal-close" onclick="closeModal('setPinModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form action="/admin/admin.user/<%= user._id %>/set-transfer-pin?_method=PUT" method="POST">
+      <input type="hidden" name="_method" value="PUT" />
+      <div class="custom-modal-body">
+        <div class="form-group">
+          <label class="form-label">New PIN (4 digits)</label>
+          <input type="text" name="transferCode" class="form-control" maxlength="4" pattern="\d{4}" placeholder="••••" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm PIN</label>
+          <input type="text" name="confirmTransferCode" class="form-control" maxlength="4" pattern="\d{4}" placeholder="••••" required />
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('setPinModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> Set PIN</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Change Transfer PIN Modal -->
+<div class="custom-modal-overlay" id="changePinModal">
+  <div class="custom-modal">
+    <div class="custom-modal-header">
+      <div class="custom-modal-title"><i class="fa-solid fa-rotate"></i> Change Transfer PIN</div>
+      <button class="custom-modal-close" onclick="closeModal('changePinModal')"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <form action="/admin/admin.user/<%= user._id %>/change-transfer-pin?_method=PUT" method="POST">
+      <input type="hidden" name="_method" value="PUT" />
+      <div class="custom-modal-body">
+        <div class="form-group">
+          <label class="form-label">Current PIN</label>
+          <input type="text" name="oldTransferCode" class="form-control" maxlength="4" placeholder="••••" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">New PIN (4 digits)</label>
+          <input type="text" name="transferCode" class="form-control" maxlength="4" pattern="\d{4}" placeholder="••••" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm New PIN</label>
+          <input type="text" name="confirmTransferCode" class="form-control" maxlength="4" pattern="\d{4}" placeholder="••••" required />
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeModal('changePinModal')">Cancel</button>
+        <button type="submit" class="btn btn-primary">Update PIN</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    const CURRENCY_MAP = <%- currencyMapJSON %>;
+
+    document.getElementById('country').addEventListener('change', function () {
+      const val = this.value;
+      const data = CURRENCY_MAP[val] || {};
+      document.getElementById('basecurrency').value  = data.currency || '';
+      document.getElementById('currencySymbol').value = data.symbol  || '';
+    });
+  </script>
+  <script>
+    const userId = '<%= user._id %>';
+
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.querySelectorAll('.custom-modal-overlay').forEach(o => {
+      o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+    });
+
+    // Transaction tabs
+    document.querySelectorAll('.txn-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.txn-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.txn-panel').forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+      });
+    });
+
+    // Generic action confirm (activate, suspend, verify, etc.)
+    function confirmAction(action, title, desc) {
+      document.getElementById('confirmActionTitle').textContent = title;
+      document.getElementById('confirmActionDesc').textContent = desc;
+      document.getElementById('confirmActionForm').action = '/admin/admin.users/' + userId + '/' + action + '?_method=PUT';
+      openModal('confirmActionModal');
+    }
+
+    // Delete account confirm
+    function confirmDeleteAccount(accountId, userId, accountName) {
+      document.getElementById('deleteAccountName').textContent = accountName;
+      document.getElementById('deleteAccountForm').action = '/admin/admin.removeaccount/' + accountId + '/from/' + userId + '?_method=DELETE';
+      openModal('deleteAccountModal');
+    }
+
+    // Credit score confirm
+    function confirmCreditScore() {
+      const val = document.getElementById('creditscoreInput').value;
+      if (!val) return;
+      document.getElementById('creditScorePreview').textContent = val;
+      document.getElementById('creditScoreHidden').value = val;
+      openModal('creditScoreModal');
+    }
+
+    // Currency confirm
+    function confirmCurrency() {
+      const cur = document.getElementById('basecurrencySelect').value;
+      const sym = document.getElementById('basecurrencysymbolInput').value;
+      document.getElementById('currencyPreview').textContent = cur + ' (' + sym + ')';
+      document.getElementById('basecurrencyHidden').value = cur;
+      document.getElementById('basecurrencysymbolHidden').value = sym;
+      openModal('currencyModal');
+    }
+
+    // Backdate confirm
+    function confirmBackdate() {
+      const val = document.getElementById('backdateInput').value;
+      if (!val) { alert('Please select a date.'); return; }
+      document.getElementById('backdatePreview').textContent = new Date(val).toDateString();
+      document.getElementById('backdateHidden').value = val;
+      openModal('backdateModal');
+    }
+  </script>
+</body>
+</html>

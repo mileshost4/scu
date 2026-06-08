@@ -1,0 +1,337 @@
+/* accountupgrade.css — Account Upgrade Page */
+
+.upgrade-page { padding-bottom: 48px; }
+
+/* ── Page Header ─────────────────────────────────────── */
+.upgrade-header {
+  margin-bottom: 32px;
+}
+.upgrade-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+.upgrade-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin: 4px 0 0;
+}
+
+/* ── Sections ────────────────────────────────────────── */
+.upgrade-section { margin-bottom: 36px; }
+.upgrade-section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+/* ── Plan Cards ──────────────────────────────────────── */
+.upgrade-plans-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: stretch;
+}
+.upgrade-plan-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  flex: 1;
+  min-width: 220px;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: var(--transition);
+}
+.upgrade-plan-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+.upgrade-plan-card.featured {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), var(--shadow-accent);
+}
+.upgrade-plan-card.selected {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold), 0 4px 24px rgba(240,165,0,0.15);
+}
+.upgrade-plan-badge {
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: var(--text-inverse);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  padding: 3px 12px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+.upgrade-plan-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.upgrade-plan-icon {
+  width: 44px; height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--gold-dim);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.upgrade-plan-card.featured .upgrade-plan-icon {
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+.upgrade-plan-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.upgrade-plan-price {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+.upgrade-price-symbol {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  align-self: flex-start;
+  margin-top: 6px;
+}
+.upgrade-price-amount {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.04em;
+}
+.upgrade-plan-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+.upgrade-plan-btn { width: 100%; justify-content: center; }
+.upgrade-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  color: var(--text-muted);
+  width: 100%;
+}
+.upgrade-empty i { font-size: 2.5rem; opacity: 0.4; }
+
+/* ── Upgrade Form ────────────────────────────────────── */
+.upgrade-form-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  margin-bottom: 36px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.5s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease, padding 0.4s ease;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.upgrade-form-section.visible {
+  max-height: 1200px;
+  opacity: 1;
+  padding: 28px;
+}
+.upgrade-form-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.upgrade-form-icon {
+  width: 44px; height: 44px;
+  border-radius: var(--radius-md);
+  background: var(--accent-dim);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.upgrade-form-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+.upgrade-form-subtitle { font-size: 0.82rem; color: var(--text-muted); margin: 3px 0 0; }
+.upgrade-form { display: flex; flex-direction: column; gap: 0; }
+
+/* Wallet Box */
+.upgrade-wallet-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 18px;
+}
+.upgrade-wallet-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+.upgrade-wallet-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.upgrade-wallet-addr {
+  flex: 1;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  word-break: break-all;
+  padding: 10px 12px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+.upgrade-wallet-qr { margin-top: 12px; }
+.upgrade-qr-img {
+  width: 120px;
+  height: 120px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  object-fit: contain;
+  background: #fff;
+  padding: 4px;
+}
+
+/* Upload Zone */
+.upgrade-upload-zone {
+  position: relative;
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: var(--transition);
+  overflow: hidden;
+}
+.upgrade-upload-zone:hover,
+.upgrade-upload-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.upload-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+.upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 20px;
+  color: var(--text-muted);
+  text-align: center;
+}
+.upload-placeholder i { font-size: 1.8rem; color: var(--accent); opacity: 0.6; }
+.upload-placeholder span { font-size: 0.87rem; font-weight: 500; color: var(--text-secondary); }
+.upload-placeholder small { font-size: 0.72rem; color: var(--text-muted); }
+.upload-preview {
+  padding: 14px 16px;
+  align-items: center;
+  gap: 10px;
+}
+.upload-preview i { color: var(--success); font-size: 1.1rem; }
+.upload-preview span { flex: 1; font-size: 0.85rem; color: var(--text-primary); word-break: break-all; }
+.upload-remove {
+  width: 26px; height: 26px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: var(--transition);
+  z-index: 3;
+  position: relative;
+}
+.upload-remove:hover { background: var(--danger-dim); color: var(--danger); border-color: var(--danger); }
+
+/* ── History ─────────────────────────────────────────── */
+.upgrade-history-list {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.upgrade-history-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+}
+.upgrade-history-row:last-child { border-bottom: none; }
+.upgrade-history-row:hover { background: var(--bg-card-hover); }
+.upgrade-hist-icon {
+  width: 38px; height: 38px;
+  border-radius: var(--radius-md);
+  background: var(--gold-dim);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.upgrade-hist-info { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.upgrade-hist-name { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
+.upgrade-hist-date { font-size: 0.75rem; color: var(--text-muted); }
+.upgrade-hist-amount {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-right: 12px;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .upgrade-plans-list { flex-direction: column; }
+  .upgrade-plan-card { max-width: 100%; }
+  .upgrade-form-section.visible { padding: 20px; }
+  .upgrade-form-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .upgrade-history-row { flex-wrap: wrap; }
+}

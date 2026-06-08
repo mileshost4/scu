@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wire Transfer | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/transfer.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/user/transactions'; %>
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="transfer-page fade-in">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1>
+              <span class="ph-icon" style="background:var(--gold-dim);color:var(--gold)">
+                <i class="fa-solid fa-earth-americas"></i>
+              </span>
+              Wire / International Transfer
+            </h1>
+            <p>Send money globally using SWIFT/BIC or IBAN. Allow 3–5 business days.</p>
+          </div>
+          <div style="display:flex;gap:10px">
+            <a href="/user/transactions" class="btn btn-ghost btn-sm"><i class="fa-solid fa-grid-2"></i> All Transfers</a>
+            <a href="/user/transaction-history" class="btn btn-ghost btn-sm"><i class="fa-solid fa-clock-rotate-left"></i> History</a>
+          </div>
+        </div>
+
+        <div class="transfer-body">
+          <div class="transfer-main">
+
+            <!-- HERO -->
+            <div class="transfer-hero" style="background:linear-gradient(135deg,#1a1200 0%,#2d1e00 55%,#1a1200 100%);border-color:rgba(240,165,0,0.18)">
+              <div class="transfer-hero-label">You are sending</div>
+              <div class="transfer-hero-amount" style="color:#fff">
+                <span class="currency-sym"><%= user.basecurrencysymbol || '$' %></span><span id="wire-hero-amount">0.00</span>
+              </div>
+              <div class="transfer-hero-meta">
+                <div class="transfer-hero-pill" style="border-color:rgba(240,165,0,0.25)">
+                  <i class="fa-solid fa-clock" style="color:var(--gold)"></i> 3–5 business days
+                </div>
+                <div class="transfer-hero-pill" style="border-color:rgba(240,165,0,0.25)">
+                  <i class="fa-solid fa-earth-americas" style="color:var(--gold)"></i> International
+                </div>
+                <div class="transfer-hero-pill" style="border-color:rgba(240,165,0,0.25)">
+                  <i class="fa-solid fa-shield-halved" style="color:var(--gold)"></i> PIN secured
+                </div>
+              </div>
+            </div>
+
+            <!-- STEP INDICATORS -->
+            <div style="display:flex;align-items:center;gap:0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 22px;overflow-x:auto">
+              <div class="wire-step active" id="wstep-1" style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--gold);color:#000;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0">1</div>
+                <span style="font-size:0.82rem;font-weight:600;color:var(--gold)">Source Account</span>
+              </div>
+              <div style="flex:1;height:2px;background:var(--border);margin:0 14px;min-width:24px"></div>
+              <div class="wire-step" id="wstep-2" style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--border);color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0" id="wstep-2-num">2</div>
+                <span style="font-size:0.82rem;font-weight:600;color:var(--text-muted)" id="wstep-2-label">Recipient Details</span>
+              </div>
+              <div style="flex:1;height:2px;background:var(--border);margin:0 14px;min-width:24px"></div>
+              <div class="wire-step" id="wstep-3" style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+                <div style="width:28px;height:28px;border-radius:50%;background:var(--border);color:var(--text-muted);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0" id="wstep-3-num">3</div>
+                <span style="font-size:0.82rem;font-weight:600;color:var(--text-muted)" id="wstep-3-label">Amount & Review</span>
+              </div>
+            </div>
+
+            <!-- FORM -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-title">
+                  <i class="fa-solid fa-earth-americas" style="background:var(--gold-dim);color:var(--gold)"></i>
+                  Wire Transfer Details
+                </div>
+                <span class="badge badge-gold">International</span>
+              </div>
+              <div class="section-body">
+
+                <form id="wireTransferForm" action="/user/wire-transfer" method="POST" class="transfer-form">
+                  <input type="hidden" name="account"     id="wire-account-hidden" value="<%= allaccounts.length ? allaccounts[0]._id : '' %>" />
+                  <input type="hidden" name="transferPin" id="wire-pin-hidden" />
+
+                  <!-- ─── SECTION 1: Source account ─── -->
+                  <div style="margin-bottom:26px">
+                    <div class="form-label" style="margin-bottom:12px;display:flex;align-items:center;gap:8px">
+                      <span style="width:22px;height:22px;border-radius:50%;background:var(--gold);color:#000;display:inline-flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">1</span>
+                      Select debit account
+                    </div>
+                    <div class="account-selector" id="wire-account-selector">
+                      <% allaccounts.forEach(function(acct, idx) { %>
+                        <label class="account-option <%= idx === 0 ? 'selected' : '' %>"
+                          for="wire-acct-<%= acct._id %>"
+                          style="<%= idx === 0 ? 'border-color:var(--gold);background:var(--gold-dim)' : '' %>">
+                          <input type="radio" name="wire_account_select" id="wire-acct-<%= acct._id %>"
+                            value="<%= acct._id %>"
+                            data-balance="<%= parseFloat(acct.accountWallet) %>"
+                            <%= idx === 0 ? 'checked' : '' %>
+                            onchange="selectWireAccount(this)" />
+                          <div class="account-option-radio"
+                            style="<%= idx === 0 ? 'border-color:var(--gold);background:var(--gold)' : '' %>">
+                            <% if (idx === 0) { %><span style="width:6px;height:6px;border-radius:50%;background:#000;display:block"></span><% } %>
+                          </div>
+                          <div class="account-option-icon" style="background:var(--gold-dim);color:var(--gold)">
+                            <i class="fa-solid fa-building-columns"></i>
+                          </div>
+                          <div class="account-option-info">
+                            <div class="account-option-name"><%= acct.displayName || acct.accountType %></div>
+                            <div class="account-option-meta">
+                              <span>•••• <%= String(acct.accountNumber).slice(-4) %></span>
+                              <span>·</span>
+                              <span><%= acct.accountType %></span>
+                            </div>
+                          </div>
+                          <div class="account-option-balance" style="color:var(--gold)">
+                            <%= user.basecurrencysymbol || '$' %><%= parseFloat(acct.accountWallet).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+                          </div>
+                        </label>
+                      <% }); %>
+                    </div>
+                  </div>
+
+                  <!-- Divider -->
+                  <div style="height:1px;background:var(--border);margin:0 -24px 24px"></div>
+
+                  <!-- ─── SECTION 2: Recipient details ─── -->
+                  <div style="margin-bottom:26px">
+                    <div class="form-label" style="margin-bottom:16px;display:flex;align-items:center;gap:8px">
+                      <span style="width:22px;height:22px;border-radius:50%;background:var(--gold);color:#000;display:inline-flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">2</span>
+                      Recipient information
+                    </div>
+
+                    <div class="form-row" style="margin-bottom:16px">
+                      <div class="form-group">
+                        <label class="form-label" for="wire-receiver-name">Beneficiary full name</label>
+                        <input type="text" class="form-control" id="wire-receiver-name" name="receiverAccountName"
+                          placeholder="Full legal name" required autocomplete="off"
+                          oninput="updateWireSummary()" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="wire-receiver-country">Recipient country</label>
+                        <div class="bank-select-wrap">
+                          <i class="bank-icon fa-solid fa-flag" style="color:var(--gold)"></i>
+                          <input type="text" class="form-control" id="wire-receiver-country" name="receiverCountry"
+                            placeholder="e.g. United Kingdom" required style="padding-left:44px"
+                            oninput="updateWireSummary()" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="form-row" style="margin-bottom:16px">
+                      <div class="form-group">
+                        <label class="form-label" for="wire-bank-to">Recipient bank name</label>
+                        <input type="text" class="form-control" id="wire-bank-to" name="bankTo"
+                          placeholder="e.g. Barclays Bank PLC" required autocomplete="off"
+                          oninput="updateWireSummary()" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="wire-receiver-acct">Account / IBAN number</label>
+                        <input type="text" class="form-control" id="wire-receiver-acct" name="receiverAccountNumber"
+                          placeholder="Account or IBAN" required autocomplete="off"
+                          oninput="updateWireSummary()" />
+                      </div>
+                    </div>
+
+                    <!-- Routing code toggle -->
+                    <div class="form-group" style="margin-bottom:0">
+                      <label class="form-label">Routing code type</label>
+                      <div class="routing-type-row">
+                        <button type="button" class="routing-type-btn active" id="routeBtn-swift" onclick="setRoutingType('SWIFT/BIC Code')">
+                          <i class="fa-solid fa-globe"></i> SWIFT / BIC
+                        </button>
+                        <button type="button" class="routing-type-btn" id="routeBtn-iban" onclick="setRoutingType('IBAN')">
+                          <i class="fa-solid fa-hashtag"></i> IBAN
+                        </button>
+                      </div>
+                      <input type="hidden" name="routingType" id="wire-routing-type-hidden" value="SWIFT/BIC Code" />
+                      <input type="text" class="form-control" id="wire-routing-number" name="routingNumber" style="display:none" />
+                      <div id="wire-routing-field" style="margin-top:10px">
+                        <input type="text" class="form-control" id="wire-swiftcode" name="swiftcode"
+                          placeholder="e.g. BARCGB22XXX"
+                          oninput="updateWireSummary()" />
+                        <div style="font-size:0.73rem;color:var(--text-muted);margin-top:5px">
+                          <i class="fa-solid fa-circle-info" style="color:var(--gold)"></i>
+                          SWIFT/BIC codes are 8–11 characters. Find it on the bank's website.
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Divider -->
+                  <div style="height:1px;background:var(--border);margin:0 -24px 24px"></div>
+
+                  <!-- ─── SECTION 3: Amount & narration ─── -->
+                  <div style="margin-bottom:4px">
+                    <div class="form-label" style="margin-bottom:16px;display:flex;align-items:center;gap:8px">
+                      <span style="width:22px;height:22px;border-radius:50%;background:var(--gold);color:#000;display:inline-flex;align-items:center;justify-content:center;font-size:0.68rem;font-weight:700;flex-shrink:0">3</span>
+                      Amount & narration
+                    </div>
+
+                    <div class="form-row" style="margin-bottom:18px">
+                      <div class="form-group">
+                        <label class="form-label" for="wire-amount">Transfer amount</label>
+                        <div class="amount-input-wrap">
+                          <span class="amount-currency-prefix" style="color:var(--gold);background:var(--gold-dim);border-color:rgba(240,165,0,0.3)">
+                            <%= user.basecurrencysymbol || '$' %>
+                          </span>
+                          <input type="number" class="form-control" id="wire-amount" name="amount"
+                            placeholder="0.00" min="1" step="0.01" required
+                            oninput="updateWireHero(this.value); updateWireSummary()" />
+                        </div>
+                        <div class="balance-hint">
+                          <span class="avail">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Available: <strong id="wire-avail-bal"><%= user.basecurrencysymbol || '$' %><%= allaccounts.length ? parseFloat(allaccounts[0].accountWallet).toLocaleString(undefined,{minimumFractionDigits:2}) : '0.00' %></strong>
+                          </span>
+                          <button type="button" class="use-all-btn" style="color:var(--gold)" onclick="useWireMaxBal()">Use max</button>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="wire-description">Narration <span style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+                        <input type="text" class="form-control" id="wire-description" name="description"
+                          placeholder="Purpose of transfer" maxlength="120"
+                          oninput="updateWireSummary()" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SUMMARY -->
+                  <div class="transfer-summary" style="border-color:rgba(240,165,0,0.2)">
+                    <div class="summary-row">
+                      <span class="summary-label"><i class="fa-solid fa-user" style="color:var(--gold)"></i> Beneficiary</span>
+                      <span class="summary-value" id="wire-sum-name">—</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="summary-label"><i class="fa-solid fa-flag" style="color:var(--gold)"></i> Country</span>
+                      <span class="summary-value" id="wire-sum-country">—</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="summary-label"><i class="fa-solid fa-building-columns" style="color:var(--gold)"></i> Bank</span>
+                      <span class="summary-value" id="wire-sum-bank">—</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="summary-label"><i class="fa-solid fa-hashtag" style="color:var(--gold)"></i> Account / IBAN</span>
+                      <span class="summary-value" id="wire-sum-acct">—</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="summary-label"><i class="fa-solid fa-globe" style="color:var(--gold)"></i> Routing code</span>
+                      <span class="summary-value" id="wire-sum-swift">—</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="summary-label"><i class="fa-solid fa-clock" style="color:var(--gold)"></i> Settlement</span>
+                      <span class="summary-value" style="color:var(--gold)">3–5 business days</span>
+                    </div>
+                    <div class="summary-row">
+                      <span class="summary-label"><i class="fa-solid fa-dollar-sign" style="color:var(--gold)"></i> Amount</span>
+                      <span class="summary-value amount" id="wire-sum-amount" style="color:var(--gold)">—</span>
+                    </div>
+                  </div>
+
+                  <!-- IMPORTANT NOTICE -->
+                  <div style="display:flex;gap:12px;padding:13px 16px;background:var(--warning-dim);border:1px solid rgba(240,165,0,0.3);border-radius:var(--radius-md);margin-top:18px">
+                    <i class="fa-solid fa-triangle-exclamation" style="color:var(--gold);margin-top:2px;flex-shrink:0"></i>
+                    <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.55;margin:0">
+                      International wire transfers are reviewed before processing. Ensure all recipient details are accurate — incorrect SWIFT/BIC or IBAN codes may result in delays or failed transfers. Funds will be locked pending approval.
+                    </p>
+                  </div>
+
+                  <div class="transfer-submit-row">
+                    <a href="/user/transactions" class="btn btn-ghost btn-sm">
+                      <i class="fa-solid fa-arrow-left"></i> Back
+                    </a>
+                    <button type="button" class="btn btn-primary" style="background:var(--gold);color:#000"
+                      onclick="openWirePinModal()">
+                      <i class="fa-solid fa-shield-halved"></i> Authorise & Send
+                    </button>
+                  </div>
+                </form>
+
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ASIDE -->
+          <div class="transfer-aside">
+
+            <div class="widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-circle-info"></i> Transfer Type</span>
+              </div>
+              <div class="widget-body">
+                <div class="transfer-type-badge" style="border-color:var(--gold);background:var(--gold-dim)">
+                  <div class="ttb-icon" style="background:rgba(240,165,0,0.15);color:var(--gold)">
+                    <i class="fa-solid fa-earth-americas"></i>
+                  </div>
+                  <div class="ttb-info">
+                    <div class="ttb-name">Wire / International</div>
+                    <div class="ttb-desc">Global transfers via SWIFT/BIC or IBAN. Requires full beneficiary details.</div>
+                  </div>
+                </div>
+                <div class="tip-list">
+                  <div class="tip-item"><i class="fa-solid fa-earth-americas" style="color:var(--gold)"></i>Send to any bank worldwide.</div>
+                  <div class="tip-item"><i class="fa-solid fa-clock" style="color:var(--gold)"></i>Processing takes 3–5 business days.</div>
+                  <div class="tip-item"><i class="fa-solid fa-shield-halved" style="color:var(--gold)"></i>All wires require PIN + admin review.</div>
+                  <div class="tip-item"><i class="fa-solid fa-triangle-exclamation"></i>Incorrect codes may cause transfer failure.</div>
+                  <div class="tip-item"><i class="fa-solid fa-hourglass-half"></i>Funds remain locked until processing completes.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SWIFT/IBAN guide -->
+            <div class="widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-book"></i> Code Reference</span>
+              </div>
+              <div class="widget-body">
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <div style="padding:12px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-md)">
+                    <div style="font-size:0.78rem;font-weight:700;color:var(--gold);margin-bottom:5px">
+                      <i class="fa-solid fa-globe"></i> SWIFT / BIC
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);line-height:1.5">
+                      8 or 11 characters identifying the recipient bank internationally. Example: <code style="color:var(--accent);background:var(--accent-dim);padding:1px 5px;border-radius:4px">BARCGB22XXX</code>
+                    </div>
+                  </div>
+                  <div style="padding:12px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-md)">
+                    <div style="font-size:0.78rem;font-weight:700;color:var(--info);margin-bottom:5px">
+                      <i class="fa-solid fa-hashtag"></i> IBAN
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);line-height:1.5">
+                      International Bank Account Number, up to 34 alphanumeric characters. Example: <code style="color:var(--accent);background:var(--accent-dim);padding:1px 5px;border-radius:4px">GB29NWBK6016133...</code>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-wallet"></i> My Accounts</span>
+              </div>
+              <div class="widget-body">
+                <div class="balance-account-list">
+                  <% allaccounts.forEach(function(acct) { %>
+                    <div class="balance-account-item">
+                      <span class="bal-acct-name"><span class="bal-acct-dot" style="background:var(--gold)"></span><%= acct.displayName || acct.accountType %></span>
+                      <span class="bal-acct-value"><%= user.basecurrencysymbol || '$' %><%= parseFloat(acct.accountWallet).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %></span>
+                    </div>
+                  <% }); %>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Wires</span>
+                <a href="/user/transaction-history" style="font-size:0.75rem;color:var(--accent);text-decoration:none;font-weight:600">All →</a>
+              </div>
+              <div class="tx-list">
+                <% const wireTx = transactions.filter(t => t.transferType === 'Wire').slice(0,4); %>
+                <% if (wireTx.length > 0) { %>
+                  <% wireTx.forEach(function(tx) { %>
+                    <a href="/user/transaction/<%= tx._id %>/receipt" class="tx-item">
+                      <div class="tx-icon <%= tx.status === 'Pending' ? 'pending' : 'transfer' %>">
+                        <i class="fa-solid fa-earth-americas"></i>
+                      </div>
+                      <div class="tx-info">
+                        <div class="tx-name"><%= (tx.receiverAccountName || '—').substring(0,20) %></div>
+                        <div class="tx-meta">
+                          <span class="badge badge-<%= tx.status === 'Successful' ? 'success' : tx.status === 'Pending' ? 'warning' : 'danger' %>" style="padding:1px 5px;font-size:0.6rem"><%= tx.status %></span>
+                          <% if(tx.receiverCountry) { %><span>· <%= tx.receiverCountry %></span><% } %>
+                        </div>
+                      </div>
+                      <div class="tx-right">
+                        <div class="tx-amount">-<%= user.basecurrencysymbol || '$' %><%= parseFloat(tx.amount).toLocaleString(undefined,{minimumFractionDigits:2}) %></div>
+                        <div class="tx-date"><%= new Date(tx.date).toLocaleDateString('en-US',{month:'short',day:'numeric'}) %></div>
+                      </div>
+                    </a>
+                  <% }); %>
+                <% } else { %>
+                  <div class="tx-empty"><i class="fa-solid fa-earth-americas"></i>No wire transfers yet</div>
+                <% } %>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- PIN MODAL -->
+  <div class="custom-modal-overlay" id="wirePinModal" onclick="if(event.target===this)closeWirePinModal()">
+    <div class="pin-modal" style="border-color:rgba(240,165,0,0.25)">
+      <div class="pin-modal-header">
+        <div class="pin-modal-title">
+          <span class="pin-modal-icon" style="background:var(--gold-dim);color:var(--gold)">
+            <i class="fa-solid fa-lock"></i>
+          </span>
+          Authorise Wire Transfer
+        </div>
+        <button class="pin-modal-close" onclick="closeWirePinModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="pin-modal-body">
+        <div class="pin-confirm-summary" style="border-color:rgba(240,165,0,0.2)">
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Beneficiary</span>
+            <span class="pcr-value" id="wpin-sum-name">—</span>
+          </div>
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Country</span>
+            <span class="pcr-value" id="wpin-sum-country">—</span>
+          </div>
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Bank</span>
+            <span class="pcr-value" id="wpin-sum-bank">—</span>
+          </div>
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Amount</span>
+            <span class="pcr-value highlight" id="wpin-sum-amount" style="color:var(--gold)">—</span>
+          </div>
+        </div>
+
+        <!-- Warning callout in modal -->
+        <div style="display:flex;gap:10px;padding:10px 12px;background:var(--warning-dim);border:1px solid rgba(240,165,0,0.3);border-radius:var(--radius-md);margin-bottom:16px">
+          <i class="fa-solid fa-triangle-exclamation" style="color:var(--gold);font-size:0.85rem;margin-top:1px;flex-shrink:0"></i>
+          <p style="font-size:0.76rem;color:var(--text-secondary);margin:0;line-height:1.45">
+            International transfers cannot be reversed once processed. Verify all details before confirming.
+          </p>
+        </div>
+
+        <div class="pin-dots-wrap" id="wirePinDots">
+          <% for(let i=0;i<4;i++) { %>
+            <div class="pin-dot" id="wirePinDot<%= i %>" style="border-color:rgba(240,165,0,0.3)"></div>
+          <% } %>
+        </div>
+
+        <div class="pin-input-wrap">
+          <input type="password" class="form-control" id="wirePinInput"
+            placeholder="Enter your transaction PIN"
+            maxlength="4" inputmode="numeric" autocomplete="off"
+            oninput="onWirePinInput(this.value)" />
+          <button type="button" class="pin-input-toggle" onclick="toggleWirePinVisibility()">
+            <i class="fa-solid fa-eye" id="wirePinEyeIcon"></i>
+          </button>
+        </div>
+        <div class="pin-error-msg" id="wirePinErrorMsg">Incorrect PIN. Please try again.</div>
+      </div>
+      <div class="pin-modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeWirePinModal()">Cancel</button>
+        <button type="button" class="btn btn-primary" style="background:var(--gold);color:#000" onclick="submitWireTransfer()">
+          <i class="fa-solid fa-paper-plane"></i> Confirm Wire
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    let wireSelectedBalance = <%= allaccounts.length ? parseFloat(allaccounts[0].accountWallet) : 0 %>;
+    let currentRoutingType  = 'SWIFT/BIC Code';
+
+    /* ── Account selector ── */
+    document.querySelectorAll('#wire-account-selector .account-option').forEach(function(opt) {
+      opt.addEventListener('click', function() {
+        document.querySelectorAll('#wire-account-selector .account-option').forEach(o => {
+          o.classList.remove('selected');
+          o.style.borderColor = '';
+          o.style.background  = '';
+        });
+        this.classList.add('selected');
+        this.style.borderColor = 'var(--gold)';
+        this.style.background  = 'var(--gold-dim)';
+      });
+    });
+
+    function selectWireAccount(radio) {
+      wireSelectedBalance = parseFloat(radio.dataset.balance) || 0;
+      document.getElementById('wire-account-hidden').value = radio.value;
+      document.getElementById('wire-avail-bal').textContent =
+        '<%= user.basecurrencysymbol || "$" %>' + wireSelectedBalance.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    function useWireMaxBal() {
+      document.getElementById('wire-amount').value = wireSelectedBalance.toFixed(2);
+      updateWireHero(wireSelectedBalance);
+      updateWireSummary();
+    }
+
+    function updateWireHero(val) {
+      const n = parseFloat(val) || 0;
+      document.getElementById('wire-hero-amount').textContent =
+        n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    /* ── Routing type toggle ── */
+    function setRoutingType(type) {
+      currentRoutingType = type;
+      document.getElementById('wire-routing-type-hidden').value = type;
+
+      const isSwift = type === 'SWIFT/BIC Code';
+      document.getElementById('routeBtn-swift').classList.toggle('active', isSwift);
+      document.getElementById('routeBtn-iban').classList.toggle('active', !isSwift);
+
+      const swiftField = document.getElementById('wire-swiftcode');
+      swiftField.placeholder = isSwift ? 'e.g. BARCGB22XXX' : 'e.g. GB29NWBK60161331926819';
+      swiftField.name        = isSwift ? 'swiftcode' : 'routingNumber';
+
+      const hint = document.querySelector('#wire-routing-field div');
+      if (hint) {
+        hint.innerHTML = isSwift
+          ? '<i class="fa-solid fa-circle-info" style="color:var(--gold)"></i> SWIFT/BIC codes are 8–11 characters. Find it on the bank\'s website.'
+          : '<i class="fa-solid fa-circle-info" style="color:var(--info)"></i> IBAN numbers are up to 34 alphanumeric characters.';
+      }
+    }
+
+    /* ── Live summary ── */
+    function updateWireSummary() {
+      const name    = document.getElementById('wire-receiver-name').value    || '—';
+      const country = document.getElementById('wire-receiver-country').value || '—';
+      const bank    = document.getElementById('wire-bank-to').value          || '—';
+      const acct    = document.getElementById('wire-receiver-acct').value    || '—';
+      const swift   = document.getElementById('wire-swiftcode').value        || '—';
+      const amount  = parseFloat(document.getElementById('wire-amount').value) || 0;
+      const sym     = '<%= user.basecurrencysymbol || "$" %>';
+
+      document.getElementById('wire-sum-name').textContent    = name;
+      document.getElementById('wire-sum-country').textContent = country;
+      document.getElementById('wire-sum-bank').textContent    = bank;
+      document.getElementById('wire-sum-acct').textContent    = acct;
+      document.getElementById('wire-sum-swift').textContent   = swift + (currentRoutingType === 'IBAN' ? ' (IBAN)' : ' (SWIFT)');
+      document.getElementById('wire-sum-amount').textContent  = amount > 0 ? sym + amount.toLocaleString(undefined,{minimumFractionDigits:2}) : '—';
+    }
+
+    /* ── PIN modal ── */
+    function openWirePinModal() {
+      const form = document.getElementById('wireTransferForm');
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+
+      const sym    = '<%= user.basecurrencysymbol || "$" %>';
+      const amount = parseFloat(document.getElementById('wire-amount').value) || 0;
+
+      document.getElementById('wpin-sum-name').textContent    = document.getElementById('wire-receiver-name').value    || '—';
+      document.getElementById('wpin-sum-country').textContent = document.getElementById('wire-receiver-country').value || '—';
+      document.getElementById('wpin-sum-bank').textContent    = document.getElementById('wire-bank-to').value          || '—';
+      document.getElementById('wpin-sum-amount').textContent  = sym + amount.toLocaleString(undefined,{minimumFractionDigits:2});
+
+      document.getElementById('wirePinInput').value = '';
+      document.getElementById('wirePinErrorMsg').classList.remove('visible');
+      resetWirePinDots();
+      document.getElementById('wirePinModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => document.getElementById('wirePinInput').focus(), 200);
+    }
+
+    function closeWirePinModal() {
+      document.getElementById('wirePinModal').classList.remove('open');
+      document.body.style.overflow = '';
+      document.getElementById('wirePinInput').value = '';
+      resetWirePinDots();
+    }
+
+    function onWirePinInput(val) {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById('wirePinDot' + i);
+        dot.classList.toggle('filled', i < val.length);
+        dot.style.background    = i < val.length ? 'var(--gold)' : '';
+        dot.style.borderColor   = i < val.length ? 'var(--gold)' : '';
+        dot.style.boxShadow     = i < val.length ? '0 0 8px rgba(240,165,0,0.5)' : '';
+      }
+      document.getElementById('wirePinErrorMsg').classList.remove('visible');
+    }
+
+    function resetWirePinDots() {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById('wirePinDot' + i);
+        dot.classList.remove('filled');
+        dot.style.background  = '';
+        dot.style.borderColor = '';
+        dot.style.boxShadow   = '';
+      }
+    }
+
+    function toggleWirePinVisibility() {
+      const input = document.getElementById('wirePinInput');
+      const icon  = document.getElementById('wirePinEyeIcon');
+      input.type  = input.type === 'password' ? 'text' : 'password';
+      icon.className = input.type === 'password' ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+    }
+
+    function submitWireTransfer() {
+      const pin = document.getElementById('wirePinInput').value.trim();
+      if (!pin) {
+        document.getElementById('wirePinErrorMsg').textContent = 'Please enter your PIN.';
+        document.getElementById('wirePinErrorMsg').classList.add('visible');
+        document.getElementById('wirePinDots').classList.add('pin-shake');
+        setTimeout(() => document.getElementById('wirePinDots').classList.remove('pin-shake'), 500);
+        return;
+      }
+      document.getElementById('wire-pin-hidden').value = pin;
+      document.getElementById('wireTransferForm').submit();
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeWirePinModal();
+      if (e.key === 'Enter' && document.getElementById('wirePinModal').classList.contains('open')) submitWireTransfer();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upgrade Plans | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/plans.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/admin/admin.upgrade-plans'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Account Upgrade Plans</h1>
+            <p class="page-subtitle">Manage upgrade tiers available to users</p>
+          </div>
+          <div class="page-header-right">
+            <button class="btn btn-primary btn-sm" onclick="openModal('addUpgradeModal')">
+              <i class="fa-solid fa-plus"></i> Add New Plan
+            </button>
+          </div>
+        </div>
+
+        <!-- Plans List -->
+        <% if (plans.length === 0) { %>
+          <div class="card plans-empty">
+            <i class="fa-solid fa-star"></i>
+            <p>No upgrade plans yet. Add one to get started.</p>
+            <button class="btn btn-primary btn-sm" onclick="openModal('addUpgradeModal')">
+              <i class="fa-solid fa-plus"></i> Add First Plan
+            </button>
+          </div>
+        <% } else { %>
+          <div class="upgrade-plans-list">
+            <% for (let plan of plans) { %>
+              <div class="upgrade-plan-card card">
+                <div class="upc-icon"><i class="fa-solid fa-star"></i></div>
+                <div class="upc-body">
+                  <div class="upc-name"><%= plan.name %></div>
+                  <% if (plan.description) { %><div class="upc-desc"><%= plan.description %></div><% } %>
+                </div>
+                <div class="upc-amount">
+                  <span class="amount">$<%= (parseFloat(plan.amount)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %></span>
+                </div>
+                <div class="upc-actions">
+                  <button class="btn btn-icon" title="Edit" onclick="openEditModal('<%= plan._id %>', '<%= plan.name %>', '<%= plan.amount %>', `<%= plan.description || '' %>`)">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                  <button class="btn btn-icon btn-icon-danger" title="Delete" onclick="openDeleteModal('<%= plan._id %>', '<%= plan.name %>')">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ ADD UPGRADE MODAL ══════════════ -->
+  <div class="custom-modal-overlay" id="addUpgradeModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-plus-circle"></i> New Upgrade Plan
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('addUpgradeModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form action="/admin/admin.upgrade-plans" method="POST">
+        <div class="custom-modal-body">
+          <div class="form-group">
+            <label class="form-label">Plan Name</label>
+            <input type="text" name="name" class="form-control" placeholder="e.g. Premium Account" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Upgrade Fee ($)</label>
+            <input type="number" name="amount" class="form-control" placeholder="e.g. 299.00" min="0" step="0.01" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description (optional)</label>
+            <textarea name="description" class="form-control" rows="3" placeholder="What does this upgrade include?"></textarea>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('addUpgradeModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-save"></i> Save Plan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════ EDIT UPGRADE MODAL ══════════════ -->
+  <div class="custom-modal-overlay" id="editUpgradeModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-pen"></i> Edit Upgrade Plan
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('editUpgradeModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="editUpgradeForm" method="POST">
+        <input type="hidden" name="_method" value="PUT" />
+        <div class="custom-modal-body">
+          <div class="form-group">
+            <label class="form-label">Plan Name</label>
+            <input type="text" name="name" id="editUpgradeName" class="form-control" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Upgrade Fee ($)</label>
+            <input type="number" name="amount" id="editUpgradeAmount" class="form-control" step="0.01" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description</label>
+            <textarea name="description" id="editUpgradeDesc" class="form-control" rows="3"></textarea>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('editUpgradeModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-save"></i> Update Plan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════ DELETE UPGRADE MODAL ══════════════ -->
+  <div class="custom-modal-overlay" id="deleteUpgradeModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title" style="color:var(--danger);">
+          <i class="fa-solid fa-trash" style="background:var(--danger-dim);color:var(--danger);"></i>
+          Delete Upgrade Plan
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('deleteUpgradeModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body">
+        <p style="color:var(--text-secondary);font-size:0.9rem;">
+          Are you sure you want to delete <strong id="deleteUpgradeName" style="color:var(--text-primary);"></strong>? This cannot be undone.
+        </p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('deleteUpgradeModal')">Cancel</button>
+        <form id="deleteUpgradeForm" method="POST" style="margin:0;">
+          <input type="hidden" name="_method" value="DELETE" />
+          <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i> Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    function openEditModal(id, name, amount, description) {
+      document.getElementById('editUpgradeForm').action = '/admin/admin.upgrade-plans/' + id + '?_method=PUT';
+      document.getElementById('editUpgradeName').value = name;
+      document.getElementById('editUpgradeAmount').value = amount;
+      document.getElementById('editUpgradeDesc').value = description;
+      openModal('editUpgradeModal');
+    }
+
+    function openDeleteModal(id, name) {
+      document.getElementById('deleteUpgradeForm').action = '/admin/admin.upgrade-plans/' + id + '?_method=DELETE';
+      document.getElementById('deleteUpgradeName').textContent = '"' + name + '"';
+      openModal('deleteUpgradeModal');
+    }
+
+    document.querySelectorAll('.custom-modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>

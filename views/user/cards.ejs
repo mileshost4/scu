@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Cards | <%= typeof websiteName !== 'undefined' ? websiteName : 'Banking' %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/card.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/user/cards'; %>
+
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="cards-page fade-in">
+
+        <!-- ── Page Header ───────────────────────────────────── -->
+        <div class="cards-page-header">
+          <div>
+            <div class="cards-page-title">My Cards</div>
+            <div class="cards-page-sub"><%= cards.length %> card<%= cards.length !== 1 ? 's' : '' %> linked to your account</div>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('addCardModal')">
+            <i class="fa-solid fa-plus"></i> Add Card
+          </button>
+        </div>
+
+        <!-- ── Cards Grid ────────────────────────────────────── -->
+        <% if (cards.length === 0) { %>
+          <div class="cards-empty">
+            <i class="fa-regular fa-credit-card"></i>
+            <p>You haven't added any cards yet.</p>
+            <button class="btn btn-primary" onclick="openModal('addCardModal')">
+              <i class="fa-solid fa-plus"></i> Add Your First Card
+            </button>
+          </div>
+        <% } else { %>
+          <div class="section-heading">Saved Cards</div>
+          <div class="cards-grid">
+            <% cards.forEach(function(card) {
+              const brand = (card.cardBrand || '').toLowerCase();
+              let brandClass = 'default-card';
+              if (brand.includes('visa')) brandClass = 'visa';
+              else if (brand.includes('master')) brandClass = 'mastercard';
+              else if (brand.includes('amex') || brand.includes('american')) brandClass = 'amex';
+              else if (brand.includes('discover')) brandClass = 'discover';
+
+              const num = String(card.cardNumber || '');
+              const maskedNum = num.length >= 4
+                ? '**** **** **** ' + num.slice(-4)
+                : '**** **** **** ****';
+            %>
+              <div class="card-item-wrapper fade-in">
+
+                <!-- ── 3D Flip Container ── -->
+                <div class="card-flip-scene" onclick="toggleFlip(this)">
+                  <div class="card-flipper">
+
+                    <!-- FRONT -->
+                    <div class="card-face card-face--front payment-card <%= brandClass %>">
+                      <!-- Ribbon -->
+                      <div class="card-ribbon"><span><%= card.cardType || 'Card' %></span></div>
+
+                      <!-- Shine overlay -->
+                      <div class="card-shine"></div>
+
+                      <div class="card-top-row">
+                        <div class="card-chip">
+                          <div class="chip-lines"></div>
+                        </div>
+                        <% if (brand.includes('visa')) { %>
+                          <div class="card-brand-logo">VISA</div>
+                        <% } else if (brand.includes('master')) { %>
+                          <div class="card-brand-logo">
+                            <div class="brand-circles"><span class="c1"></span><span class="c2"></span></div>
+                            Mastercard
+                          </div>
+                        <% } else if (brand.includes('amex')) { %>
+                          <div class="card-brand-logo">AMEX</div>
+                        <% } else if (brand.includes('discover')) { %>
+                          <div class="card-brand-logo">Discover</div>
+                        <% } else { %>
+                          <div class="card-brand-logo"><%= card.cardBrand || 'Card' %></div>
+                        <% } %>
+                      </div>
+
+                      <div class="card-number-row">
+                        <%= maskedNum %>
+                      </div>
+
+                      <div class="card-bottom-row">
+                        <div class="card-holder-block">
+                          <div class="card-holder-label">Card Holder</div>
+                          <div class="card-holder-name"><%= card.userName || user.firstname + ' ' + user.lastname %></div>
+                        </div>
+                        <div class="card-expiry-block">
+                          <div class="card-expiry-label">Expires</div>
+                          <div class="card-expiry-value"><%= card.cardExpiryMonth %>/<%= card.cardExpiryYear %></div>
+                        </div>
+                      </div>
+
+                      <div class="card-tap-hint"><i class="fa-solid fa-rotate"></i> Tap to reveal</div>
+                    </div><!-- /FRONT -->
+
+                    <!-- BACK -->
+                    <div class="card-face card-face--back payment-card <%= brandClass %>">
+                      <div class="card-shine"></div>
+
+                      <!-- Magnetic stripe -->
+                      <div class="card-mag-stripe"></div>
+
+                      <div class="card-back-body">
+                        <!-- CVV strip -->
+                        <div class="card-back-row">
+                          <div class="card-back-label">CVV / CVC</div>
+                          <div class="card-cvv-strip">
+                            <span class="cvv-hatching"></span>
+                            <span class="cvv-value"><%= card.cvv ? card.cvv : '•••' %></span>
+                          </div>
+                        </div>
+
+                        <!-- PIN -->
+                        <div class="card-back-row" style="margin-top:14px">
+                          <div class="card-back-label">Card PIN</div>
+                          <div class="card-pin-dots">
+                            <% const pin = card.cardPin ? String(card.cardPin) : ''; %>
+                            <% for(let p=0; p < (pin.length || 4); p++) { %>
+                              <span class="pin-dot"><%= pin[p] || '•' %></span>
+                            <% } %>
+                          </div>
+                        </div>
+
+                        <!-- Bank & brand -->
+                        <div class="card-back-footer">
+                          <span class="card-back-bank"><%= card.bankName || 'Unknown Bank' %></span>
+                          <% if (brand.includes('visa')) { %>
+                            <div class="card-brand-logo">VISA</div>
+                          <% } else if (brand.includes('master')) { %>
+                            <div class="card-brand-logo">
+                              <div class="brand-circles"><span class="c1"></span><span class="c2"></span></div>
+                            </div>
+                          <% } else { %>
+                            <div class="card-brand-logo"><%= card.cardBrand || '' %></div>
+                          <% } %>
+                        </div>
+                      </div>
+
+                      <div class="card-tap-hint"><i class="fa-solid fa-rotate"></i> Tap to flip back</div>
+                    </div><!-- /BACK -->
+
+                  </div><!-- /.card-flipper -->
+                </div><!-- /.card-flip-scene -->
+
+                <!-- Actions bar -->
+                <div class="card-actions-bar">
+                  <span class="bank-name"><i class="fa-solid fa-building-columns" style="margin-right:5px;font-size:0.7rem;"></i><%= card.bankName || 'Unknown Bank' %></span>
+                  <button class="card-action-btn" title="Edit card"
+                    onclick="openEditCard(
+                      '<%= card._id %>',
+                      '<%= card.cardBrand %>',
+                      '<%= card.cardType %>',
+                      '<%= card.bankName %>',
+                      '<%= card.cardExpiryMonth %>',
+                      '<%= card.cardExpiryYear %>',
+                      '<%= card.userName || user.firstname + ' ' + user.lastname %>'
+                    )">
+                    <i class="fa-solid fa-pen"></i>
+                  </button>
+                  <button class="card-action-btn danger" title="Delete card"
+                    onclick="confirmDeleteCard('<%= card._id %>', '<%= maskedNum %>')">
+                    <i class="fa-solid fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            <% }); %>
+
+            <!-- Add card tile -->
+            <div class="add-card-tile" onclick="openModal('addCardModal')">
+              <i class="fa-solid fa-plus"></i>
+              <span>Add New Card</span>
+            </div>
+          </div>
+        <% } %>
+
+      </div><!-- /.cards-page -->
+    </div><!-- /.page-inner -->
+  </div><!-- /.main-content -->
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       ADD CARD MODAL
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="custom-modal-overlay" id="addCardModal" onclick="handleOverlayClick(event,'addCardModal')">
+    <div class="custom-modal" style="max-width:520px">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-regular fa-credit-card"></i>
+          Add New Card
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('addCardModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form action="/user/card" method="POST">
+        <div class="custom-modal-body">
+
+          <!-- Live preview -->
+          <div class="card-preview-mini" id="previewCard">
+            <span id="previewNum">**** **** **** ****</span>
+            <span id="previewExpiry" style="font-size:0.78rem;opacity:0.7">MM/YY</span>
+          </div>
+
+          <div class="modal-form-row">
+            <div class="form-group">
+              <label class="form-label">Card Brand</label>
+              <select name="cardBrand" class="form-control" id="addCardBrand" required onchange="updatePreview()">
+                <option value="">Select brand</option>
+                <option value="Visa">Visa</option>
+                <option value="Mastercard">Mastercard</option>
+                <option value="Amex">Amex</option>
+                <option value="Discover">Discover</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Card Type</label>
+              <select name="cardType" class="form-control" required>
+                <option value="">Select type</option>
+                <option value="Debit">Debit</option>
+                <option value="Credit">Credit</option>
+                <option value="Prepaid">Prepaid</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Card Number</label>
+            <input type="text" name="cardNumber" class="form-control" placeholder="1234 5678 9012 3456"
+              maxlength="19" required oninput="formatCardNum(this); updatePreview()" />
+          </div>
+
+          <div class="modal-form-row three-col">
+            <div class="form-group">
+              <label class="form-label">Expiry Month</label>
+              <select name="cardExpiryMonth" class="form-control" required onchange="updatePreview()">
+                <option value="">MM</option>
+                <% for(let m=1;m<=12;m++) { %>
+                  <option value="<%= String(m).padStart(2,'0') %>"><%= String(m).padStart(2,'0') %></option>
+                <% } %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Expiry Year</label>
+              <select name="cardExpiryYear" class="form-control" required onchange="updatePreview()">
+                <option value="">YY</option>
+                <% for(let y=new Date().getFullYear();y<=new Date().getFullYear()+15;y++) { %>
+                  <option value="<%= String(y).slice(-2) %>"><%= y %></option>
+                <% } %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">CVV</label>
+              <input type="password" name="cvv" class="form-control" placeholder="•••" maxlength="4" required />
+            </div>
+          </div>
+
+          <div class="modal-form-row">
+            <div class="form-group">
+              <label class="form-label">Card PIN</label>
+              <input type="password" name="cardPin" class="form-control" placeholder="••••" maxlength="6" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Bank Name</label>
+              <input type="text" name="bankName" class="form-control" placeholder="e.g. Chase" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Name on Card</label>
+            <input type="text" name="userName" class="form-control"
+              placeholder="<%= user.firstname %> <%= user.lastname %>"
+              value="<%= user.firstname %> <%= user.lastname %>" required />
+          </div>
+
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('addCardModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-plus"></i> Add Card
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       EDIT CARD MODAL
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="custom-modal-overlay" id="editCardModal" onclick="handleOverlayClick(event,'editCardModal')">
+    <div class="custom-modal" style="max-width:460px">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-pen"></i>
+          Edit Card
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('editCardModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="editCardForm" method="POST">
+        <input type="hidden" name="_method" value="PUT" />
+        <div class="custom-modal-body">
+
+          <div class="modal-form-row">
+            <div class="form-group">
+              <label class="form-label">Card Brand</label>
+              <select name="cardBrand" id="editCardBrand" class="form-control">
+                <option value="Visa">Visa</option>
+                <option value="Mastercard">Mastercard</option>
+                <option value="Amex">Amex</option>
+                <option value="Discover">Discover</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Card Type</label>
+              <select name="cardType" id="editCardType" class="form-control">
+                <option value="Debit">Debit</option>
+                <option value="Credit">Credit</option>
+                <option value="Prepaid">Prepaid</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Bank Name</label>
+            <input type="text" name="bankName" id="editBankName" class="form-control" />
+          </div>
+
+          <div class="modal-form-row">
+            <div class="form-group">
+              <label class="form-label">Expiry Month</label>
+              <select name="cardExpiryMonth" id="editExpiryMonth" class="form-control">
+                <% for(let m=1;m<=12;m++) { %>
+                  <option value="<%= String(m).padStart(2,'0') %>"><%= String(m).padStart(2,'0') %></option>
+                <% } %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Expiry Year</label>
+              <select name="cardExpiryYear" id="editExpiryYear" class="form-control">
+                <% for(let y=new Date().getFullYear();y<=new Date().getFullYear()+15;y++) { %>
+                  <option value="<%= String(y).slice(-2) %>"><%= y %></option>
+                <% } %>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Name on Card</label>
+            <input type="text" name="userName" id="editUserName" class="form-control" />
+          </div>
+
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('editCardModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       DELETE CONFIRM MODAL
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="custom-modal-overlay" id="deleteCardModal" onclick="handleOverlayClick(event,'deleteCardModal')">
+    <div class="custom-modal" style="max-width:400px">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title" style="gap:10px">
+          <span style="width:32px;height:32px;border-radius:var(--radius-md);background:var(--danger-dim);color:var(--danger);display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0">
+            <i class="fa-solid fa-trash"></i>
+          </span>
+          Remove Card
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('deleteCardModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body" style="text-align:center;padding:28px 24px 20px">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--danger-dim);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;color:var(--danger)">
+          <i class="fa-solid fa-trash"></i>
+        </div>
+        <p style="font-size:0.97rem;font-weight:700;color:var(--text-primary);margin-bottom:6px">Remove this card?</p>
+        <p id="deleteCardNum" style="font-family:var(--font-mono);font-size:0.85rem;color:var(--text-muted);margin-bottom:6px"></p>
+        <p style="font-size:0.82rem;color:var(--text-secondary)">This action cannot be undone.</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('deleteCardModal')">Cancel</button>
+        <form id="deleteCardForm" method="POST" style="display:inline">
+          <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa-solid fa-trash"></i> Yes, Remove
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════ SCRIPTS ══════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/script/partials/navbar.js"></script>
+
+  <script>
+    /* ── Card flip ── */
+    function toggleFlip(scene) {
+      scene.classList.toggle('is-flipped');
+    }
+
+    /* ── Card number formatter ── */
+    function formatCardNum(input) {
+      let v = input.value.replace(/\D/g, '').substring(0, 16);
+      input.value = v.replace(/(.{4})/g, '$1 ').trim();
+    }
+
+    /* ── Live preview update ── */
+    function updatePreview() {
+      const numInput = document.querySelector('[name="cardNumber"]');
+      const monthSel = document.querySelector('[name="cardExpiryMonth"]');
+      const yearSel  = document.querySelector('[name="cardExpiryYear"]');
+      const brandSel = document.getElementById('addCardBrand');
+      const preview  = document.getElementById('previewCard');
+
+      const raw = (numInput ? numInput.value.replace(/\s/g,'') : '');
+      const masked = raw.length > 0
+        ? ('**** **** **** ' + (raw.length >= 4 ? raw.slice(-4) : raw.padStart(4,'*')))
+        : '**** **** **** ****';
+
+      document.getElementById('previewNum').textContent = masked;
+
+      const mm = monthSel ? monthSel.value : 'MM';
+      const yy = yearSel  ? yearSel.value  : 'YY';
+      document.getElementById('previewExpiry').textContent = (mm && yy) ? mm + '/' + yy : 'MM/YY';
+
+      const brand = brandSel ? brandSel.value.toLowerCase() : '';
+      let grad = 'linear-gradient(135deg, #1a1f35 0%, #232b45 50%, #2c3560 100%)';
+      if (brand.includes('visa'))     grad = 'linear-gradient(135deg, #1a237e 0%, #283593 50%, #1565c0 100%)';
+      if (brand.includes('master'))   grad = 'linear-gradient(135deg, #1b0000 0%, #b71c1c 50%, #e53935 100%)';
+      if (brand.includes('amex'))     grad = 'linear-gradient(135deg, #004d40 0%, #00695c 50%, #00796b 100%)';
+      if (brand.includes('discover')) grad = 'linear-gradient(135deg, #e65100 0%, #f57c00 50%, #ff8f00 100%)';
+      preview.style.background = grad;
+    }
+
+    /* ── Open edit modal ── */
+    function openEditCard(id, brand, type, bank, month, year, name) {
+      document.getElementById('editCardForm').action = '/user/edit-card/' + id + '?_method=PUT';
+      document.getElementById('editCardBrand').value   = brand;
+      document.getElementById('editCardType').value    = type;
+      document.getElementById('editBankName').value    = bank;
+      document.getElementById('editExpiryMonth').value = month;
+      document.getElementById('editExpiryYear').value  = year;
+      document.getElementById('editUserName').value    = name;
+      openModal('editCardModal');
+    }
+
+    /* ── Open delete confirm ── ✅ ?_method=DELETE in query string ── */
+    function confirmDeleteCard(id, maskedNum) {
+      document.getElementById('deleteCardForm').action = '/user/delete-card/' + id + '?_method=DELETE';
+      document.getElementById('deleteCardNum').textContent = maskedNum;
+      openModal('deleteCardModal');
+    }
+  </script>
+
+</body>
+</html>

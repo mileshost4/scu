@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KYC Review — <%= user.firstname %> | Admin</title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/verification.css" />
+</head>
+<body>
+  <% locals.currentPath = '/admin/admin.verification-requests'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <div class="breadcrumb">
+          <a href="/admin/admin.users"><i class="fa-solid fa-users"></i> Users</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <a href="/admin/admin.verification-requests"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span><%= user.firstname %> <%= user.lastname %></span>
+        </div>
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">KYC Review</h1>
+            <p class="page-subtitle"><%= user.firstname %> <%= user.lastname %></p>
+          </div>
+          <div class="page-header-right">
+            <a href="/admin/admin.user/<%= user._id %>" class="btn btn-ghost btn-sm"><i class="fa-solid fa-user"></i> View Profile</a>
+          </div>
+        </div>
+
+        <div class="kyc-layout">
+
+          <!-- Left: User Info -->
+          <div class="kyc-col-left">
+            <div class="card section-card">
+              <div class="section-card-header">
+                <h3><i class="fa-solid fa-circle-user"></i> Applicant</h3>
+              </div>
+              <div class="kyc-profile-block">
+                <div class="kyc-avatar">
+                  <% if (user.profilepicture && user.profilepicture.length > 0) { %>
+                    <img src="<%= user.profilepicture[user.profilepicture.length-1].url %>" alt="" />
+                  <% } else { %>
+                    <%= (user.firstname||'?')[0].toUpperCase() %><%= (user.lastname||'')[0]?(user.lastname)[0].toUpperCase():'' %>
+                  <% } %>
+                </div>
+                <div>
+                  <div class="kyc-profile-name"><%= user.firstname %> <%= user.middlename||'' %> <%= user.lastname %></div>
+                  <div class="kyc-profile-email"><%= user.email %></div>
+                </div>
+              </div>
+              <div class="detail-grid" style="padding:0 20px 16px;">
+                <div class="detail-item"><span class="detail-lbl">Account #</span><span class="detail-val mono-text"><%= user.accountNumber||'—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Country</span><span class="detail-val"><%= user.country||'—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Phone</span><span class="detail-val"><%= user.phonenumber||'—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">DOB</span><span class="detail-val"><%= user.dob||'—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Gender</span><span class="detail-val"><%= user.gender||'—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Address</span><span class="detail-val"><%= user.address||'—' %></span></div>
+                <div class="detail-item"><span class="detail-lbl">Document Type</span>
+                  <span class="detail-val"><%= user.documenttype||'Not specified' %></span>
+                </div>
+                <div class="detail-item"><span class="detail-lbl">KYC Status</span>
+                  <span class="detail-val">
+                    <% if(user.verificationstatus==='Verified') { %><span class="badge badge-success">Verified</span>
+                    <% } else if(user.verificationstatus==='Pending') { %><span class="badge badge-warning">Pending</span>
+                    <% } else { %><span class="badge badge-danger">Not Verified</span><% } %>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Documents + Actions -->
+          <div class="kyc-col-right">
+
+            <!-- Documents -->
+            <div class="card section-card">
+              <div class="section-card-header">
+                <h3><i class="fa-solid fa-file-image"></i> Submitted Documents</h3>
+                <span class="badge badge-info"><%= user.verificationdocument ? user.verificationdocument.length : 0 %> file(s)</span>
+              </div>
+
+              <% if (!user.verificationdocument || user.verificationdocument.length === 0) { %>
+              <div class="empty-state">
+                <i class="fa-solid fa-file-circle-xmark"></i>
+                <p>No documents submitted yet.</p>
+              </div>
+              <% } else { %>
+              <div class="doc-grid">
+                <% user.verificationdocument.forEach((doc, i) => { %>
+                <div class="doc-card" onclick="openLightbox('<%= doc.url %>')">
+                  <% const isPdf = doc.url && doc.url.toLowerCase().includes('.pdf'); %>
+                  <% if (isPdf) { %>
+                  <div class="doc-card-icon"><i class="fa-solid fa-file-pdf"></i></div>
+                  <% } else { %>
+                  <div class="doc-card-img">
+                    <img src="<%= doc.url %>" alt="Document <%= i+1 %>" loading="lazy" />
+                    <div class="doc-card-overlay"><i class="fa-solid fa-magnifying-glass-plus"></i></div>
+                  </div>
+                  <% } %>
+                  <div class="doc-card-footer">
+                    <span class="doc-card-name">Document <%= i + 1 %></span>
+                    <a href="<%= doc.url %>" target="_blank" class="btn btn-ghost btn-sm" onclick="event.stopPropagation()"><i class="fa-solid fa-external-link"></i> Open</a>
+                  </div>
+                </div>
+                <% }) %>
+              </div>
+              <% } %>
+            </div>
+
+            <!-- Decision Actions -->
+            <div class="card section-card">
+              <div class="section-card-header">
+                <h3><i class="fa-solid fa-gavel"></i> Decision</h3>
+              </div>
+              <div class="kyc-actions-body">
+                <div class="kyc-decision-note">
+                  Review the submitted documents above and choose an action. Approving will set this user's verification status to <strong>Verified</strong> and account status to <strong>Active</strong>.
+                </div>
+                <div class="kyc-decision-btns">
+                  <form action="/admin/admin.verification-requests/<%= user._id %>" method="POST" onsubmit="return confirm('Approve and verify this user?')">
+                    <input type="hidden" name="_method" value="PUT" />
+                    <button type="submit" class="btn btn-primary kyc-btn"><i class="fa-solid fa-check-circle"></i> Approve & Verify</button>
+                  </form>
+                  <form action="/admin/admin.verification-requests/<%= user._id %>/decline" method="POST" onsubmit="return confirm('Decline this verification?')">
+                    <input type="hidden" name="_method" value="PUT" />
+                    <button type="submit" class="btn btn-danger kyc-btn"><i class="fa-solid fa-times-circle"></i> Decline</button>
+                  </form>
+                </div>
+
+                <div class="divider"></div>
+
+                <p class="kyc-manual-label">Manual Status Override</p>
+                <div class="kyc-manual-actions">
+                  <form action="/admin/admin.users/<%= user._id %>/verify-acct" method="POST">
+                    <input type="hidden" name="_method" value="PUT" />
+                    <button type="submit" class="btn btn-ghost btn-sm"><i class="fa-solid fa-shield-check"></i> Set Verified</button>
+                  </form>
+                  <form action="/admin/admin.users/<%= user._id %>/unverify-acct" method="POST">
+                    <input type="hidden" name="_method" value="PUT" />
+                    <button type="submit" class="btn btn-ghost btn-sm"><i class="fa-solid fa-shield-xmark"></i> Set Unverified</button>
+                  </form>
+                  <form action="/admin/admin.users/<%= user._id %>/activate-acct" method="POST">
+                    <input type="hidden" name="_method" value="PUT" />
+                    <button type="submit" class="btn btn-ghost btn-sm"><i class="fa-solid fa-circle-check"></i> Activate Account</button>
+                  </form>
+                  <form action="/admin/admin.users/<%= user._id %>/suspend-acct" method="POST">
+                    <input type="hidden" name="_method" value="PUT" />
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-ban"></i> Suspend Account</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /kyc-col-right -->
+        </div><!-- /kyc-layout -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div class="lightbox-overlay" id="lightboxOverlay" onclick="closeLightbox()">
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+      <button class="lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
+      <img id="lightboxImg" src="" alt="Document" />
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    function openLightbox(url) {
+      document.getElementById('lightboxImg').src = url;
+      document.getElementById('lightboxOverlay').classList.add('open');
+    }
+    function closeLightbox() {
+      document.getElementById('lightboxOverlay').classList.remove('open');
+      document.getElementById('lightboxImg').src = '';
+    }
+  </script>
+</body>
+</html>

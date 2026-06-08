@@ -1,0 +1,488 @@
+/* ============================================================
+   KYC.CSS — Identity Verification page
+   Follows theme.css variables strictly.
+   ============================================================ */
+
+/* ── Page wrapper ────────────────────────────────────────────── */
+.kyc-page {
+  max-width: 680px;
+}
+
+/* ── Page Header ─────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.page-icon--gold {
+  background: var(--gold-dim);
+  border-color: rgba(240, 165, 0, 0.25);
+  color: var(--gold);
+}
+
+.page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.page-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 3px 0 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.kyc-status-badge {
+  font-size: 0.8rem;
+  padding: 6px 14px;
+}
+
+/* ── Status Banner ───────────────────────────────────────────── */
+.kyc-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  border: 1px solid;
+  margin-bottom: 28px;
+  font-size: 0.88rem;
+}
+
+.kyc-banner i {
+  font-size: 1.15rem;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.kyc-banner--success {
+  background: var(--success-dim);
+  border-color: rgba(0, 212, 170, 0.25);
+  color: var(--success);
+}
+
+.kyc-banner--warning {
+  background: var(--warning-dim);
+  border-color: rgba(255, 176, 32, 0.25);
+  color: var(--warning);
+}
+
+.kyc-banner--info {
+  background: var(--info-dim);
+  border-color: rgba(77, 159, 255, 0.25);
+  color: var(--info);
+}
+
+.kyc-banner-title {
+  font-weight: 700;
+  margin: 0 0 3px;
+  color: inherit;
+}
+
+.kyc-banner-sub {
+  margin: 0;
+  opacity: 0.85;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+/* ── Progress Steps ──────────────────────────────────────────── */
+.kyc-steps {
+  display: flex;
+  align-items: center;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.kyc-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  background: var(--bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: var(--transition);
+}
+
+.kyc-step.is-active .step-num {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-dim);
+}
+
+.kyc-step.is-done .step-num {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--text-inverse);
+}
+
+/* Replace number with check for done steps */
+.kyc-step.is-done .step-num::before {
+  content: '\f00c';
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+  font-size: 0.7rem;
+}
+.kyc-step.is-done .step-num {
+  font-size: 0; /* hide number */
+}
+
+.step-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.step-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.kyc-step.is-active .step-label { color: var(--accent); }
+.kyc-step.is-done .step-label   { color: var(--text-primary); }
+
+.step-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.kyc-step-connector {
+  flex: 1;
+  height: 2px;
+  background: var(--border);
+  min-width: 24px;
+  max-width: 60px;
+  margin: 0 8px;
+}
+
+/* ── KYC Card ────────────────────────────────────────────────── */
+.kyc-card {
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.kyc-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.kyc-card-header i {
+  color: var(--accent);
+  font-size: 1rem;
+}
+
+/* ── Form body ───────────────────────────────────────────────── */
+.kyc-form-body {
+  padding: 24px 24px 0;
+}
+
+.kyc-form-footer {
+  padding: 18px 24px 24px;
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+/* ── Dropzone ────────────────────────────────────────────────── */
+.kyc-dropzone {
+  position: relative;
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  cursor: pointer;
+  transition: var(--transition);
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.kyc-dropzone:hover,
+.kyc-dropzone.is-dragover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.kyc-file-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.dropzone-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 28px 20px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.dropzone-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+.kyc-dropzone:hover .dropzone-icon {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.dropzone-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0 0 4px;
+}
+
+.dropzone-sub {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 0 0 8px;
+}
+
+.dropzone-link {
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.dropzone-hint {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* Previews */
+.dropzone-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px;
+  pointer-events: none;
+  z-index: 1;
+  width: 100%;
+}
+
+.preview-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 90px;
+}
+
+.preview-item img {
+  width: 90px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+}
+
+.preview-item span {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-align: center;
+  word-break: break-all;
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preview-pdf-icon {
+  width: 90px;
+  height: 70px;
+  background: var(--danger-dim);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: var(--danger);
+}
+
+/* ── Tips ────────────────────────────────────────────────────── */
+.kyc-tips {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-top: 4px;
+}
+
+.tips-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--gold);
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.tips-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.tips-list li {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── Submitted docs ──────────────────────────────────────────── */
+.kyc-submitted-docs {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.submitted-doc {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.submitted-doc-thumb {
+  width: 56px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.submitted-doc-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.submitted-doc-thumb i {
+  font-size: 1.4rem;
+  color: var(--danger);
+}
+
+.submitted-doc-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.submitted-doc-name {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  word-break: break-all;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .kyc-steps {
+    gap: 8px;
+  }
+
+  .kyc-step-connector {
+    min-width: 14px;
+  }
+
+  .step-sub {
+    display: none;
+  }
+
+  .kyc-form-body,
+  .kyc-form-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .kyc-card-header {
+    padding: 14px 16px;
+  }
+}

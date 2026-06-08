@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= user.firstname %> <%= user.lastname %> — Delete Transactions | Admin</title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/subpages.css" />
+</head>
+<body>
+  <% locals.currentPath = '/admin/admin.users'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <a href="/admin/admin.users"><i class="fa-solid fa-users"></i> Users</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <a href="/admin/admin.user/<%= user._id %>"><%= user.firstname %> <%= user.lastname %></a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span>Delete Transactions</span>
+        </div>
+
+        <!-- Page Header -->
+        <div class="subpage-header">
+          <div class="subpage-header-left">
+            <div class="subpage-avatar danger-avatar">
+              <i class="fa-solid fa-trash"></i>
+            </div>
+            <div>
+              <h2 class="subpage-title">Delete Transactions</h2>
+              <p class="subpage-subtitle"><%= user.firstname %> <%= user.lastname %> — Select transactions to permanently delete</p>
+            </div>
+          </div>
+          <div class="subpage-header-actions">
+            <a href="/admin/admin.user/<%= user._id %>/transaction-history" class="btn btn-ghost btn-sm"><i class="fa-solid fa-arrow-left"></i> Back to Transactions</a>
+          </div>
+        </div>
+
+        <!-- Danger Banner -->
+        <div class="danger-banner">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>Deleted transactions are <strong>permanent</strong> and cannot be recovered. Select carefully before deleting.</span>
+        </div>
+
+        <form action="/admin/admin.user/<%= user._id %>/delete-transactions" method="POST" id="deleteForm">
+          <!-- Toolbar -->
+          <div class="card delete-toolbar">
+            <div class="delete-toolbar-left">
+              <label class="checkbox-wrap">
+                <input type="checkbox" id="selectAll" />
+                <span class="checkbox-label">Select All</span>
+              </label>
+              <span class="selected-count" id="selectedCount">0 selected</span>
+            </div>
+            <div class="delete-toolbar-right">
+              <div class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="deleteSearch" class="form-control" placeholder="Search transactions…" />
+              </div>
+              <button type="button" class="btn btn-danger btn-sm" id="deleteBtn" disabled onclick="confirmDelete()">
+                <i class="fa-solid fa-trash"></i> Delete Selected
+              </button>
+            </div>
+          </div>
+
+          <!-- Transactions List -->
+          <div class="card section-card">
+            <% if (transactions.length === 0) { %>
+              <div class="empty-state">
+                <i class="fa-solid fa-inbox"></i>
+                <p>No transactions to display.</p>
+              </div>
+            <% } else { %>
+            <div class="delete-list" id="deleteList">
+              <% transactions.forEach(tx => {
+                const isCredit = ['Credit','Deposit'].includes(tx.transactionType);
+              %>
+              <div class="delete-row" data-search="<%= [tx.description, tx.transactionType, tx.refCode, tx.receiverAccountName, tx.senderAccountName].filter(Boolean).join(' ').toLowerCase() %>">
+                <label class="checkbox-wrap">
+                  <input type="checkbox" name="selectedData" value="<%= tx._id %>" class="txn-checkbox" />
+                </label>
+                <div class="delete-row-icon <%= isCredit ? 'credit' : 'debit' %>">
+                  <i class="fa-solid fa-<%= isCredit ? 'arrow-down' : 'arrow-up' %>"></i>
+                </div>
+                <div class="delete-row-info">
+                  <div class="delete-row-type">
+                    <%= tx.transactionType %><% if(tx.transferType) { %> / <%= tx.transferType %><% } %>
+                    <span class="delete-row-ref mono-text"><%= tx.refCode || '' %></span>
+                  </div>
+                  <div class="delete-row-desc"><%= tx.description || tx.receiverAccountName || tx.senderAccountName || '—' %></div>
+                  <div class="delete-row-meta">
+                    <%= tx.date ? new Date(tx.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric',hour:'2-digit',minute:'2-digit'}) : '—' %>
+                    &middot;
+                    <% if(tx.status === 'Successful') { %><span style="color:var(--success)">Successful</span>
+                    <% } else if(tx.status === 'Pending') { %><span style="color:var(--warning)">Pending</span>
+                    <% } else { %><span style="color:var(--danger)">Failed</span><% } %>
+                  </div>
+                </div>
+                <div class="delete-row-amount <%= isCredit ? 'credit' : 'debit' %>">
+                  <%= isCredit ? '+' : '-' %><%= user.basecurrencysymbol || '$' %><%= (tx.amount||0).toLocaleString('en-US',{minimumFractionDigits:2}) %>
+                </div>
+                <a href="/admin/admin.user/<%= user._id %>/transaction/<%= tx._id %>" class="btn btn-ghost btn-sm" title="View Receipt" target="_blank"><i class="fa-solid fa-receipt"></i></a>
+              </div>
+              <% }) %>
+            </div>
+            <% } %>
+          </div>
+        </form>
+
+        <!-- Confirm Delete Modal -->
+        <div class="custom-modal-overlay" id="confirmDeleteModal">
+          <div class="custom-modal">
+            <div class="custom-modal-header">
+              <div class="custom-modal-title"><i class="fa-solid fa-trash" style="background:var(--danger-dim);color:var(--danger)"></i> Confirm Deletion</div>
+              <button class="custom-modal-close" onclick="closeDeleteModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="custom-modal-body">
+              <p style="color:var(--text-secondary)">You are about to permanently delete <strong id="deleteCountPreview" style="color:var(--danger)"></strong>. This action cannot be undone.</p>
+            </div>
+            <div class="custom-modal-footer">
+              <button type="button" class="btn btn-ghost" onclick="closeDeleteModal()">Cancel</button>
+              <button type="button" class="btn btn-danger" onclick="document.getElementById('deleteForm').submit()"><i class="fa-solid fa-trash"></i> Delete Permanently</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    const checkboxes = document.querySelectorAll('.txn-checkbox');
+    const selectAll = document.getElementById('selectAll');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const countEl = document.getElementById('selectedCount');
+    const searchInput = document.getElementById('deleteSearch');
+    const rows = document.querySelectorAll('.delete-row');
+
+    function updateCount() {
+      const checked = document.querySelectorAll('.txn-checkbox:checked').length;
+      countEl.textContent = checked + ' selected';
+      deleteBtn.disabled = checked === 0;
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', updateCount));
+
+    selectAll.addEventListener('change', function() {
+      checkboxes.forEach(cb => {
+        const row = cb.closest('.delete-row');
+        if(row.style.display !== 'none') cb.checked = this.checked;
+      });
+      updateCount();
+    });
+
+    searchInput && searchInput.addEventListener('input', function() {
+      const q = this.value.toLowerCase();
+      rows.forEach(row => {
+        row.style.display = (!q || row.dataset.search.includes(q)) ? '' : 'none';
+      });
+    });
+
+    function confirmDelete() {
+      const checked = document.querySelectorAll('.txn-checkbox:checked').length;
+      document.getElementById('deleteCountPreview').textContent = checked + ' transaction' + (checked !== 1 ? 's' : '');
+      document.getElementById('confirmDeleteModal').classList.add('open');
+    }
+
+    function closeDeleteModal() {
+      document.getElementById('confirmDeleteModal').classList.remove('open');
+    }
+
+    document.getElementById('confirmDeleteModal').addEventListener('click', function(e) {
+      if(e.target === this) closeDeleteModal();
+    });
+  </script>
+</body>
+</html>

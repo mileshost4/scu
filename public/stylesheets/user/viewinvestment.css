@@ -1,0 +1,290 @@
+/* viewinvestment.css — Single Investment Detail Page */
+
+.vinv-page { padding-bottom: 48px; }
+
+.vinv-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+  transition: var(--transition);
+}
+.vinv-back:hover { color: var(--accent); }
+
+/* ── Layout ──────────────────────────────────────────── */
+.vinv-layout {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.vinv-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.vinv-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Hero ────────────────────────────────────────────── */
+.vinv-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+.vinv-hero-icon {
+  width: 56px; height: 56px;
+  border-radius: var(--radius-lg);
+  background: var(--accent-dim);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.vinv-hero-info { flex: 1; }
+.vinv-plan-name {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 8px;
+}
+.vinv-status-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.vinv-pulse-dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  animation: pulse-ring 1.8s ease infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(0,212,170,0.5); }
+  70%  { box-shadow: 0 0 0 7px rgba(0,212,170,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,212,170,0); }
+}
+.vinv-started { font-size: 0.8rem; color: var(--text-muted); }
+
+/* ── Profit Banner ───────────────────────────────────── */
+.vinv-profit-banner {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, var(--accent-dim), rgba(0,212,170,0.05));
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  gap: 0;
+  overflow: hidden;
+}
+.vinv-profit-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.vinv-profit-section:last-child { align-items: flex-end; }
+.vinv-profit-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--accent);
+  opacity: 0.7;
+}
+.vinv-profit-value {
+  font-family: var(--font-mono);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.03em;
+}
+.vinv-profit-divider {
+  width: 1px;
+  height: 50px;
+  background: var(--accent);
+  opacity: 0.2;
+  margin: 0 24px;
+  flex-shrink: 0;
+}
+
+/* ── Stats Grid ──────────────────────────────────────── */
+.vinv-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.vinv-stat-card {
+  flex: 1;
+  min-width: 140px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: var(--transition);
+}
+.vinv-stat-card:hover { border-color: var(--border-strong); }
+.vinv-stat-icon {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+.vinv-stat-icon.gold    { background: var(--gold-dim);    color: var(--gold);    }
+.vinv-stat-icon.accent  { background: var(--accent-dim);  color: var(--accent);  }
+.vinv-stat-icon.info    { background: var(--info-dim);    color: var(--info);    }
+.vinv-stat-icon.success { background: var(--success-dim); color: var(--success); }
+.vinv-stat-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.vinv-stat-val {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+/* ── Progress ────────────────────────────────────────── */
+.vinv-progress-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.vinv-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.vinv-progress-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.vinv-progress-pct {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.vinv-progress-track {
+  height: 8px;
+  background: var(--border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+.vinv-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--accent-dark));
+  border-radius: var(--radius-full);
+  transition: width 0.8s ease;
+  min-width: 6px;
+}
+.vinv-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* ── Sidebar Cards ───────────────────────────────────── */
+.vinv-info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+.vinv-card-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+/* Timeline */
+.vinv-timeline { display: flex; flex-direction: column; gap: 0; }
+.vinv-tl-item { display: flex; align-items: flex-start; gap: 12px; }
+.vinv-tl-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  border: 2px solid var(--border-strong);
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+.vinv-tl-dot.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.vinv-tl-content { display: flex; flex-direction: column; gap: 2px; padding-bottom: 16px; }
+.vinv-tl-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.vinv-tl-val { font-size: 0.87rem; color: var(--text-primary); font-weight: 600; }
+.vinv-tl-line {
+  width: 2px;
+  height: 20px;
+  background: var(--border);
+  margin-left: 5px;
+  flex-shrink: 0;
+}
+
+/* Summary */
+.vinv-summary-rows { display: flex; flex-direction: column; gap: 0; }
+.vinv-sum-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
+}
+.vinv-sum-row:last-child { border-bottom: none; }
+.vinv-sum-label { font-size: 0.78rem; color: var(--text-muted); }
+.vinv-sum-val { font-size: 0.87rem; font-weight: 600; color: var(--text-primary); text-align: right; }
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 900px) {
+  .vinv-layout { flex-direction: column; }
+  .vinv-sidebar { width: 100%; }
+}
+@media (max-width: 540px) {
+  .vinv-hero { flex-direction: column; align-items: flex-start; }
+  .vinv-profit-banner { flex-direction: column; gap: 16px; }
+  .vinv-profit-section:last-child { align-items: flex-start; }
+  .vinv-profit-divider { width: 100%; height: 1px; margin: 0; }
+  .vinv-stats { flex-direction: column; }
+}

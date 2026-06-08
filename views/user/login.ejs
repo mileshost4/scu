@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= websiteName %> || Sign In</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css">
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css">
+
+  <style>
+    /* ── Auth page layout ─────────────────────────────────────── */
+    .auth-root {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-root);
+      position: relative;
+      overflow: hidden;
+      padding: 40px 16px;
+    }
+
+    /* Grid overlay */
+    .auth-root::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Accent glow */
+    .auth-root::after {
+      content: '';
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+      top: -150px;
+      right: -100px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow-blob-2 {
+      position: fixed;
+      width: 350px;
+      height: 350px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(77,159,255,0.10) 0%, transparent 70%);
+      bottom: -80px;
+      left: -80px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Card ─────────────────────────────────────────────────── */
+    .auth-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-xl);
+      padding: 44px 36px 36px;
+      box-shadow: var(--shadow-lg);
+      animation: fadeIn 0.4s ease both;
+    }
+
+    @media (max-width: 480px) {
+      .auth-card { padding: 32px 20px 28px; }
+    }
+
+    /* ── Logo ─────────────────────────────────────────────────── */
+    .auth-logo-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 28px;
+    }
+
+    .auth-logo { height: 44px; width: auto; }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    .auth-header { margin-bottom: 30px; }
+
+    .auth-title {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .auth-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* ── Fields ───────────────────────────────────────────────── */
+    .field { margin-bottom: 16px; }
+
+    .field-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .input-wrap { position: relative; }
+
+    .input-wrap .field-icon {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 13px;
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 11px 14px 11px 38px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .field-input::placeholder { color: var(--text-muted); }
+
+    .field-input:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
+    .input-wrap:focus-within .field-icon { color: var(--accent); }
+
+    /* ── Submit ───────────────────────────────────────────────── */
+    .auth-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 13px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: var(--accent);
+      color: var(--text-inverse);
+      font-family: var(--font-ui);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.03em;
+      transition: var(--transition);
+    }
+
+    .auth-btn:hover:not(:disabled) {
+      background: var(--accent-dark);
+      box-shadow: var(--shadow-accent);
+      transform: translateY(-1px);
+    }
+
+    .auth-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Divider ──────────────────────────────────────────────── */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 24px 0 18px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    .auth-footer {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: 20px;
+    }
+
+    .auth-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .auth-footer a:hover { text-decoration: underline; }
+
+    /* ── Decorative accent bar ────────────────────────────────── */
+    .auth-card-accent {
+      width: 48px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: var(--radius-full);
+      margin-bottom: 20px;
+    }
+
+    /* ── Theme toggle ─────────────────────────────────────────── */
+    .theme-fab {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      z-index: 100;
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-fab button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .theme-fab button:hover,
+    .theme-fab button.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    /* Security badge */
+    .security-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      margin-top: 18px;
+    }
+
+    .security-badge i {
+      color: var(--accent);
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="glow-blob-2"></div>
+
+<!-- Theme toggle -->
+<div class="theme-fab">
+  <button onclick="setTheme('dark')"  title="Dark"  data-theme-opt="dark">
+    <i class="fa-solid fa-moon"></i>
+  </button>
+  <button onclick="setTheme('light')" title="Light" data-theme-opt="light">
+    <i class="fa-solid fa-sun"></i>
+  </button>
+</div>
+
+<div class="auth-root">
+  <div class="auth-card">
+
+    <!-- Logo -->
+    <div class="auth-logo-wrap">
+      <a href="/"><img src="/images/logo.png" class="auth-logo" alt="Logo"></a>
+    </div>
+
+    <div class="auth-card-accent"></div>
+
+    <!-- Header -->
+    <div class="auth-header">
+      <h1 class="auth-title">Welcome back</h1>
+      <p class="auth-subtitle">Sign in to access your account dashboard.</p>
+    </div>
+
+    <!-- Flash messages -->
+    <%- partial('../partials/flash') %>
+
+    <form action="/login" method="post" id="loginForm">
+
+      <div class="field">
+        <label class="field-label">Email Address</label>
+        <div class="input-wrap">
+          <i class="fas fa-envelope field-icon"></i>
+          <input class="field-input" type="email" name="email" placeholder="you@example.com" required autocomplete="email">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Password</label>
+        <div class="input-wrap">
+          <i class="fas fa-lock field-icon"></i>
+          <input class="field-input" type="password" name="password" placeholder="Your password" required autocomplete="current-password">
+        </div>
+      </div>
+
+      <button class="auth-btn" type="submit" id="loginBtn">
+        <i class="fas fa-arrow-right-to-bracket"></i>
+        <span id="btnLabel">Sign In</span>
+      </button>
+
+    </form>
+
+    <div class="security-badge">
+      <i class="fas fa-shield-halved"></i>
+      256-bit encrypted &amp; secure connection
+    </div>
+
+    <div class="auth-divider">or</div>
+
+    <div class="auth-footer">
+      Forgot your password? <a href="/forgotpassword">Reset it</a>
+      <br>
+      Don't have an account? <a href="/register">Create one</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- Form loading state -->
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function () {
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in…';
+  });
+</script>
+
+<!-- Theme logic -->
+<script>
+  function setTheme(mode) {
+    let resolved = mode;
+    if (mode === 'system') {
+      resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', resolved);
+    localStorage.setItem('theme', mode);
+    document.querySelectorAll('.theme-fab button').forEach(function(btn) {
+      btn.classList.toggle('active', btn.dataset.themeOpt === mode);
+    });
+  }
+
+  (function() {
+    setTheme(localStorage.getItem('theme') || 'dark');
+  })();
+</script>
+
+</body>
+</html>

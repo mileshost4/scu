@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Investments — <%= user.firstname %> | Admin</title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/user-investments.css" />
+</head>
+<body>
+  <% locals.currentPath = '/admin/admin.users'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <div class="breadcrumb">
+          <a href="/admin/admin.users"><i class="fa-solid fa-users"></i> Users</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <a href="/admin/admin.user/<%= user._id %>"><%= user.firstname %> <%= user.lastname %></a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span>Investments</span>
+        </div>
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Investments</h1>
+            <p class="page-subtitle"><%= user.firstname %> <%= user.lastname %> &mdash; <%= investments.length %> total</p>
+          </div>
+          <a href="/admin/admin.user/<%= user._id %>" class="btn btn-ghost btn-sm"><i class="fa-solid fa-arrow-left"></i> Back to Profile</a>
+        </div>
+
+        <!-- Investment stats -->
+        <div class="stats-strip">
+          <div class="stat-pill">
+            <span class="stat-pill-icon success"><i class="fa-solid fa-chart-line"></i></span>
+            <div>
+              <div class="stat-pill-val"><%= investments.filter(i=>i.status==='Active').length %></div>
+              <div class="stat-pill-lbl">Active</div>
+            </div>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-icon warning"><i class="fa-solid fa-clock"></i></span>
+            <div>
+              <div class="stat-pill-val"><%= investments.filter(i=>i.status==='Pending').length %></div>
+              <div class="stat-pill-lbl">Pending</div>
+            </div>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-icon accent"><i class="fa-solid fa-flag-checkered"></i></span>
+            <div>
+              <div class="stat-pill-val"><%= investments.filter(i=>i.status==='Completed').length %></div>
+              <div class="stat-pill-lbl">Completed</div>
+            </div>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-icon gold"><i class="fa-solid fa-coins"></i></span>
+            <div>
+              <div class="stat-pill-val"><%= user.basecurrencysymbol || '$' %><%= investments.reduce((s,i)=>s+(i.investedamount||0),0).toLocaleString() %></div>
+              <div class="stat-pill-lbl">Total Invested</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Investments List -->
+        <% if (investments.length === 0) { %>
+        <div class="card" style="padding:48px;text-align:center;color:var(--text-muted);">
+          <i class="fa-solid fa-chart-line" style="font-size:2rem;opacity:.3;display:block;margin-bottom:12px;"></i>
+          <p>No investments found for this user.</p>
+        </div>
+        <% } %>
+
+        <% investments.forEach(inv => { %>
+        <div class="card inv-card">
+          <div class="inv-card-header">
+            <div class="inv-card-left">
+              <div class="inv-icon">
+                <% if(inv.status==='Active') { %><i class="fa-solid fa-chart-line"></i>
+                <% } else if(inv.status==='Completed') { %><i class="fa-solid fa-flag-checkered"></i>
+                <% } else { %><i class="fa-solid fa-clock"></i><% } %>
+              </div>
+              <div>
+                <div class="inv-package"><%= inv.packagetype || 'Investment Plan' %></div>
+                <div class="inv-dates">
+                  Started <%= inv.startDate ? new Date(inv.startDate).toDateString() : '—' %>
+                  <% if(inv.endDate) { %> &rarr; <%= new Date(inv.endDate).toDateString() %><% } %>
+                </div>
+              </div>
+            </div>
+            <div class="inv-status">
+              <% if(inv.status==='Active') { %><span class="badge badge-success">Active</span>
+              <% } else if(inv.status==='Completed') { %><span class="badge badge-accent">Completed</span>
+              <% } else { %><span class="badge badge-warning">Pending</span><% } %>
+            </div>
+          </div>
+          <div class="inv-card-body">
+            <div class="inv-stat">
+              <div class="inv-stat-lbl">Invested</div>
+              <div class="inv-stat-val"><%= user.basecurrencysymbol || '$' %><%= (inv.investedamount||0).toLocaleString('en-US',{minimumFractionDigits:2}) %></div>
+            </div>
+            <div class="inv-stat">
+              <div class="inv-stat-lbl">Profit</div>
+              <div class="inv-stat-val" style="color:var(--success)"><%= user.basecurrencysymbol || '$' %><%= (inv.investmentprofit||0).toLocaleString('en-US',{minimumFractionDigits:2}) %></div>
+            </div>
+            <div class="inv-stat">
+              <div class="inv-stat-lbl">ROI</div>
+              <div class="inv-stat-val"><%= inv.roi || '—' %></div>
+            </div>
+            <div class="inv-stat">
+              <div class="inv-stat-lbl">Duration</div>
+              <div class="inv-stat-val"><%= inv.duration || '—' %></div>
+            </div>
+          </div>
+          <div class="inv-card-footer">
+            <a href="/admin/admin.investment/<%= user._id %>/<%= inv._id %>" class="btn btn-ghost btn-sm"><i class="fa-solid fa-eye"></i> Manage</a>
+          </div>
+        </div>
+        <% }) %>
+
+      </div>
+    </div>
+  </div>
+  <script src="/script/partials/navbar.js"></script>
+</body>
+</html>

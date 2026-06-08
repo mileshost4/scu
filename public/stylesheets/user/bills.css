@@ -1,0 +1,518 @@
+/* ============================================================
+   BILLS.CSS — Pay Bills page
+   Extends theme.css; does NOT redefine base variables/resets.
+   ============================================================ */
+
+/* ── Page Header ─────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.page-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: var(--accent-dim);
+  border: 1px solid var(--accent-glow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin: 3px 0 0;
+}
+
+.header-balance {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.balance-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.balance-amount {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+/* ── Category Strip ──────────────────────────────────────── */
+.category-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 24px;
+  scrollbar-width: none;
+}
+
+.category-strip::-webkit-scrollbar { display: none; }
+
+.category-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  font-family: var(--font-ui);
+  flex-shrink: 0;
+}
+
+.category-btn i {
+  font-size: 1.1rem;
+}
+
+.category-btn span {
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.category-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.category-btn.active {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+}
+
+/* ── Layout ──────────────────────────────────────────────── */
+.bills-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.bills-form-card {
+  flex: 1;
+  min-width: 0;
+}
+
+.card-inner {
+  padding: 28px;
+}
+
+.bills-side {
+  width: 320px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Section titles ──────────────────────────────────────── */
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 24px;
+}
+
+.section-title i {
+  color: var(--accent);
+}
+
+.section-title-sm {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ── Select wrapper ──────────────────────────────────────── */
+.select-wrapper {
+  position: relative;
+}
+
+.select-wrapper select.form-control {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.select-arrow {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+/* ── Amount input ─────────────────────────────────────────── */
+.amount-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.currency-prefix {
+  position: absolute;
+  left: 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.amount-input {
+  padding-left: 32px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 1rem !important;
+}
+
+/* ── Optional tag ────────────────────────────────────────── */
+.optional-tag {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 4px;
+}
+
+/* ── Form hint ───────────────────────────────────────────── */
+.form-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+/* ── Pay Summary ─────────────────────────────────────────── */
+.pay-summary {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.84rem;
+  padding: 6px 0;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-total {
+  color: var(--text-primary);
+  font-weight: 700;
+  font-size: 0.92rem;
+  padding-top: 10px;
+  margin-top: 4px;
+}
+
+.summary-total span:last-child {
+  color: var(--accent);
+  font-family: var(--font-mono);
+}
+
+/* ── Pay button ──────────────────────────────────────────── */
+.pay-btn {
+  width: 100%;
+  justify-content: center;
+  padding: 13px 24px;
+  font-size: 0.95rem;
+  border-radius: var(--radius-lg);
+}
+
+/* ── Info card ───────────────────────────────────────────── */
+.info-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 18px;
+  background: var(--info-dim);
+  border-color: rgba(77,159,255,0.2);
+}
+
+.info-card-icon {
+  color: var(--info);
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.info-card-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 4px;
+}
+
+.info-card-text {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Saved Billers ───────────────────────────────────────── */
+.saved-billers {
+  padding: 20px;
+}
+
+.saved-billers-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.biller-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.biller-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  transition: var(--transition);
+  cursor: default;
+}
+
+.biller-item:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-card-hover);
+}
+
+.biller-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.biller-icon.electricity { background: var(--gold-dim);    color: var(--gold);    }
+.biller-icon.internet    { background: var(--info-dim);    color: var(--info);    }
+.biller-icon.phone       { background: var(--accent-dim);  color: var(--accent);  }
+.biller-icon.streaming   { background: var(--danger-dim);  color: var(--danger);  }
+.biller-icon.water       { background: var(--info-dim);    color: var(--info);    }
+.biller-icon.gas         { background: var(--warning-dim); color: var(--warning); }
+.biller-icon.insurance   { background: var(--success-dim); color: var(--success); }
+
+.biller-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.biller-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.biller-acct {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.biller-pay-btn {
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent);
+  background: var(--accent-dim);
+  color: var(--accent);
+  font-size: 0.76rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: var(--font-ui);
+  flex-shrink: 0;
+}
+
+.biller-pay-btn:hover {
+  background: var(--accent);
+  color: var(--text-inverse);
+}
+
+/* ── Recent Bills ────────────────────────────────────────── */
+.recent-bills {
+  padding: 20px;
+}
+
+.recent-bills > .section-title-sm {
+  display: block;
+  margin-bottom: 14px;
+}
+
+.recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recent-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+.recent-item:hover {
+  background: var(--bg-card-hover);
+}
+
+.recent-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.recent-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.recent-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.recent-date {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.recent-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.recent-amount {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .bills-layout {
+    flex-direction: column;
+  }
+
+  .bills-side {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .bills-side > * {
+    flex: 1;
+    min-width: 260px;
+  }
+}
+
+@media (max-width: 640px) {
+  .card-inner {
+    padding: 20px 16px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .header-balance {
+    align-items: flex-start;
+  }
+
+  .bills-side {
+    flex-direction: column;
+  }
+
+  .bills-side > * {
+    min-width: unset;
+  }
+}

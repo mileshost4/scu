@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apply for Loan | <%= websiteName %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/loan.css" />
+</head>
+<body>
+
+  <%
+    locals.currentPath = '/user/loan';
+  %>
+
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="loan-page fade-in">
+
+        <!-- Page Header -->
+        <div class="loan-header">
+          <div class="loan-header-left">
+            <div class="loan-icon-wrap">
+              <i class="fa-solid fa-hand-holding-dollar"></i>
+            </div>
+            <div>
+              <h1 class="loan-title">Loan Application</h1>
+              <p class="loan-subtitle">Apply for a personal or business loan — quick review, fast decisions</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Credit Score Banner -->
+        <div class="card credit-banner">
+          <div class="credit-score-wrap">
+            <div class="credit-score-circle">
+              <svg viewBox="0 0 120 120" class="score-ring">
+                <circle cx="60" cy="60" r="50" class="ring-track" />
+                <circle cx="60" cy="60" r="50" class="ring-fill"
+                  style="stroke-dasharray: <%= Math.round((user.creditscore / 850) * 314) %> 314;" />
+              </svg>
+              <div class="score-label">
+                <span class="score-num"><%= user.creditscore || 850 %></span>
+                <span class="score-text">Credit Score</span>
+              </div>
+            </div>
+            <div class="credit-meta">
+              <h3>Your Credit Profile</h3>
+              <p>Your credit score determines your loan eligibility and interest rates. A score above 700 qualifies you for our best rates.</p>
+              <div class="credit-tags">
+                <span class="badge badge-<%= (user.creditscore >= 750) ? 'success' : (user.creditscore >= 650) ? 'warning' : 'danger' %>">
+                  <i class="fa-solid fa-circle-check"></i>
+                  <%= (user.creditscore >= 750) ? 'Excellent' : (user.creditscore >= 650) ? 'Good' : 'Fair' %> Standing
+                </span>
+                <span class="badge badge-info">
+                  <i class="fa-solid fa-shield-halved"></i>
+                  <%= user.verificationstatus %>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="loan-layout">
+
+          <!-- Left: Form -->
+          <div class="loan-form-col">
+            <div class="card loan-card">
+              <div class="loan-card-head">
+                <i class="fa-solid fa-file-contract"></i>
+                <span>Loan Application Form</span>
+              </div>
+
+              <form action="/user/loan" method="POST" class="loan-form">
+
+                <!-- Loan Type -->
+                <div class="form-group">
+                  <label class="form-label">Loan Type</label>
+                  <div class="loan-type-grid">
+                    <label class="loan-type-option">
+                      <input type="radio" name="loanType" value="Personal Loan" checked required />
+                      <span class="loan-type-pill">
+                        <i class="fa-solid fa-user"></i>
+                        Personal Loan
+                      </span>
+                    </label>
+                    <label class="loan-type-option">
+                      <input type="radio" name="loanType" value="Business Loan" />
+                      <span class="loan-type-pill">
+                        <i class="fa-solid fa-briefcase"></i>
+                        Business Loan
+                      </span>
+                    </label>
+                    <label class="loan-type-option">
+                      <input type="radio" name="loanType" value="Mortgage" />
+                      <span class="loan-type-pill">
+                        <i class="fa-solid fa-house"></i>
+                        Mortgage
+                      </span>
+                    </label>
+                    <label class="loan-type-option">
+                      <input type="radio" name="loanType" value="Auto Loan" />
+                      <span class="loan-type-pill">
+                        <i class="fa-solid fa-car"></i>
+                        Auto Loan
+                      </span>
+                    </label>
+                    <label class="loan-type-option">
+                      <input type="radio" name="loanType" value="Education Loan" />
+                      <span class="loan-type-pill">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        Education
+                      </span>
+                    </label>
+                    <label class="loan-type-option">
+                      <input type="radio" name="loanType" value="Emergency Loan" />
+                      <span class="loan-type-pill">
+                        <i class="fa-solid fa-bolt"></i>
+                        Emergency
+                      </span>
+                    </label>
+                  </div>
+                </div>
+
+                <hr class="divider" />
+
+                <!-- Amount + Duration row -->
+                <div class="loan-row">
+                  <div class="form-group flex-1">
+                    <label class="form-label" for="amount">Loan Amount</label>
+                    <div class="amount-input-wrap">
+                      <span class="amount-prefix"><%= user.basecurrencysymbol || '$' %></span>
+                      <input type="number" name="amount" id="amount" class="form-control amount-input"
+                        placeholder="0.00" min="500" step="100" required />
+                    </div>
+                  </div>
+                  <div class="form-group flex-1">
+                    <label class="form-label" for="loanDuration">Repayment Period</label>
+                    <div class="select-wrap">
+                      <select name="loanDuration" id="loanDuration" class="form-control" required>
+                        <option value="" disabled selected>— Select —</option>
+                        <option value="3 months">3 Months</option>
+                        <option value="6 months">6 Months</option>
+                        <option value="12 months">12 Months</option>
+                        <option value="18 months">18 Months</option>
+                        <option value="24 months">24 Months</option>
+                        <option value="36 months">36 Months</option>
+                        <option value="48 months">48 Months</option>
+                        <option value="60 months">60 Months</option>
+                      </select>
+                      <i class="fa-solid fa-chevron-down select-caret"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Purpose / Reason -->
+                <div class="form-group">
+                  <label class="form-label" for="reason">Purpose of Loan</label>
+                  <textarea name="reason" id="reason" class="form-control" rows="3"
+                    placeholder="Briefly describe what the loan will be used for..." required></textarea>
+                </div>
+
+                <!-- Employment Info -->
+                <div class="form-group">
+                  <label class="form-label" for="employmentStatus">Employment Status</label>
+                  <div class="select-wrap">
+                    <select name="employmentStatus" id="employmentStatus" class="form-control" required>
+                      <option value="" disabled selected>— Select —</option>
+                      <option value="Employed Full-Time" <%= user.employmentstatus === 'Employed Full-Time' ? 'selected' : '' %>>Employed Full-Time</option>
+                      <option value="Employed Part-Time" <%= user.employmentstatus === 'Employed Part-Time' ? 'selected' : '' %>>Employed Part-Time</option>
+                      <option value="Self-Employed" <%= user.employmentstatus === 'Self-Employed' ? 'selected' : '' %>>Self-Employed</option>
+                      <option value="Unemployed" <%= user.employmentstatus === 'Unemployed' ? 'selected' : '' %>>Unemployed</option>
+                      <option value="Retired" <%= user.employmentstatus === 'Retired' ? 'selected' : '' %>>Retired</option>
+                      <option value="Student" <%= user.employmentstatus === 'Student' ? 'selected' : '' %>>Student</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-caret"></i>
+                  </div>
+                </div>
+
+                <!-- Monthly income -->
+                <div class="loan-row">
+                  <div class="form-group flex-1">
+                    <label class="form-label" for="monthlyIncome">Monthly Income</label>
+                    <div class="amount-input-wrap">
+                      <span class="amount-prefix"><%= user.basecurrencysymbol || '$' %></span>
+                      <input type="number" name="monthlyIncome" id="monthlyIncome" class="form-control amount-input"
+                        placeholder="0.00" min="0" step="100" required />
+                    </div>
+                  </div>
+                  <div class="form-group flex-1">
+                    <label class="form-label" for="monthlyExpenses">Monthly Expenses</label>
+                    <div class="amount-input-wrap">
+                      <span class="amount-prefix"><%= user.basecurrencysymbol || '$' %></span>
+                      <input type="number" name="monthlyExpenses" id="monthlyExpenses" class="form-control amount-input"
+                        placeholder="0.00" min="0" step="100" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Collateral -->
+                <div class="form-group">
+                  <label class="form-label" for="collateral">Collateral (if any)</label>
+                  <input type="text" name="collateral" id="collateral" class="form-control"
+                    placeholder="e.g. Real estate, vehicle, savings account, none" />
+                </div>
+
+                <!-- Existing Loans -->
+                <div class="form-group">
+                  <label class="form-label">Do you have any existing loans?</label>
+                  <div class="radio-row">
+                    <label class="radio-option">
+                      <input type="radio" name="hasExistingLoans" value="No" checked />
+                      <span>No</span>
+                    </label>
+                    <label class="radio-option">
+                      <input type="radio" name="hasExistingLoans" value="Yes" />
+                      <span>Yes</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Agreement -->
+                <div class="form-group">
+                  <label class="loan-agree-label">
+                    <input type="checkbox" name="agreement" required />
+                    <span>I confirm that all information provided is accurate and I agree to the loan terms and conditions.</span>
+                  </label>
+                </div>
+
+                <div class="loan-submit-row">
+                  <div class="loan-estimate" id="loanEstimate">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span id="estimateText">Fill in amount &amp; duration to see estimate</span>
+                  </div>
+                  <button type="submit" class="btn btn-primary loan-submit-btn">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Submit Application
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Right: Info sidebar -->
+          <div class="loan-info-col">
+
+            <div class="card loan-info-card">
+              <div class="loan-card-head">
+                <i class="fa-solid fa-tags"></i>
+                <span>Loan Rates &amp; Terms</span>
+              </div>
+              <div class="rate-table">
+                <div class="rate-row">
+                  <span class="rate-label">Personal Loan APR</span>
+                  <span class="rate-value accent">5.9% – 18%</span>
+                </div>
+                <div class="rate-row">
+                  <span class="rate-label">Business Loan APR</span>
+                  <span class="rate-value accent">6.5% – 22%</span>
+                </div>
+                <div class="rate-row">
+                  <span class="rate-label">Mortgage APR</span>
+                  <span class="rate-value accent">3.5% – 7%</span>
+                </div>
+                <div class="rate-row">
+                  <span class="rate-label">Auto Loan APR</span>
+                  <span class="rate-value accent">4% – 14%</span>
+                </div>
+                <div class="rate-row">
+                  <span class="rate-label">Min. Credit Score</span>
+                  <span class="rate-value">600</span>
+                </div>
+                <div class="rate-row">
+                  <span class="rate-label">Decision Time</span>
+                  <span class="rate-value">1–3 business days</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card loan-info-card">
+              <div class="loan-card-head">
+                <i class="fa-solid fa-list-check"></i>
+                <span>Eligibility Checklist</span>
+              </div>
+              <ul class="eligibility-list">
+                <li class="<%= user.verificationstatus === 'Verified' ? 'pass' : 'warn' %>">
+                  <i class="fa-solid fa-<%= user.verificationstatus === 'Verified' ? 'circle-check' : 'circle-xmark' %>"></i>
+                  Identity Verified
+                </li>
+                <li class="<%= user.accountStatus === 'Active' ? 'pass' : 'warn' %>">
+                  <i class="fa-solid fa-<%= user.accountStatus === 'Active' ? 'circle-check' : 'circle-xmark' %>"></i>
+                  Account Active
+                </li>
+                <li class="<%= (user.creditscore >= 600) ? 'pass' : 'warn' %>">
+                  <i class="fa-solid fa-<%= (user.creditscore >= 600) ? 'circle-check' : 'circle-xmark' %>"></i>
+                  Credit Score ≥ 600
+                </li>
+                <li class="pass">
+                  <i class="fa-solid fa-circle-check"></i>
+                  Account in Good Standing
+                </li>
+              </ul>
+            </div>
+
+            <div class="card loan-info-card">
+              <div class="loan-card-head">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>What Happens Next</span>
+              </div>
+              <ul class="dep-steps">
+                <li class="dep-step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <strong>Application Review</strong>
+                    <span>Our team reviews your application within 1–3 business days.</span>
+                  </div>
+                </li>
+                <li class="dep-step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <strong>Email Decision</strong>
+                    <span>You'll receive an approval, counter-offer, or decline via email.</span>
+                  </div>
+                </li>
+                <li class="dep-step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <strong>Disbursement</strong>
+                    <span>Approved funds are credited directly to your account.</span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    // Live monthly estimate calculator
+    const amountInput = document.getElementById('amount');
+    const durationInput = document.getElementById('loanDuration');
+    const estimateText = document.getElementById('estimateText');
+    const symbol = '<%= user.basecurrencysymbol || "$" %>';
+
+    function updateEstimate() {
+      const amount = parseFloat(amountInput.value);
+      const durationStr = durationInput.value;
+      if (!amount || !durationStr) {
+        estimateText.textContent = 'Fill in amount & duration to see estimate';
+        return;
+      }
+      const months = parseInt(durationStr);
+      const apr = 0.12; // assume 12% APR for estimate
+      const monthlyRate = apr / 12;
+      const monthly = (amount * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+      estimateText.textContent = `Est. monthly payment: ${symbol}${monthly.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})} (at ~12% APR)`;
+    }
+
+    amountInput.addEventListener('input', updateEstimate);
+    durationInput.addEventListener('change', updateEstimate);
+  </script>
+</body>
+</html>

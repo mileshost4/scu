@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cron Jobs</title>
+    <link rel="stylesheet" href="/stylesheets/admin/investmentplans.css">
+</head>
+<body>
+    <%- partial('../partials/adminnavbar')%>
+
+    <div class="contentbox">
+        <div id="header">
+            <div id="headerinner">
+                <span class="headerinnerspan"><i class="fa-solid fa-id-card headericon"></i> <small>Cron Jobs</small></span>
+                <span class="headerinnerspan"><a href="/admin/admin.dashboard"><i class="fas fa-project-diagram headericon"></i></a></span>
+            </div>
+          </div>
+
+        <div class="flashbox">
+            <% if(success && success.length) { %>
+                   <div class="flashboxsuccess-alert">
+                       <%= success %> 
+                       <span class="flashboxsuccess-closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                       
+                   </div>
+               <% } %> 
+           
+               <% if(error && error.length) { %>
+                       <div class="flashboxerror-alert">
+                           <%= error %> 
+                           <span class="flashboxerror-closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                           
+                       </div>
+               <% } %> 
+               
+        </div>
+
+        
+        <div class="plansdiv">
+            <button type="button" class="btn btn-primary depositbtn mb-4" data-bs-toggle="modal" data-bs-target="#depositMethod">
+                <i class="fa-solid fa-plus"></i> New Plan
+            </button>
+            
+            <!-- Modal -->
+            <div class="modal fade" id="depositMethod" tabindex="-1" aria-labelledby="depositMethodLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="depositMethodLabel">CRON JOBS PLANS</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="/admin/admin.cron" class="" method="post">
+                            <p>Create a new cron job plan.</p>
+                           
+                            <input type="text" name="name" class="form-control" placeholder="Plan Name *" required>
+                            <input type="number" name="number" min="1" class="form-control mt-2" placeholder="Number *" required>
+
+                            <button type="submit" class="btn btn-primary mt-3 w-100">Create Plan</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                    </div>
+                </div>
+                </div>
+            </div>
+            <% if (cron.length > 0) { %>
+               
+                <div class="planscontainer mt-4">
+                    <% for (var x = 0; x < cron.length; x++) { %> 
+                        <div class="planboxes">
+                            <span>
+                                <p>Plan Name:</p> 
+                                <small class="accounttype"><%= cron[x].name %></small>
+                            </span>
+                            <span>
+                                <p>Number:</p>
+                                <small><%= cron[x].number  %></small>
+                            </span>
+                            <span>
+                                <p>Statust:</p> 
+                                <small><%= cron[x].status %></small>
+                            </span>
+
+                            <span class="planboxaction">
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#cryptoMedit<%= x %>">
+                                    <i class="fa-solid fa-pen"></i> Edit
+                                </button>
+
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal<%= x %>">
+                                    <i class="fa-solid fa-trash"></i> Delete
+                                </button>
+                            </span>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="cryptoMedit<%= x %>" tabindex="-1" aria-labelledby="cryptoMedit<%= x %>Label" aria-hidden="true">
+                                <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="cryptoMedit<%= x %>Label">Edit <%= cron[x].packagename %> Plan</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        
+                                            <form action="/admin/admin.cron/<%= cron[x].id %>?_method=PUT" method="post" id="editdepositmethodform" >
+                                                <div class="editformlabel mt-2">
+                                                   <p>Plan Name *</p>
+                                                    <input type="text" value="<%=cron[x].name%>" name="name" id="name" class="form-control" required>
+                                                </div>
+                                                
+                                                <div class="editformlabel mt-2">
+                                                   <p>Number to be Updated*</p>
+                                                    <input type="number" min="1" value="<%=cron[x].number%>" name="number" id="number" class="form-control" required>
+                                                </div>
+
+                                                <button type="submit" class="btn btn-primary mt-3 w-100">Edit Plan</button>
+                                        </form>
+                                        
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="deleteModal<%= x %>" tabindex="-1" aria-labelledby="deleteModal<%= x %>Label" aria-hidden="true">
+                                <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteModal<%= x %>Label">Delete <%= cron[x].name %> Plan</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="/admin/admin.cron/<%= cron[x].id %>?_method=DELETE" method="post" class="delete">
+                                            <button class="btn btn-danger modalbtn w-100">Proceed to Delete</button>
+                                        </form>
+                                        
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    <% } %>
+                </div>
+            <% } else { %>
+                <div class="null">
+                    <p>You haven't created any cron job plan yet.</p>
+                </div>
+            <% } %>
+        </div>
+
+        
+    </div>
+    
+
+
+    <script src="/script/app.js"></script>
+</body>
+</html>

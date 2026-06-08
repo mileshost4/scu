@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support | <%= websiteName %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/support.css" />
+</head>
+<body>
+
+  <%
+    locals.currentPath = '/user/support';
+  %>
+
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="support-page fade-in">
+
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="page-icon">
+              <i class="fa-solid fa-headset"></i>
+            </div>
+            <div>
+              <h1 class="page-title">Support Center</h1>
+              <p class="page-subtitle">We're here to help — reach us anytime</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Support Layout -->
+        <div class="support-layout">
+
+          <!-- Left: Contact Form -->
+          <div class="support-form-card card">
+            <div class="card-inner">
+              <h2 class="section-title">
+                <i class="fa-regular fa-envelope"></i>
+                Send Us a Message
+              </h2>
+              <p class="form-description">
+                Fill in the form below and click <strong>Open Email</strong> — your default mail app will open
+                pre-filled and ready to send. We respond within 1–2 business days.
+              </p>
+
+              <div id="supportForm">
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label" for="supportFirstName">First Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="supportFirstName"
+                      value="<%= user.firstname %>"
+                      placeholder="First name"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="supportLastName">Last Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="supportLastName"
+                      value="<%= user.lastname %>"
+                      placeholder="Last name"
+                    />
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="supportEmail">Your Email Address</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="supportEmail"
+                    value="<%= user.email %>"
+                    placeholder="your@email.com"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="supportAccountNo">Account Number</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="supportAccountNo"
+                    value="<%= user.accountNumber %>"
+                    readonly
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="supportCategory">Category</label>
+                  <div class="select-wrapper">
+                    <select class="form-control" id="supportCategory">
+                      <option value="" disabled selected>Select issue category</option>
+                      <option value="Account Access">Account Access / Login Issues</option>
+                      <option value="Transaction Dispute">Transaction Dispute</option>
+                      <option value="Failed Transfer">Failed or Stuck Transfer</option>
+                      <option value="Deposit Issue">Deposit Not Credited</option>
+                      <option value="Card Issue">Card Issue</option>
+                      <option value="Loan Enquiry">Loan Enquiry</option>
+                      <option value="Verification / KYC">Verification / KYC</option>
+                      <option value="Account Upgrade">Account Upgrade</option>
+                      <option value="Investment Issue">Investment Issue</option>
+                      <option value="Security Concern">Security / Suspicious Activity</option>
+                      <option value="Statement Request">Statement / Document Request</option>
+                      <option value="General Enquiry">General Enquiry</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-arrow"></i>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="supportSubject">Subject</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="supportSubject"
+                    placeholder="Brief summary of your issue"
+                  />
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="supportMessage">Message</label>
+                  <textarea
+                    class="form-control support-textarea"
+                    id="supportMessage"
+                    rows="6"
+                    placeholder="Describe your issue in detail. Include any transaction IDs, dates, or reference numbers that may be relevant…"
+                  ></textarea>
+                  <p class="form-hint" id="charCount">0 / 1500 characters</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="supportPriority">Priority</label>
+                  <div class="priority-options">
+                    <label class="priority-radio">
+                      <input type="radio" name="priority" value="Low" />
+                      <span class="priority-pill low">Low</span>
+                    </label>
+                    <label class="priority-radio">
+                      <input type="radio" name="priority" value="Normal" checked />
+                      <span class="priority-pill normal">Normal</span>
+                    </label>
+                    <label class="priority-radio">
+                      <input type="radio" name="priority" value="Urgent" />
+                      <span class="priority-pill urgent">Urgent</span>
+                    </label>
+                  </div>
+                </div>
+
+                <button type="button" class="btn btn-primary open-email-btn" id="openEmailBtn">
+                  <i class="fa-regular fa-envelope"></i>
+                  Open in Email App
+                </button>
+
+                <p class="email-note">
+                  <i class="fa-solid fa-circle-info"></i>
+                  This will open your default mail client (Gmail, Outlook, Apple Mail, etc.) pre-filled with your message.
+                </p>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Contact info + FAQs -->
+          <div class="support-side">
+
+            <!-- Contact methods -->
+            <div class="contact-methods card">
+              <p class="section-title-sm">Other Ways to Reach Us</p>
+              <div class="contact-list">
+                <div class="contact-item">
+                  <div class="contact-icon email-icon">
+                    <i class="fa-solid fa-envelope"></i>
+                  </div>
+                  <div class="contact-info">
+                    <span class="contact-label">Email Support</span>
+                    <a href="mailto:<%= typeof websiteMail !== 'undefined' ? websiteMail : 'support@yourbank.com' %>" class="contact-value">
+                      <%= typeof websiteMail !== 'undefined' ? websiteMail : 'support@yourbank.com' %>
+                    </a>
+                  </div>
+                </div>
+                <div class="contact-item">
+                  <div class="contact-icon chat-icon">
+                    <i class="fa-solid fa-comment-dots"></i>
+                  </div>
+                  <div class="contact-info">
+                    <span class="contact-label">Live Chat</span>
+                    <span class="contact-value">Available Mon–Fri, 9am–6pm EST</span>
+                  </div>
+                  <span class="badge badge-success online-badge">Online</span>
+                </div>
+                <div class="contact-item">
+                  <div class="contact-icon phone-icon">
+                    <i class="fa-solid fa-phone"></i>
+                  </div>
+                  <div class="contact-info">
+                    <span class="contact-label">Phone Support</span>
+                    <span class="contact-value">+1 (800) 123-4567</span>
+                  </div>
+                </div>
+                <div class="contact-item">
+                  <div class="contact-icon hours-icon">
+                    <i class="fa-regular fa-clock"></i>
+                  </div>
+                  <div class="contact-info">
+                    <span class="contact-label">Business Hours</span>
+                    <span class="contact-value">Mon–Fri 8am–8pm · Sat 9am–5pm EST</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Response time card -->
+            <div class="response-card card">
+              <div class="response-row">
+                <div class="response-item">
+                  <span class="response-time accent">~2 hrs</span>
+                  <span class="response-label">Avg. Response</span>
+                </div>
+                <div class="response-divider"></div>
+                <div class="response-item">
+                  <span class="response-time gold">98%</span>
+                  <span class="response-label">Satisfaction Rate</span>
+                </div>
+                <div class="response-divider"></div>
+                <div class="response-item">
+                  <span class="response-time">24/7</span>
+                  <span class="response-label">Security Desk</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- FAQs -->
+            <div class="faqs-card card">
+              <p class="section-title-sm" style="margin-bottom: 14px;">Frequently Asked Questions</p>
+              <div class="faq-list">
+
+                <div class="faq-item">
+                  <button class="faq-toggle">
+                    <span>How long do transfers take?</span>
+                    <i class="fa-solid fa-chevron-down faq-caret"></i>
+                  </button>
+                  <div class="faq-answer">
+                    Intra-bank transfers are processed within the same business day. Inter-bank and wire transfers typically take 1–3 business days depending on the receiving institution.
+                  </div>
+                </div>
+
+                <div class="faq-item">
+                  <button class="faq-toggle">
+                    <span>Why is my account restricted?</span>
+                    <i class="fa-solid fa-chevron-down faq-caret"></i>
+                  </button>
+                  <div class="faq-answer">
+                    Account restrictions are applied for security reviews or pending KYC verification. Please complete your identity verification under the KYC section or contact support for more information.
+                  </div>
+                </div>
+
+                <div class="faq-item">
+                  <button class="faq-toggle">
+                    <span>How do I dispute a transaction?</span>
+                    <i class="fa-solid fa-chevron-down faq-caret"></i>
+                  </button>
+                  <div class="faq-answer">
+                    Use the contact form above and select "Transaction Dispute" as the category. Provide the transaction ID, date, and amount. Our team will investigate within 48 hours.
+                  </div>
+                </div>
+
+                <div class="faq-item">
+                  <button class="faq-toggle">
+                    <span>How do I reset my transaction PIN?</span>
+                    <i class="fa-solid fa-chevron-down faq-caret"></i>
+                  </button>
+                  <div class="faq-answer">
+                    Visit Account Settings → Security → Change Transaction PIN. You'll need your current PIN. If you've forgotten it, contact support to initiate a secure reset.
+                  </div>
+                </div>
+
+                <div class="faq-item">
+                  <button class="faq-toggle">
+                    <span>How do I upgrade my account?</span>
+                    <i class="fa-solid fa-chevron-down faq-caret"></i>
+                  </button>
+                  <div class="faq-answer">
+                    Navigate to Account Upgrade from your dashboard. Choose your desired plan, complete the payment, and upload proof. Upgrades are processed within 24 hours.
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    // Character counter
+    const textarea = document.getElementById('supportMessage');
+    const charCount = document.getElementById('charCount');
+    textarea.addEventListener('input', () => {
+      const len = textarea.value.length;
+      charCount.textContent = `${len} / 1500 characters`;
+      if (len > 1400) charCount.style.color = 'var(--warning)';
+      else charCount.style.color = 'var(--text-muted)';
+    });
+
+    // Category → auto subject prefix
+    const categorySelect = document.getElementById('supportCategory');
+    const subjectInput = document.getElementById('supportSubject');
+    categorySelect.addEventListener('change', () => {
+      if (!subjectInput.value) {
+        subjectInput.value = categorySelect.value + ' — ';
+        subjectInput.focus();
+        subjectInput.setSelectionRange(subjectInput.value.length, subjectInput.value.length);
+      }
+    });
+
+    // Open in email mailto
+    document.getElementById('openEmailBtn').addEventListener('click', () => {
+      const firstName = document.getElementById('supportFirstName').value.trim();
+      const lastName  = document.getElementById('supportLastName').value.trim();
+      const email     = document.getElementById('supportEmail').value.trim();
+      const acctNo    = document.getElementById('supportAccountNo').value.trim();
+      const category  = categorySelect.value;
+      const subject   = subjectInput.value.trim();
+      const message   = textarea.value.trim();
+      const priority  = document.querySelector('input[name="priority"]:checked')?.value || 'Normal';
+
+      if (!subject || !message) {
+        alert('Please fill in the Subject and Message fields before opening your email app.');
+        return;
+      }
+
+      const to      = '<%= typeof websiteMail !== "undefined" ? websiteMail : "support@yourbank.com" %>';
+      const subLine = encodeURIComponent(`[${priority}] ${subject}`);
+      const body    = encodeURIComponent(
+        `Name: ${firstName} ${lastName}\nEmail: ${email}\nAccount Number: ${acctNo}\nCategory: ${category}\nPriority: ${priority}\n\n---\n\n${message}`
+      );
+
+      window.location.href = `mailto:${to}?subject=${subLine}&body=${body}`;
+    });
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+  </script>
+</body>
+</html>

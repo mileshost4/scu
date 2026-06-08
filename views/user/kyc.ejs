@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Identity Verification | <%= websiteName %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/kyc.css" />
+</head>
+<body>
+
+  <%
+    locals.currentPath = '/user/kyc';
+  %>
+
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="kyc-page fade-in">
+
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <div class="page-icon page-icon--gold">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div>
+              <h1 class="page-title">Identity Verification</h1>
+              <p class="page-subtitle">KYC — Know Your Customer</p>
+            </div>
+          </div>
+          <!-- Status badge -->
+          <% if (user.verificationstatus === 'Verified') { %>
+            <span class="badge badge-success kyc-status-badge">
+              <i class="fa-solid fa-circle-check"></i> Verified
+            </span>
+          <% } else if (user.verificationstatus === 'Pending') { %>
+            <span class="badge badge-warning kyc-status-badge">
+              <i class="fa-solid fa-clock"></i> Under Review
+            </span>
+          <% } else { %>
+            <span class="badge badge-danger kyc-status-badge">
+              <i class="fa-solid fa-circle-xmark"></i> Not Verified
+            </span>
+          <% } %>
+        </div>
+
+        <!-- Status Banner -->
+        <% if (user.verificationstatus === 'Verified') { %>
+          <div class="kyc-banner kyc-banner--success">
+            <i class="fa-solid fa-circle-check"></i>
+            <div>
+              <p class="kyc-banner-title">Your identity has been verified</p>
+              <p class="kyc-banner-sub">You have full access to all platform features.</p>
+            </div>
+          </div>
+        <% } else if (user.verificationstatus === 'Pending') { %>
+          <div class="kyc-banner kyc-banner--warning">
+            <i class="fa-solid fa-hourglass-half"></i>
+            <div>
+              <p class="kyc-banner-title">Verification in progress</p>
+              <p class="kyc-banner-sub">We're reviewing your documents. This typically takes 1–2 business days. We'll notify you once complete.</p>
+            </div>
+          </div>
+        <% } else { %>
+          <div class="kyc-banner kyc-banner--info">
+            <i class="fa-solid fa-circle-info"></i>
+            <div>
+              <p class="kyc-banner-title">Verify your identity to unlock full access</p>
+              <p class="kyc-banner-sub">Submit a government-issued ID to activate transactions, transfers, and investments.</p>
+            </div>
+          </div>
+        <% } %>
+
+        <!-- Steps -->
+        <% if (user.verificationstatus !== 'Verified') { %>
+        <div class="kyc-steps">
+          <div class="kyc-step <%= user.verificationstatus !== 'Not Verified' ? 'is-done' : 'is-active' %>">
+            <div class="step-num">1</div>
+            <div class="step-text">
+              <span class="step-label">Personal Info</span>
+              <span class="step-sub">Completed at registration</span>
+            </div>
+          </div>
+          <div class="kyc-step-connector"></div>
+          <div class="kyc-step <%= user.verificationstatus === 'Pending' ? 'is-active' : user.verificationstatus === 'Verified' ? 'is-done' : '' %>">
+            <div class="step-num">2</div>
+            <div class="step-text">
+              <span class="step-label">Document Upload</span>
+              <span class="step-sub">Submit a valid ID</span>
+            </div>
+          </div>
+          <div class="kyc-step-connector"></div>
+          <div class="kyc-step <%= user.verificationstatus === 'Verified' ? 'is-done' : '' %>">
+            <div class="step-num">3</div>
+            <div class="step-text">
+              <span class="step-label">Review & Approval</span>
+              <span class="step-sub">Admin review (1–2 days)</span>
+            </div>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Upload Form — only show if not verified or pending -->
+        <% if (user.verificationstatus === 'Not Verified') { %>
+        <div class="kyc-card card">
+          <div class="kyc-card-header">
+            <i class="fa-regular fa-id-card"></i>
+            <span>Upload Verification Document</span>
+          </div>
+
+          <form action="/user/kyc?_method=PUT" method="POST" enctype="multipart/form-data" id="kycForm">
+            <div class="kyc-form-body">
+
+              <!-- Document type -->
+              <div class="form-group">
+                <label class="form-label" for="documenttype">Document Type</label>
+                <select class="form-control" id="documenttype" name="documenttype" required>
+                  <option value="" disabled selected>Select document type</option>
+                  <option value="National ID">National ID</option>
+                  <option value="International Passport">International Passport</option>
+                  <option value="Driver's License">Driver's License</option>
+                  <option value="Residence Permit">Residence Permit</option>
+                </select>
+              </div>
+
+              <!-- File upload -->
+              <div class="form-group">
+                <label class="form-label">Upload Document</label>
+                <div class="kyc-dropzone" id="dropzone">
+                  <input type="file" name="verificationdocument" id="docFile" multiple accept=".jpg,.jpeg,.png,.pdf" class="kyc-file-input" required />
+                  <div class="dropzone-inner" id="dropzoneContent">
+                    <div class="dropzone-icon">
+                      <i class="fa-regular fa-cloud-arrow-up"></i>
+                    </div>
+                    <p class="dropzone-title">Drag &amp; drop files here</p>
+                    <p class="dropzone-sub">or <span class="dropzone-link">click to browse</span></p>
+                    <p class="dropzone-hint">JPG, PNG or PDF · Max 10MB per file</p>
+                  </div>
+                  <div class="dropzone-preview" id="dropzonePreview" style="display:none;"></div>
+                </div>
+              </div>
+
+              <!-- Tips -->
+              <div class="kyc-tips">
+                <p class="tips-title"><i class="fa-solid fa-lightbulb"></i> Tips for a successful submission</p>
+                <ul class="tips-list">
+                  <li>Ensure the document is clear, unblurred and fully visible</li>
+                  <li>All four corners of the document must be visible</li>
+                  <li>The document must not be expired</li>
+                  <li>No screenshots — original photos only</li>
+                </ul>
+              </div>
+
+            </div>
+            <div class="kyc-form-footer">
+              <button type="submit" class="btn btn-primary" id="kycSubmitBtn">
+                <i class="fa-solid fa-paper-plane"></i>
+                Submit for Verification
+              </button>
+            </div>
+          </form>
+        </div>
+        <% } %>
+
+        <!-- Already submitted: show uploaded docs -->
+        <% if (user.verificationstatus === 'Pending' && user.verificationdocument && user.verificationdocument.length > 0) { %>
+        <div class="kyc-card card">
+          <div class="kyc-card-header">
+            <i class="fa-regular fa-folder-open"></i>
+            <span>Submitted Documents</span>
+          </div>
+          <div class="kyc-submitted-docs">
+            <% user.verificationdocument.forEach(function(doc) { %>
+              <div class="submitted-doc">
+                <div class="submitted-doc-thumb">
+                  <% if (doc.url.endsWith('.pdf')) { %>
+                    <i class="fa-regular fa-file-pdf"></i>
+                  <% } else { %>
+                    <img src="<%= doc.url %>" alt="Document" />
+                  <% } %>
+                </div>
+                <div class="submitted-doc-info">
+                  <span class="submitted-doc-name"><%= doc.filename.split('/').pop() %></span>
+                  <span class="badge badge-warning"><i class="fa-solid fa-clock"></i> Pending Review</span>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    // Dropzone preview
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('docFile');
+    const preview   = document.getElementById('dropzonePreview');
+    const content   = document.getElementById('dropzoneContent');
+
+    if (dropzone && fileInput) {
+      dropzone.addEventListener('click', () => fileInput.click());
+
+      dropzone.addEventListener('dragover', e => {
+        e.preventDefault();
+        dropzone.classList.add('is-dragover');
+      });
+      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('is-dragover'));
+      dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropzone.classList.remove('is-dragover');
+        fileInput.files = e.dataTransfer.files;
+        showPreviews(e.dataTransfer.files);
+      });
+
+      fileInput.addEventListener('change', () => showPreviews(fileInput.files));
+    }
+
+    function showPreviews(files) {
+      if (!files.length) return;
+      preview.innerHTML = '';
+      Array.from(files).forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = e => {
+            item.innerHTML = `<img src="${e.target.result}" alt="${file.name}" /><span>${file.name}</span>`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          item.innerHTML = `<div class="preview-pdf-icon"><i class="fa-regular fa-file-pdf"></i></div><span>${file.name}</span>`;
+        }
+        preview.appendChild(item);
+      });
+      content.style.display = 'none';
+      preview.style.display = 'flex';
+    }
+  </script>
+</body>
+</html>

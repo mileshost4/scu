@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verification Requests | Admin</title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/verification.css" />
+</head>
+<body>
+  <% locals.currentPath = '/admin/admin.verification-requests'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">KYC Verification Requests</h1>
+            <p class="page-subtitle"><%= users.length %> pending review</p>
+          </div>
+        </div>
+
+        <!-- Tabs: Pending / All -->
+        <div class="verif-tabs">
+          <button class="verif-tab active" data-filter="all">All Pending (<%= users.length %>)</button>
+        </div>
+
+        <% if (users.length === 0) { %>
+        <div class="card" style="padding:60px;text-align:center;color:var(--text-muted);">
+          <i class="fa-solid fa-id-card" style="font-size:2rem;opacity:.3;display:block;margin-bottom:12px;"></i>
+          <p>No pending verification requests.</p>
+        </div>
+        <% } %>
+
+        <div class="verif-list">
+          <% users.forEach(u => { %>
+          <div class="verif-list-item card">
+            <div class="verif-list-left">
+              <div class="verif-avatar">
+                <% if (u.profilepicture && u.profilepicture.length > 0) { %>
+                  <img src="<%= u.profilepicture[u.profilepicture.length-1].url %>" alt="" />
+                <% } else { %>
+                  <%= (u.firstname||'?')[0].toUpperCase() %><%= (u.lastname||'')[0]?(u.lastname)[0].toUpperCase():'' %>
+                <% } %>
+              </div>
+              <div class="verif-user-info">
+                <div class="verif-user-name"><%= u.firstname %> <%= u.lastname %></div>
+                <div class="verif-user-email"><%= u.email %></div>
+                <div class="verif-user-meta">
+                  <span class="verif-meta-item"><i class="fa-solid fa-globe"></i> <%= u.country || '—' %></span>
+                  <span class="verif-meta-item"><i class="fa-solid fa-id-badge"></i> <%= u.documenttype || 'Document not set' %></span>
+                  <% if(u.verificationdocument && u.verificationdocument.length > 0) { %>
+                    <span class="badge badge-info"><i class="fa-solid fa-file"></i> <%= u.verificationdocument.length %> doc(s)</span>
+                  <% } else { %>
+                    <span class="badge badge-danger">No documents</span>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+            <div class="verif-list-right">
+              <span class="badge badge-warning"><i class="fa-solid fa-clock"></i> Pending</span>
+              <div class="verif-list-actions">
+                <a href="/admin/admin.verification-requests/<%= u._id %>" class="btn btn-primary btn-sm"><i class="fa-solid fa-eye"></i> Review</a>
+                <form action="/admin/admin.users/<%= u._id %>/verify-acct" method="POST" style="display:inline">
+                  <input type="hidden" name="_method" value="PUT" />
+                  <button type="submit" class="btn btn-ghost btn-sm"><i class="fa-solid fa-check"></i> Quick Approve</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <script src="/script/partials/navbar.js"></script>
+</body>
+</html>

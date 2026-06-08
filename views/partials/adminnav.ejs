@@ -1,0 +1,393 @@
+<%
+/*
+  ADMIN NAVBAR + SIDEBAR PARTIAL — views/partials/adminnav.ejs
+  Mirrors the user navbar.ejs pattern exactly.
+  Uses the same CSS variables, modal system, flash, and JS helpers.
+  Routes derived from adminRoutes.js.
+*/
+
+const _initials = admin
+  ? (admin.firstname ? admin.firstname[0].toUpperCase() : '')
+  + (admin.lastname  ? admin.lastname[0].toUpperCase()  : '')
+  : 'A';
+
+let _statusLabel = 'Admin';
+let _statusClass = 'verified';
+
+const _path   = locals.currentPath || '';
+const _active = (p) => _path === p ? 'active' : '';
+
+/* Helper: mark active for any path that starts with a prefix */
+const _activePrefix = (prefix) => _path.startsWith(prefix) ? 'active' : '';
+%>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TOP NAVBAR — ADMIN
+════════════════════════════════════════════════════════════ -->
+<nav class="navbar" id="mainNavbar">
+
+  <div class="navbar-left">
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+      <a href="/admin/admin.dashboard" class="navbar-logo">
+        <img src="/images/logo.png" alt="Logo" onerror="this.style.display='none'" />
+        <span class="logo-text">SCU <span style="font-size:0.65rem; background:var(--danger-dim); color:var(--danger); padding:2px 8px; border-radius:var(--radius-full); font-family:var(--font-ui); font-weight:700; letter-spacing:0.06em; vertical-align:middle;">ADMIN</span></span>
+      </a>
+      <div class="hamburger-icon">
+        <span></span><span></span><span></span>
+      </div>
+    </button>
+  </div>
+
+  <div class="navbar-right">
+
+    <!-- Theme toggle -->
+    <div class="theme-toggle" id="themeToggleWrap">
+      <button class="theme-toggle-btn" id="themeToggleBtn" aria-label="Toggle theme">
+        <i class="fa-solid fa-moon theme-icon" id="themeIcon"></i>
+        <span id="themeLabel">Dark</span>
+        <i class="fa-solid fa-chevron-down" style="font-size:0.65rem; color:var(--text-muted)"></i>
+      </button>
+      <div class="dropdown-panel theme-dropdown" id="themeDropdown">
+        <button class="theme-option active" data-theme-opt="dark"   onclick="setTheme('dark')">
+          <i class="fa-solid fa-moon"></i> Dark
+        </button>
+        <button class="theme-option"        data-theme-opt="light"  onclick="setTheme('light')">
+          <i class="fa-solid fa-sun"></i> Light
+        </button>
+        <button class="theme-option"        data-theme-opt="system" onclick="setTheme('system')">
+          <i class="fa-solid fa-circle-half-stroke"></i> System
+        </button>
+      </div>
+    </div>
+
+    <!-- Admin user dropdown -->
+    <div class="nav-user" id="navUser">
+      <button class="nav-user-btn" id="navUserBtn" aria-label="User menu">
+        <div class="nav-avatar" style="background: linear-gradient(135deg, var(--danger), #c0392b);">
+          <% if (admin && admin.profilepicture && admin.profilepicture.length > 0) { %>
+            <img src="<%= admin.profilepicture[0].url %>" alt="avatar" />
+          <% } else { %>
+            <%= _initials %>
+          <% } %>
+        </div>
+        <div class="nav-user-info">
+          <span class="nav-user-name"><%= admin ? admin.firstname : 'Admin' %></span>
+          <span class="nav-user-status verified">Administrator</span>
+        </div>
+        <i class="fa-solid fa-chevron-down nav-caret"></i>
+      </button>
+
+      <div class="dropdown-panel" id="userDropdown">
+        <div class="dropdown-header">
+          <div class="dh-name"><%= admin ? admin.firstname + ' ' + admin.lastname : '' %></div>
+          <div class="dh-email"><%= admin ? admin.email : '' %></div>
+          <div class="dh-meta">
+            <span class="badge badge-danger">
+              <i class="fa-solid fa-shield-halved"></i> Administrator
+            </span>
+          </div>
+        </div>
+
+        <a href="/admin/admin.profile" class="dropdown-item">
+          <i class="fa-regular fa-user"></i> My Profile
+        </a>
+        <a href="/admin/admin.send-mail" class="dropdown-item">
+          <i class="fa-regular fa-envelope"></i> Send Mail
+        </a>
+        <div class="dropdown-divider"></div>
+        <button type="button" class="dropdown-item danger" onclick="openLogoutModal()">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+        </button>
+      </div>
+    </div>
+
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SIDEBAR — ADMIN
+════════════════════════════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+
+  <!-- ── Overview ── -->
+  <div class="sidebar-section-label">Overview</div>
+
+  <a href="/admin/admin.dashboard"
+     class="sidebar-item <%= _active('/admin/admin.dashboard') %>"
+     data-tooltip="Dashboard">
+    <i class="fa-solid fa-gauge-high"></i>
+    <span class="item-label">Dashboard</span>
+  </a>
+
+  <!-- ── Users ── -->
+  <div class="sidebar-section-label">Users</div>
+
+  <a href="/admin/admin.users"
+     class="sidebar-item <%= _active('/admin/admin.users') %>"
+     data-tooltip="All Users">
+    <i class="fa-solid fa-users"></i>
+    <span class="item-label">All Users</span>
+  </a>
+
+  <a href="/admin/admin.verification-requests"
+     class="sidebar-item <%= _active('/admin/admin.verification-requests') %>"
+     data-tooltip="Verification Requests">
+    <i class="fa-solid fa-id-card"></i>
+    <span class="item-label">Verification Requests</span>
+  </a>
+
+  <!-- ── Transactions ── -->
+  <div class="sidebar-section-label">Transactions</div>
+
+  <div class="sidebar-group">
+    <button class="sidebar-group-toggle" id="transGroupToggle" data-tooltip="Transactions">
+      <i class="fa-solid fa-arrow-right-arrow-left"></i>
+      <span class="toggle-label">Transactions</span>
+      <i class="fa-solid fa-chevron-right toggle-caret"></i>
+    </button>
+    <div class="sidebar-sub" id="transSub">
+      <a href="/admin/admin.pending-transactions"
+         class="sidebar-item <%= _active('/admin/admin.pending-transactions') %>"
+         data-tooltip="Pending">
+        <i class="fa-solid fa-hourglass-half"></i>
+        <span class="item-label">Pending</span>
+      </a>
+      <a href="/admin/admin.approved-transactions"
+         class="sidebar-item <%= _active('/admin/admin.approved-transactions') %>"
+         data-tooltip="Approved">
+        <i class="fa-solid fa-circle-check"></i>
+        <span class="item-label">Approved</span>
+      </a>
+      <a href="/admin/admin.declined-transactions"
+         class="sidebar-item <%= _active('/admin/admin.declined-transactions') %>"
+         data-tooltip="Declined">
+        <i class="fa-solid fa-circle-xmark"></i>
+        <span class="item-label">Declined</span>
+      </a>
+      <a href="/admin/admin.delete-transactions"
+         class="sidebar-item <%= _active('/admin/admin.delete-transactions') %>"
+         data-tooltip="Delete">
+        <i class="fa-solid fa-trash"></i>
+        <span class="item-label">Delete Transactions</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── Deposits ── -->
+  <div class="sidebar-section-label">Deposits</div>
+
+  <a href="/admin/admin.deposit-requests"
+     class="sidebar-item <%= _active('/admin/admin.deposit-requests') %>"
+     data-tooltip="Deposit Requests">
+    <i class="fa-solid fa-inbox"></i>
+    <span class="item-label">Deposit Requests</span>
+  </a>
+
+  <a href="/admin/admin.deposit-history"
+     class="sidebar-item <%= _active('/admin/admin.deposit-history') %>"
+     data-tooltip="Deposit History">
+    <i class="fa-solid fa-clock-rotate-left"></i>
+    <span class="item-label">Deposit History</span>
+  </a>
+
+  <a href="/admin/admin.depositmethods"
+     class="sidebar-item <%= _active('/admin/admin.depositmethods') %>"
+     data-tooltip="Deposit Methods">
+    <i class="fa-brands fa-bitcoin"></i>
+    <span class="item-label">Deposit Methods</span>
+  </a>
+
+  <!-- ── Cards ── -->
+  <div class="sidebar-section-label">Cards</div>
+
+  <a href="/admin/admin.cards"
+     class="sidebar-item <%= _active('/admin/admin.cards') %>"
+     data-tooltip="All Cards">
+    <i class="fa-regular fa-credit-card"></i>
+    <span class="item-label">All Cards</span>
+  </a>
+
+  <!-- ── Investments ── -->
+  <div class="sidebar-section-label">Investments</div>
+
+  <a href="/admin/admin.active-investments"
+     class="sidebar-item <%= _active('/admin/admin.active-investments') %>"
+     data-tooltip="Active Investments">
+    <i class="fa-solid fa-chart-line"></i>
+    <span class="item-label">Active Investments</span>
+  </a>
+
+  <a href="/admin/admin.inactive-investments"
+     class="sidebar-item <%= _active('/admin/admin.inactive-investments') %>"
+     data-tooltip="Closed Investments">
+    <i class="fa-solid fa-chart-bar"></i>
+    <span class="item-label">Closed Investments</span>
+  </a>
+
+  <!-- ── Plans ── -->
+  <div class="sidebar-section-label">Plans</div>
+
+  <a href="/admin/admin.upgrade-plans"
+     class="sidebar-item <%= _active('/admin/admin.upgrade-plans') %>"
+     data-tooltip="Upgrade Plans">
+    <i class="fa-solid fa-star"></i>
+    <span class="item-label">Upgrade Plans</span>
+  </a>
+
+  <a href="/admin/admin.investment-plans"
+     class="sidebar-item <%= _active('/admin/admin.investment-plans') %>"
+     data-tooltip="Investment Plans">
+    <i class="fa-solid fa-seedling"></i>
+    <span class="item-label">Investment Plans</span>
+  </a>
+
+  <!-- ── Communication ── -->
+  <div class="sidebar-section-label">Communication</div>
+
+  <a href="/admin/admin.send-mail"
+     class="sidebar-item <%= _active('/admin/admin.send-mail') %>"
+     data-tooltip="Send Mail">
+    <i class="fa-regular fa-envelope"></i>
+    <span class="item-label">Send Mail</span>
+  </a>
+
+  <!-- ── Admin Account ── -->
+  <div class="sidebar-section-label">Account</div>
+
+  <a href="/admin/admin.profile"
+     class="sidebar-item <%= _active('/admin/admin.profile') %>"
+     data-tooltip="My Profile">
+    <i class="fa-regular fa-user"></i>
+    <span class="item-label">My Profile</span>
+  </a>
+
+  <div class="sidebar-footer">
+    <button type="button" class="sidebar-item" data-tooltip="Sign Out"
+      style="color:var(--danger); border:none; background:transparent; width:100%; text-align:left; cursor:pointer;"
+      onclick="openLogoutModal()">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      <span class="item-label">Sign Out</span>
+    </button>
+  </div>
+
+</aside>
+
+<!-- Mobile overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- Logout confirmation modal (same structure as user partial) -->
+<div class="custom-modal-overlay logout-modal" id="logoutModal" onclick="if(event.target===this)closeLogoutModal()">
+  <div class="custom-modal" style="max-width:400px">
+    <div class="custom-modal-header">
+      <div class="custom-modal-title" style="gap:10px">
+        <span style="width:32px;height:32px;border-radius:var(--radius-md);background:var(--danger-dim);color:var(--danger);display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </span>
+        Sign Out
+      </div>
+      <button class="custom-modal-close" onclick="closeLogoutModal()">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="custom-modal-body" style="text-align:center; padding:28px 24px 20px;">
+      <div style="width:64px;height:64px;border-radius:50%;background:var(--danger-dim);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;color:var(--danger)">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </div>
+      <p style="font-size:0.97rem;font-weight:700;color:var(--text-primary);margin-bottom:6px">Sign out of admin panel?</p>
+      <p style="font-size:0.82rem;color:var(--text-secondary)">You'll be redirected to the admin login page.</p>
+    </div>
+    <div class="custom-modal-footer">
+      <button type="button" class="btn btn-ghost btn-sm" onclick="closeLogoutModal()">Stay Logged In</button>
+      <a href="/admin.logout" class="btn btn-danger btn-sm">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Yes, Sign Out
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Flash messages -->
+<div class="flash-container" id="flashContainer">
+  <% if (typeof messages !== 'undefined' && messages) { %>
+    <% if (messages.success && messages.success.length) { %>
+      <% messages.success.forEach(function(msg) { %>
+        <div class="flash flash-success" role="alert">
+          <div class="flash-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="flash-body">
+            <div class="flash-title">Success</div>
+            <div class="flash-msg"><%= msg %></div>
+          </div>
+          <button class="flash-close" onclick="dismissFlash(this)" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <div class="flash-progress"></div>
+        </div>
+      <% }); %>
+    <% } %>
+    <% if (messages.error && messages.error.length) { %>
+      <% messages.error.forEach(function(msg) { %>
+        <div class="flash flash-error" role="alert">
+          <div class="flash-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+          <div class="flash-body">
+            <div class="flash-title">Error</div>
+            <div class="flash-msg"><%= msg %></div>
+          </div>
+          <button class="flash-close" onclick="dismissFlash(this)" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <div class="flash-progress"></div>
+        </div>
+      <% }); %>
+    <% } %>
+    <% if (messages.warning && messages.warning.length) { %>
+      <% messages.warning.forEach(function(msg) { %>
+        <div class="flash flash-warning" role="alert">
+          <div class="flash-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="flash-body">
+            <div class="flash-title">Warning</div>
+            <div class="flash-msg"><%= msg %></div>
+          </div>
+          <button class="flash-close" onclick="dismissFlash(this)" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <div class="flash-progress"></div>
+        </div>
+      <% }); %>
+    <% } %>
+    <% if (messages.info && messages.info.length) { %>
+      <% messages.info.forEach(function(msg) { %>
+        <div class="flash flash-info" role="alert">
+          <div class="flash-icon"><i class="fa-solid fa-circle-info"></i></div>
+          <div class="flash-body">
+            <div class="flash-title">Info</div>
+            <div class="flash-msg"><%= msg %></div>
+          </div>
+          <button class="flash-close" onclick="dismissFlash(this)" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <div class="flash-progress"></div>
+        </div>
+      <% }); %>
+    <% } %>
+  <% } %>
+</div>
+
+<script>
+/* Logout modal */
+function openLogoutModal() {
+  var m = document.getElementById('logoutModal');
+  if (m) { m.classList.add('open'); document.body.style.overflow = 'hidden'; }
+}
+function closeLogoutModal() {
+  var m = document.getElementById('logoutModal');
+  if (m) { m.classList.remove('open'); document.body.style.overflow = ''; }
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeLogoutModal();
+});
+
+if (typeof openModal === 'undefined') {
+  window.openModal  = function(id) { var el = document.getElementById(id); if (el) { el.classList.add('open'); document.body.style.overflow = 'hidden'; } };
+  window.closeModal = function(id) { var el = document.getElementById(id); if (el) { el.classList.remove('open'); document.body.style.overflow = ''; } };
+  window.handleOverlayClick = function(e, id) { if (e.target === e.currentTarget) window.closeModal(id); };
+}
+</script>

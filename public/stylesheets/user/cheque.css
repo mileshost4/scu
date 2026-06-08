@@ -1,0 +1,13 @@
+/* ============================================================
+   CHEQUE.CSS — Cheque / bank deposit page
+   Imports shared deposit styles from deposit.css
+   ============================================================ */
+
+/* The cheque page shares all layout and component styles with deposit.css.
+   Import it as a shared base via the stylesheet link in the EJS, or
+   duplicate the file as cheque.css for self-contained delivery. */
+
+@import url('/stylesheets/user/deposit.css');
+
+/* ── Cheque-specific: no extra coins/wallet box needed ────────── */
+/* Any cheque-only overrides would go here */

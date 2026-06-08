@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notifications — <%= user.firstname %> | Admin</title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/user-notifications.css" />
+</head>
+<body>
+  <% locals.currentPath = '/admin/admin.users'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <div class="breadcrumb">
+          <a href="/admin/admin.users"><i class="fa-solid fa-users"></i> Users</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <a href="/admin/admin.user/<%= user._id %>"><%= user.firstname %> <%= user.lastname %></a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span>Notifications</span>
+        </div>
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Notifications</h1>
+            <p class="page-subtitle"><%= user.firstname %> <%= user.lastname %> &mdash; <%= notifications.length %> total</p>
+          </div>
+          <div class="page-header-right">
+            <a href="/admin/admin.user/<%= user._id %>" class="btn btn-ghost btn-sm"><i class="fa-solid fa-arrow-left"></i> Back</a>
+            <button class="btn btn-primary btn-sm" onclick="openModal('sendNotifModal')"><i class="fa-solid fa-plus"></i> Send Notification</button>
+          </div>
+        </div>
+
+        <!-- Notifications List -->
+        <div class="card notif-card">
+          <% if (notifications.length === 0) { %>
+          <div class="empty-state">
+            <i class="fa-solid fa-bell-slash"></i>
+            <p>No notifications sent yet.</p>
+          </div>
+          <% } %>
+          <% notifications.forEach(notif => { %>
+          <div class="notif-row <%= notif.status === 'Unread' ? 'unread' : '' %>">
+            <div class="notif-indicator <%= notif.status === 'Unread' ? 'active' : '' %>"></div>
+            <div class="notif-icon">
+              <i class="fa-solid fa-bell"></i>
+            </div>
+            <div class="notif-content">
+              <div class="notif-title"><%= notif.title %></div>
+              <div class="notif-message"><%= notif.message %></div>
+              <div class="notif-meta">
+                <span class="notif-date"><i class="fa-solid fa-clock"></i> <%= notif.notificationdate ? new Date(notif.notificationdate).toLocaleString() : '—' %></span>
+                <% if(notif.status === 'Unread') { %>
+                  <span class="badge badge-warning" style="font-size:0.65rem;">Unread</span>
+                <% } else { %>
+                  <span class="badge badge-accent" style="font-size:0.65rem;">Read</span>
+                <% } %>
+              </div>
+            </div>
+            <div class="notif-actions">
+              <form action="/admin/client/<%= user._id %>/notifications/<%= notif._id %>/" method="POST" onsubmit="return confirm('Delete this notification?')">
+                <input type="hidden" name="_method" value="DELETE" />
+                <button type="submit" class="btn btn-icon" title="Delete"><i class="fa-solid fa-trash"></i></button>
+              </form>
+            </div>
+          </div>
+          <% }) %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Send Notification Modal -->
+  <div class="custom-modal-overlay" id="sendNotifModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title"><i class="fa-solid fa-bell"></i> Send Notification</div>
+        <button class="custom-modal-close" onclick="closeModal('sendNotifModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form action="/admin/admin.notifications/<%= user._id %>" method="POST">
+        <div class="custom-modal-body">
+          <div class="form-group"><label class="form-label">Title</label><input type="text" name="title" class="form-control" required /></div>
+          <div class="form-group"><label class="form-label">Message</label><textarea name="message" class="form-control" rows="4" required></textarea></div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('sendNotifModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Send</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.querySelectorAll('.custom-modal-overlay').forEach(o => {
+      o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+    });
+  </script>
+</body>
+</html>

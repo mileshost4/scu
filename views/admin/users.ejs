@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Users | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/users.css" />
+</head>
+<body>
+  <% locals.currentPath = '/admin/admin.users'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">All Users</h1>
+            <p class="page-subtitle"><%= users.length %> registered accounts</p>
+          </div>
+          <div class="page-header-right">
+            <a href="/admin/admin.users/findUser" class="btn btn-ghost btn-sm" id="searchToggle">
+              <i class="fa-solid fa-magnifying-glass"></i> Search
+            </a>
+            <button class="btn btn-primary btn-sm" onclick="openModal('createUserModal')">
+              <i class="fa-solid fa-user-plus"></i> New User
+            </button>
+          </div>
+        </div>
+
+        <!-- Search Bar (hidden by default) -->
+        <div class="search-bar-wrap" id="searchBarWrap">
+          <form action="/admin/admin.users/findUser" method="GET" class="search-form">
+            <div class="search-input-wrap">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input type="text" name="findUser" class="form-control search-input" placeholder="Search by name, email…" autocomplete="off" />
+              <button type="submit" class="btn btn-primary btn-sm">Search</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Stats Strip -->
+        <div class="stats-strip">
+          <div class="stat-pill">
+            <span class="stat-pill-icon accent"><i class="fa-solid fa-users"></i></span>
+            <div>
+              <div class="stat-pill-val"><%= users.length %></div>
+              <div class="stat-pill-lbl">Total</div>
+            </div>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-icon success"><i class="fa-solid fa-circle-check"></i></span>
+            <div>
+              <div class="stat-pill-val"><%= users.filter(u => u.accountStatus === 'Active').length %></div>
+              <div class="stat-pill-lbl">Active</div>
+            </div>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-icon warning"><i class="fa-solid fa-clock"></i></span>
+            <div>
+              <div class="stat-pill-val"><%= users.filter(u => u.verificationstatus === 'Pending').length %></div>
+              <div class="stat-pill-lbl">Pending KYC</div>
+            </div>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-pill-icon danger"><i class="fa-solid fa-ban"></i></span>
+            <div>
+              <div class="stat-pill-val"><%= users.filter(u => u.accountStatus === 'Suspended').length %></div>
+              <div class="stat-pill-lbl">Suspended</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Users Table -->
+        <div class="card users-table-card">
+          <div class="table-toolbar">
+            <div class="filter-tabs">
+              <button class="filter-tab active" data-filter="all">All</button>
+              <button class="filter-tab" data-filter="Active">Active</button>
+              <button class="filter-tab" data-filter="Pending">Pending KYC</button>
+              <button class="filter-tab" data-filter="Suspended">Suspended</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Account #</th>
+                  <th>Country</th>
+                  <th>KYC</th>
+                  <th>Status</th>
+                  <th>Joined</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <% if (users.length === 0) { %>
+                <tr>
+                  <td colspan="7" class="table-empty">
+                    <i class="fa-solid fa-users-slash"></i>
+                    <p>No users found</p>
+                  </td>
+                </tr>
+                <% } %>
+                <% users.forEach(user => { %>
+                <tr class="user-row" data-status="<%= user.accountStatus %>" data-kyc="<%= user.verificationstatus %>">
+                  <td>
+                    <div class="user-cell">
+                      <div class="user-avatar-sm">
+                        <% if (user.profilepicture && user.profilepicture.length > 0) { %>
+                          <img src="<%= user.profilepicture[user.profilepicture.length - 1].url %>" alt="" />
+                        <% } else { %>
+                          <%= (user.firstname || '?')[0].toUpperCase() %><%= (user.lastname || '')[0] ? (user.lastname)[0].toUpperCase() : '' %>
+                        <% } %>
+                      </div>
+                      <div class="user-cell-info">
+                        <div class="user-cell-name"><%= user.firstname %> <%= user.lastname %></div>
+                        <div class="user-cell-email"><%= user.email %></div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="mono-text"><%= user.accountNumber || '—' %></span></td>
+                  <td><%= user.country || '—' %></td>
+                  <td>
+                    <% if (user.verificationstatus === 'Verified') { %>
+                      <span class="badge badge-success"><i class="fa-solid fa-check"></i> Verified</span>
+                    <% } else if (user.verificationstatus === 'Pending') { %>
+                      <span class="badge badge-warning"><i class="fa-solid fa-clock"></i> Pending</span>
+                    <% } else { %>
+                      <span class="badge badge-danger"><i class="fa-solid fa-xmark"></i> Unverified</span>
+                    <% } %>
+                  </td>
+                  <td>
+                    <% if (user.accountStatus === 'Active') { %>
+                      <span class="badge badge-success">Active</span>
+                    <% } else if (user.accountStatus === 'Suspended') { %>
+                      <span class="badge badge-danger">Suspended</span>
+                    <% } else if (user.accountStatus === 'Disabled') { %>
+                      <span class="badge badge-warning">Disabled</span>
+                    <% } else { %>
+                      <span class="badge badge-info">Not Active</span>
+                    <% } %>
+                  </td>
+                  <td class="muted-text"><%= user.accountcreatedat ? new Date(user.accountcreatedat).toLocaleDateString('en-US', {year:'numeric',month:'short',day:'numeric'}) : '—' %></td>
+                  <td>
+                    <div class="row-actions">
+                      <a href="/admin/admin.user/<%= user._id %>" class="btn btn-ghost btn-sm" title="View Profile">
+                        <i class="fa-solid fa-eye"></i>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Create User Modal -->
+  <div class="custom-modal-overlay" id="createUserModal">
+    <div class="custom-modal" style="max-width:620px;">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-user-plus"></i>
+          Create New User
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('createUserModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form action="/admin/admin.create-account" method="POST">
+        <div class="custom-modal-body">
+          <div class="modal-grid-2">
+            <div class="form-group">
+              <label class="form-label">First Name *</label>
+              <input type="text" name="firstname" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name *</label>
+              <input type="text" name="lastname" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email *</label>
+              <input type="email" name="email" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input type="text" name="phonenumber" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Password *</label>
+              <input type="password" name="password" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Confirm Password *</label>
+              <input type="password" name="confirmpassword" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Country</label>
+              <input type="text" name="country" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Currency</label>
+              <select name="basecurrency" class="form-control">
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="NGN">NGN (₦)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Currency Symbol</label>
+              <input type="text" name="basecurrencysymbol" class="form-control" value="$" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Account Type</label>
+              <select name="accountType" class="form-control">
+                <option value="Savings">Savings</option>
+                <option value="Current">Current</option>
+                <option value="Checking">Checking</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Registration Date</label>
+              <input type="date" name="accountcreatedat" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost" onclick="closeModal('createUserModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Create User</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    // Modal helpers
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.querySelectorAll('.custom-modal-overlay').forEach(o => {
+      o.addEventListener('click', e => { if (e.target === o) o.classList.remove('open'); });
+    });
+
+    // Search toggle
+    document.getElementById('searchToggle').addEventListener('click', function(e) {
+      e.preventDefault();
+      const wrap = document.getElementById('searchBarWrap');
+      wrap.classList.toggle('open');
+      if (wrap.classList.contains('open')) wrap.querySelector('input').focus();
+    });
+
+    // Filter tabs
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        const filter = this.dataset.filter;
+        document.querySelectorAll('.user-row').forEach(row => {
+          if (filter === 'all') { row.style.display = ''; return; }
+          if (filter === 'Pending') {
+            row.style.display = row.dataset.kyc === 'Pending' ? '' : 'none';
+          } else {
+            row.style.display = row.dataset.status === filter ? '' : 'none';
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

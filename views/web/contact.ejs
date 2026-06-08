@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us — Sterling Crest Union</title>
+  <meta name="description" content="Get in touch with Sterling Crest Union. 24/7 support, dedicated relationship managers, and multiple contact channels to serve you better."/>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+
+  <link rel="stylesheet" href="/stylesheets/web/nav.css"/>
+  <link rel="stylesheet" href="/stylesheets/web/footer.css"/>
+  <!-- <link rel="stylesheet" href="/stylesheets/web/theme.css"/> -->
+  <link rel="stylesheet" href="/stylesheets/web/contact.css"/>
+</head>
+<body>
+
+  <%- include('../partials/nav', { currentPath: '/contact' }) %>
+
+  <!-- ══════════════════════════════════════
+       HERO
+  ══════════════════════════════════════════ -->
+  <section class="ct-hero">
+    <div class="ct-hero-bg"></div>
+    <div class="ct-hero-overlay"></div>
+    <div class="ct-hero-content">
+      <span class="svc-breadcrumb"><a href="/">Home</a> <i class="fa-solid fa-chevron-right"></i> Contact</span>
+      <h1 class="ct-hero-title">We're Here<br/><em>For You.</em></h1>
+      <p class="ct-hero-sub">A real person is always on the other side. Reach us how you prefer — phone, email, chat or in person. We respond, we listen, we resolve.</p>
+      <div class="ct-hero-quick">
+        <a href="tel:+<%= websiteNumber %>" class="ct-quick-btn">
+          <i class="fa-solid fa-phone"></i>
+          <div><strong>Call Now</strong><span>+<%= websiteNumber %></span></div>
+        </a>
+        <a href="#contact-form" class="ct-quick-btn">
+          <i class="fa-solid fa-envelope"></i>
+          <div><strong>Send Message</strong><span>We reply in 2hrs</span></div>
+        </a>
+        <div class="ct-quick-btn ct-quick-live">
+          <div class="ct-live-dot"></div>
+          <div><strong>Live Chat</strong><span>All agents online now</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       TRUST ASSURANCES
+  ══════════════════════════════════════════ -->
+  <section class="ct-assurance-strip">
+    <div class="ct-container">
+      <div class="ct-assurance-inner">
+        <div class="ct-assurance-item reveal-up">
+          <i class="fa-solid fa-clock"></i>
+          <div>
+            <strong>24/7 Support</strong>
+            <span>Round-the-clock assistance, every day of the year</span>
+          </div>
+        </div>
+        <div class="ct-a-sep"></div>
+        <div class="ct-assurance-item reveal-up d1">
+          <i class="fa-solid fa-stopwatch"></i>
+          <div>
+            <strong>2-Hour Email Response</strong>
+            <span>Guaranteed response during business hours</span>
+          </div>
+        </div>
+        <div class="ct-a-sep"></div>
+        <div class="ct-assurance-item reveal-up d2">
+          <i class="fa-solid fa-user-tie"></i>
+          <div>
+            <strong>Dedicated Relationship Manager</strong>
+            <span>Premium & Elite customers get a named point of contact</span>
+          </div>
+        </div>
+        <div class="ct-a-sep"></div>
+        <div class="ct-assurance-item reveal-up d3">
+          <i class="fa-solid fa-shield-check"></i>
+          <div>
+            <strong>100% Secure Communications</strong>
+            <span>All messages encrypted in transit and at rest</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       CONTACT CHANNELS
+  ══════════════════════════════════════════ -->
+  <section class="ct-channels">
+    <div class="ct-container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-headset"></i> Ways to Reach Us</span>
+        <h2 class="section-title">Choose Your <em>Channel</em></h2>
+        <p class="section-sub" style="margin:0 auto;">Every channel is staffed by trained banking professionals — not automated bots.</p>
+      </div>
+
+      <div class="ct-channels-grid reveal-up d1">
+
+        <div class="ct-channel-card ctc-teal">
+          <div class="ctc-icon-wrap"><i class="fa-solid fa-phone-volume"></i></div>
+          <h3>Phone Support</h3>
+          <p>Speak directly to a specialist. Our lines are staffed by qualified banking professionals 24 hours a day, 7 days a week.</p>
+          <div class="ctc-details">
+            <div class="ctc-detail-row">
+              <i class="fa-solid fa-globe"></i>
+              <span>International: <strong>+<%= websiteNumber %></strong></span>
+            </div>
+            
+          </div>
+          <div class="ctc-availability">
+            <div class="ctc-live-dot"></div>
+            <span>Available now · Avg wait: <strong>< 2 min</strong></span>
+          </div>
+          <a href="tel:+<%= websiteNumber %>" class="ctc-cta">Call Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="ct-channel-card ctc-violet">
+          <div class="ctc-icon-wrap"><i class="fa-solid fa-envelope-open-text"></i></div>
+          <h3>Email Support</h3>
+          <p>Send a detailed message and our team will respond with a thorough, personalised answer — every time, no templates.</p>
+          <div class="ctc-details">
+            <div class="ctc-detail-row">
+              <i class="fa-solid fa-envelope"></i>
+              <span>General: <strong><%= websiteMail %></strong></span>
+            </div>
+          </div>
+          <div class="ctc-availability">
+            <div class="ctc-live-dot ctc-dot-violet"></div>
+            <span>Response within <strong>2 business hours</strong></span>
+          </div>
+          <a href="#contact-form" class="ctc-cta">Send Email <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="ct-channel-card ctc-gold">
+          <div class="ctc-icon-wrap"><i class="fa-solid fa-comments"></i></div>
+          <h3>Live Chat</h3>
+          <p>Instant messaging with a real banking advisor — no chatbots, no runaround. Fastest resolution for common queries.</p>
+          <div class="ctc-details">
+            <div class="ctc-detail-row">
+              <i class="fa-solid fa-mobile-screen"></i>
+              <span>Available in the <strong>Sterling Crest app</strong></span>
+            </div>
+            <!-- <div class="ctc-detail-row">
+              <i class="fa-brands fa-apple"></i>
+              <span>iOS & Android <strong>fully supported</strong></span>
+            </div> -->
+          </div>
+          <div class="ctc-availability">
+            <div class="ctc-live-dot ctc-dot-gold"></div>
+            <span><strong>All agents</strong> fully active</span>
+          </div>
+          <a href="/register" class="ctc-cta">Open App <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="ct-channel-card ctc-coral">
+          <div class="ctc-icon-wrap"><i class="fa-solid fa-location-dot"></i></div>
+          <h3>Visits</h3>
+          <p>For complex matters — account opening, mortgage discussions, wealth advisory meetings — visit one of our offices.</p>
+          <div class="ctc-details">
+            <div class="ctc-detail-row">
+              <i class="fa-solid fa-building"></i>
+              <span>California HQ: <strong>2815 Townsgate Rd #215, Westlake Village</strong></span>
+            </div>
+            <!-- <div class="ctc-detail-row">
+              <i class="fa-solid fa-city"></i>
+              <span>New York: <strong>25 Highland Avenue, Flushing, NY 11354</strong></span>
+            </div>
+            <div class="ctc-detail-row">
+              <i class="fa-solid fa-mosque"></i>
+              <span>London: <strong>775 Kings Road, East Central London, EC75 7YW</strong></span>
+            </div> -->
+          </div>
+          <div class="ctc-availability">
+            <div class="ctc-live-dot ctc-dot-coral"></div>
+            <span>Mon–Fri <strong>9am–5pm</strong> (local time)</span>
+          </div>
+          <a href="#offices" class="ctc-cta">View All Offices <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       WHY OUR SUPPORT STANDS OUT
+  ══════════════════════════════════════════ -->
+  <section class="ct-why-support">
+    <div class="ct-container">
+      <div class="ct-why-inner">
+        <div class="ct-why-text reveal-up">
+          <span class="section-tag"><i class="fa-solid fa-trophy"></i> Our Promise</span>
+          <h2 class="section-title">Support That<br/><em>Actually Supports</em></h2>
+          <p class="section-sub">We've redesigned customer service from the ground up. No ticket numbers lost in the void. No scripted non-answers. No passing you between departments for 45 minutes.</p>
+          <div class="ct-promise-list">
+            <div class="ct-promise">
+              <div class="ct-promise-num">01</div>
+              <div>
+                <strong>First-Contact Resolution</strong>
+                <p>87% of issues resolved in the first interaction — no callbacks, no escalations for standard queries.</p>
+              </div>
+            </div>
+            <div class="ct-promise">
+              <div class="ct-promise-num">02</div>
+              <div>
+                <strong>Named Advisor Continuity</strong>
+                <p>Premium and Elite customers always reach the same advisor who knows your history.</p>
+              </div>
+            </div>
+            <div class="ct-promise">
+              <div class="ct-promise-num">03</div>
+              <div>
+                <strong>Proactive Communication</strong>
+                <p>We alert you before issues become problems — not after. Fraud, rate changes, regulatory updates.</p>
+              </div>
+            </div>
+            <div class="ct-promise">
+              <div class="ct-promise-num">04</div>
+              <div>
+                <strong>Multilingual Support</strong>
+                <p>Assistance in 18 languages including English, Arabic, French, Spanish, Mandarin, Hindi, and more.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="ct-why-visual reveal-up d2">
+          <div class="ct-why-img-wrap">
+            <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=700&q=80" alt="Dedicated Support" loading="lazy"/>
+            <div class="ct-rating-badge">
+              <div class="ct-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+              <strong>4.9/5 Support Rating</strong>
+              <span>Based on 94,000+ reviews</span>
+            </div>
+          </div>
+          <div class="ct-mini-stats">
+            <div class="ct-mini-stat">
+              <span class="cms-num">87<em>%</em></span>
+              <span class="cms-label">First-contact<br/>resolution</span>
+            </div>
+            <div class="ct-ms-sep"></div>
+            <div class="ct-mini-stat">
+              <span class="cms-num">&lt;2<em>m</em></span>
+              <span class="cms-label">Avg phone<br/>wait time</span>
+            </div>
+            <div class="ct-ms-sep"></div>
+            <div class="ct-mini-stat">
+              <span class="cms-num">18<em>+</em></span>
+              <span class="cms-label">Languages<br/>supported</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       CONTACT FORM
+  ══════════════════════════════════════════ -->
+  <section class="ct-form-section" id="contact-form">
+    <div class="ct-container">
+      <div class="ct-form-wrapper">
+        <div class="ct-form-left reveal-up">
+          <span class="section-tag"><i class="fa-solid fa-paper-plane"></i> Send a Message</span>
+          <h2 class="section-title">We'd Love to<br/><em>Hear From You</em></h2>
+          <p class="section-sub">Fill in the form and hit send — your email app will open pre-filled and ready to go. We respond within 2 business hours.</p>
+
+          <div class="ct-form-assurances">
+            <div class="ct-form-ass">
+              <i class="fa-solid fa-lock"></i>
+              <span>Your details are encrypted in transit</span>
+            </div>
+            <div class="ct-form-ass">
+              <i class="fa-solid fa-eye-slash"></i>
+              <span>We never share your data with third parties</span>
+            </div>
+            <div class="ct-form-ass">
+              <i class="fa-solid fa-clock"></i>
+              <span>Guaranteed response within 2 business hours</span>
+            </div>
+            <div class="ct-form-ass">
+              <i class="fa-solid fa-user-check"></i>
+              <span>All replies from real, qualified advisors</span>
+            </div>
+          </div>
+
+          <div class="ct-form-team">
+            <p class="ct-team-label">Meet the team you'll be talking to:</p>
+            <div class="ct-team-avatars">
+              <div class="ct-avatar cta-teal" title="Sarah — Personal Banking">S</div>
+              <div class="ct-avatar cta-violet" title="Marcus — Wealth Advisory">M</div>
+              <div class="ct-avatar cta-gold" title="Riya — Business Banking">R</div>
+              <div class="ct-avatar cta-coral" title="James — Technical Support">J</div>
+              <div class="ct-avatar cta-navy" title="Aisha — Compliance">A</div>
+              <span class="ct-team-more">+42 more specialists</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ct-form-right reveal-up d2" id="contact-form-card">
+          <div class="ct-form-card">
+            <div class="ct-form-header">
+              <i class="fa-solid fa-envelope-open-text"></i>
+              <div>
+                <strong>Contact Sterling Crest Union</strong>
+                <span>All fields marked * are required</span>
+              </div>
+            </div>
+
+            <div class="ct-form-body" id="ctFormBody">
+              <!-- Row 1: Name -->
+              <div class="ct-form-row">
+                <div class="ct-form-group">
+                  <label for="ctFirstName">First Name <span class="ct-req">*</span></label>
+                  <div class="ct-input-wrap">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="ctFirstName" placeholder="John" required/>
+                  </div>
+                  <span class="ct-err" id="errFirst"></span>
+                </div>
+                <div class="ct-form-group">
+                  <label for="ctLastName">Last Name <span class="ct-req">*</span></label>
+                  <div class="ct-input-wrap">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="ctLastName" placeholder="Smith" required/>
+                  </div>
+                  <span class="ct-err" id="errLast"></span>
+                </div>
+              </div>
+
+              <!-- Email -->
+              <div class="ct-form-group">
+                <label for="ctEmail">Your Email Address <span class="ct-req">*</span></label>
+                <div class="ct-input-wrap">
+                  <i class="fa-solid fa-envelope"></i>
+                  <input type="email" id="ctEmail" placeholder="john.smith@example.com" required/>
+                </div>
+                <span class="ct-err" id="errEmail"></span>
+              </div>
+
+              <!-- Phone -->
+              <div class="ct-form-group">
+                <label for="ctPhone">Phone Number <span class="ct-optional">(optional)</span></label>
+                <div class="ct-input-wrap">
+                  <i class="fa-solid fa-phone"></i>
+                  <input type="tel" id="ctPhone" placeholder="+1 555 000 0000"/>
+                </div>
+              </div>
+
+              <!-- Subject -->
+              <div class="ct-form-group">
+                <label for="ctSubject">Subject <span class="ct-req">*</span></label>
+                <div class="ct-input-wrap ct-select-wrap">
+                  <i class="fa-solid fa-tag"></i>
+                  <select id="ctSubject" required>
+                    <option value="" disabled selected>Select a topic...</option>
+                    <option value="Account Opening Enquiry">Account Opening Enquiry</option>
+                    <option value="Personal Banking Support">Personal Banking Support</option>
+                    <option value="Business Banking Enquiry">Business Banking Enquiry</option>
+                    <option value="Wealth Management Consultation">Wealth Management Consultation</option>
+                    <option value="Loan & Credit Application">Loan & Credit Application</option>
+                    <option value="International Transfer Support">International Transfer Support</option>
+                    <option value="Card Services">Card Services</option>
+                    <option value="Insurance Enquiry">Insurance Enquiry</option>
+                    <option value="Digital Assets / Crypto">Digital Assets / Crypto</option>
+                    <option value="Technical / App Support">Technical / App Support</option>
+                    <option value="Security / Fraud Report">Security / Fraud Report</option>
+                    <option value="Complaint or Feedback">Complaint or Feedback</option>
+                    <option value="Media & Press Enquiry">Media & Press Enquiry</option>
+                    <option value="Partnership & Business Development">Partnership & Business Development</option>
+                    <option value="General Enquiry">General Enquiry</option>
+                  </select>
+                  <i class="fa-solid fa-chevron-down ct-select-chevron"></i>
+                </div>
+                <span class="ct-err" id="errSubject"></span>
+              </div>
+
+              <!-- Account Type -->
+              <div class="ct-form-group">
+                <label>Account Type</label>
+                <div class="ct-radio-group">
+                  <label class="ct-radio">
+                    <input type="radio" name="acctType" value="Personal" checked/>
+                    <span class="ct-radio-custom"></span>
+                    <span><i class="fa-solid fa-user"></i> Personal</span>
+                  </label>
+                  <label class="ct-radio">
+                    <input type="radio" name="acctType" value="Business"/>
+                    <span class="ct-radio-custom"></span>
+                    <span><i class="fa-solid fa-building"></i> Business</span>
+                  </label>
+                  <label class="ct-radio">
+                    <input type="radio" name="acctType" value="Not yet a customer"/>
+                    <span class="ct-radio-custom"></span>
+                    <span><i class="fa-solid fa-user-plus"></i> Not yet a customer</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Message -->
+              <div class="ct-form-group">
+                <label for="ctMessage">Your Message <span class="ct-req">*</span></label>
+                <div class="ct-textarea-wrap">
+                  <textarea id="ctMessage" rows="5" placeholder="Tell us how we can help you. The more detail you provide, the faster and better we can assist..." required></textarea>
+                </div>
+                <div class="ct-char-count"><span id="charCount">0</span> / 2000 characters</div>
+                <span class="ct-err" id="errMsg"></span>
+              </div>
+
+              <!-- Priority -->
+              <div class="ct-form-group">
+                <label>Message Priority</label>
+                <div class="ct-priority-group">
+                  <label class="ct-priority-btn">
+                    <input type="radio" name="priority" value="Normal" checked/>
+                    <span class="cpb-inner cpb-normal"><i class="fa-solid fa-clock"></i> Normal</span>
+                  </label>
+                  <label class="ct-priority-btn">
+                    <input type="radio" name="priority" value="Urgent"/>
+                    <span class="cpb-inner cpb-urgent"><i class="fa-solid fa-bolt"></i> Urgent</span>
+                  </label>
+                  <label class="ct-priority-btn">
+                    <input type="radio" name="priority" value="Security Issue — URGENT"/>
+                    <span class="cpb-inner cpb-security"><i class="fa-solid fa-shield-exclamation"></i> Security</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Consent -->
+              <div class="ct-form-group">
+                <label class="ct-checkbox">
+                  <input type="checkbox" id="ctConsent" required/>
+                  <span class="ct-checkbox-custom"></span>
+                  <span>I agree to Sterling Crest Union's <a href="/privacy" target="_blank">Privacy Policy</a> and consent to being contacted regarding my enquiry. <span class="ct-req">*</span></span>
+                </label>
+                <span class="ct-err" id="errConsent"></span>
+              </div>
+
+              <!-- Submit -->
+              <button type="button" class="ct-submit-btn" id="ctSubmitBtn">
+                <span id="ctBtnText"><i class="fa-solid fa-paper-plane"></i> Open in My Email App</span>
+              </button>
+
+              <p class="ct-form-note">
+                <i class="fa-solid fa-circle-info"></i>
+                Clicking "Open in My Email App" will open your default email client with this message pre-filled. You review it and send — we never access your email account.
+              </p>
+            </div>
+
+            <!-- Success State -->
+            <div class="ct-form-success" id="ctFormSuccess" style="display:none;">
+              <div class="ct-success-icon"><i class="fa-solid fa-check"></i></div>
+              <h3>Your Email App Has Opened!</h3>
+              <p>Your message is ready to send from your email client. If nothing opened, please email us directly at <a href="mailto:support@sterlingcrestunion.com">support@sterlingcrestunion.com</a>.</p>
+              <p class="ct-success-tip"><i class="fa-solid fa-clock"></i> We respond within 2 business hours.</p>
+              <button class="ct-reset-btn" id="ctResetBtn">Send Another Message</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       OFFICE LOCATIONS
+  ══════════════════════════════════════════ -->
+  <section class="ct-offices-section" id="offices">
+    <div class="ct-container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag navy"><i class="fa-solid fa-building"></i> Our Offices</span>
+        <h2 class="section-title">Find Us <em>Around the World</em></h2>
+        <p class="section-sub" style="margin:0 auto;">Our global offices are open by appointment for premium advisory services, account openings, and in-person support.</p>
+      </div>
+      <div class="ct-offices-grid reveal-up d1">
+
+        <div class="ct-office-card coc-primary">
+          <div class="co-img">
+            <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&q=80" alt="London Office" loading="lazy"/>
+            <div class="co-city-badge"><i class="fa-solid fa-circle-dot" style="color:#1a8f82;"></i> Californa, USAK</div>
+          </div>
+          <div class="co-body">
+            <span class="co-tag co-hq">Global HQ</span>
+            <h4>Westlake Village</h4>
+            <div class="co-detail"><i class="fa-solid fa-location-dot"></i> 2815 Townsgate Rd #215, Westlake Village, California(CA)</div>
+            <div class="co-detail"><i class="fa-solid fa-clock"></i> Mon–Fri: 9am–5pm GMT</div>
+            <div class="co-services">
+              <span>Wealth Advisory</span>
+              <span>Business Banking</span>
+              <span>Mortgages</span>
+            </div>
+            <a href="https://maps.google.com" target="_blank" class="co-map-link"><i class="fa-solid fa-map"></i> View on Map</a>
+          </div>
+        </div>
+
+        <div class="ct-office-card">
+          <div class="co-img">
+            <img src="https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&q=80" alt="New York Office" loading="lazy"/>
+            <div class="co-city-badge"><i class="fa-solid fa-circle-dot" style="color:#7c3aed;"></i> New York, USA</div>
+          </div>
+          <div class="co-body">
+            <h4>Branch</h4>
+            <div class="co-detail"><i class="fa-solid fa-location-dot"></i>25 Highland Avenue, Flushing, NY 11354</div>
+            <div class="co-detail"><i class="fa-solid fa-clock"></i> Mon–Fri: 9am–5pm EST</div>
+            <div class="co-services">
+              <span>Personal Banking</span>
+              <span>Investment Services</span>
+            </div>
+            <a href="https://maps.google.com" target="_blank" class="co-map-link"><i class="fa-solid fa-map"></i> View on Map</a>
+          </div>
+        </div>
+
+        <div class="ct-office-card">
+          <div class="co-img">
+            <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&q=80" alt="London Office" loading="lazy"/>
+            <div class="co-city-badge"><i class="fa-solid fa-circle-dot" style="color:#c08a2e;"></i> London, UK</div>
+          </div>
+          <div class="co-body">
+            <h4>Branch</h4>
+            <div class="co-detail"><i class="fa-solid fa-location-dot"></i> 775 Kings Road, East Central London, EC75 7YW</div>
+            <div class="co-detail"><i class="fa-solid fa-clock"></i> Sun–Thu: 9am–5pm GST</div>
+            <div class="co-services">
+              <span>Finance</span>
+              <span>Wealth Management</span>
+            </div>
+            <a href="https://maps.google.com" target="_blank" class="co-map-link"><i class="fa-solid fa-map"></i> View on Map</a>
+          </div>
+        </div>
+
+        <div class="ct-office-card">
+          <div class="co-img">
+            <img src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=600&q=80" alt="Singapore Office" loading="lazy"/>
+            <div class="co-city-badge"><i class="fa-solid fa-circle-dot" style="color:#e05c3a;"></i> Singapore</div>
+          </div>
+          <div class="co-body">
+            <h4>Branch</h4>
+            <div class="co-detail"><i class="fa-solid fa-location-dot"></i> 10 Bayfront Avenue, Level 45, Singapore 018956</div>
+            <div class="co-detail"><i class="fa-solid fa-clock"></i> Mon–Fri: 9am–5pm SGT</div>
+            <div class="co-services">
+              <span>Business Banking</span>
+              <span>Asian Markets</span>
+            </div>
+            <a href="https://maps.google.com" target="_blank" class="co-map-link"><i class="fa-solid fa-map"></i> View on Map</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       FAQ
+  ══════════════════════════════════════════ -->
+  <section class="ct-faq-section">
+    <div class="ct-container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-circle-question"></i> Quick Answers</span>
+        <h2 class="section-title">Before You Reach Out, <em>Check These</em></h2>
+      </div>
+      <div class="ct-faq-cols reveal-up d1">
+        <div class="ct-faq-col">
+          <div class="faq-item">
+            <button class="faq-trigger">How quickly do you respond to emails? <i class="fa-solid fa-plus"></i></button>
+            <div class="faq-body"><p>We guarantee a response within 2 business hours during weekdays. For urgent queries, use phone or live chat for instant assistance.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-trigger">Can I book a video call with an advisor? <i class="fa-solid fa-plus"></i></button>
+            <div class="faq-body"><p>Yes. Premium and Elite customers can schedule video advisory sessions directly in the app. Starter customers can request one via email.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-trigger">What if I've been a victim of fraud? <i class="fa-solid fa-plus"></i></button>
+            <div class="faq-body"><p>Call our 24/7 fraud hotline immediately: +1 800 555 1234. Your account will be frozen within seconds of reporting. Email security@sterlingcrestunion.com for follow-up documentation.</p></div>
+          </div>
+        </div>
+        <div class="ct-faq-col">
+          <div class="faq-item">
+            <button class="faq-trigger">How do I escalate an unresolved complaint? <i class="fa-solid fa-plus"></i></button>
+            <div class="faq-body"><p>Email complaints@sterlingcrestunion.com. All complaints are acknowledged within 1 hour and formally responded to within 5 business days, per FCA guidelines.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-trigger">Do you offer support in languages other than English? <i class="fa-solid fa-plus"></i></button>
+            <div class="faq-body"><p>Yes — we provide support in 18 languages including Arabic, French, Spanish, Portuguese, Mandarin, Hindi, Urdu, Swahili, and more. Just let our team know your preferred language.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-trigger">Where can I find my account number and sort code? <i class="fa-solid fa-plus"></i></button>
+            <div class="faq-body"><p>These are found in the app under Account → Details. You can also find them on your monthly statement. If you've lost app access, call us to verify identity and we'll provide them.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       BOTTOM CTA
+  ══════════════════════════════════════════ -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-inner reveal-up">
+        <h2 class="cta-headline">Not Yet a Customer? <em>Let's Change That.</em></h2>
+        <p class="cta-sub">Open a free account in under 5 minutes. No branch visit. No paperwork. No minimum balance. 3 million customers already trust us — join them.</p>
+        <div class="cta-actions">
+          <a href="/register" class="btn-cta-primary">Open Free Account <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/services" class="btn-cta-outline"><i class="fa-solid fa-grid-2"></i> Explore Services</a>
+        </div>
+        <p class="cta-note"><i class="fa-solid fa-circle-info"></i> FDIC Insured · FCA Regulated · ISO 27001 Certified</p>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../partials/footer') %>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ── Scroll Reveal ──
+    const revEls = document.querySelectorAll('.reveal-up');
+    const revObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); revObs.unobserve(e.target); }});
+    }, { threshold: 0.07 });
+    revEls.forEach(el => revObs.observe(el));
+
+    // ── Smooth scroll for anchors ──
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    });
+
+    // ── FAQ Accordion ──
+    document.querySelectorAll('.faq-trigger').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+
+    // ── Character count ──
+    const msgTextarea = document.getElementById('ctMessage');
+    const charCount = document.getElementById('charCount');
+    if (msgTextarea) {
+      msgTextarea.addEventListener('input', () => {
+        const len = msgTextarea.value.length;
+        charCount.textContent = len;
+        charCount.style.color = len > 1800 ? 'var(--coral)' : 'var(--text-muted)';
+      });
+    }
+
+    // ── Input focus effects ──
+    document.querySelectorAll('.ct-input-wrap input, .ct-input-wrap select, .ct-textarea-wrap textarea').forEach(el => {
+      el.addEventListener('focus', () => el.closest('.ct-input-wrap, .ct-textarea-wrap')?.classList.add('focused'));
+      el.addEventListener('blur', () => el.closest('.ct-input-wrap, .ct-textarea-wrap')?.classList.remove('focused'));
+    });
+
+    // ── Range slider color update for calculator if present ──
+    function updateRange(input) {
+      const min = parseFloat(input.min);
+      const max = parseFloat(input.max);
+      const val = parseFloat(input.value);
+      const pct = ((val - min) / (max - min)) * 100;
+      input.style.background = `linear-gradient(to right, var(--teal) 0%, var(--teal) ${pct}%, var(--border) ${pct}%, var(--border) 100%)`;
+    }
+
+    // ── CONTACT FORM — Submit via mailto ──
+    document.getElementById('ctSubmitBtn')?.addEventListener('click', function () {
+      let valid = true;
+
+      const firstName = document.getElementById('ctFirstName').value.trim();
+      const lastName  = document.getElementById('ctLastName').value.trim();
+      const email     = document.getElementById('ctEmail').value.trim();
+      const phone     = document.getElementById('ctPhone').value.trim();
+      const subjectEl = document.getElementById('ctSubject');
+      const subject   = subjectEl.value;
+      const message   = document.getElementById('ctMessage').value.trim();
+      const consent   = document.getElementById('ctConsent').checked;
+      const acctType  = document.querySelector('input[name="acctType"]:checked')?.value || 'Not specified';
+      const priority  = document.querySelector('input[name="priority"]:checked')?.value || 'Normal';
+
+      // Validate
+      const setErr = (id, msg) => { document.getElementById(id).textContent = msg; };
+      const clearErr = (id) => { document.getElementById(id).textContent = ''; };
+
+      if (!firstName) { setErr('errFirst', 'Please enter your first name.'); valid = false; }
+      else clearErr('errFirst');
+
+      if (!lastName) { setErr('errLast', 'Please enter your last name.'); valid = false; }
+      else clearErr('errLast');
+
+      const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!email) { setErr('errEmail', 'Please enter your email address.'); valid = false; }
+      else if (!emailReg.test(email)) { setErr('errEmail', 'Please enter a valid email address.'); valid = false; }
+      else clearErr('errEmail');
+
+      if (!subject) { setErr('errSubject', 'Please select a subject.'); valid = false; }
+      else clearErr('errSubject');
+
+      if (!message) { setErr('errMsg', 'Please enter your message.'); valid = false; }
+      else if (message.length < 20) { setErr('errMsg', 'Please provide a more detailed message (min 20 characters).'); valid = false; }
+      else clearErr('errMsg');
+
+      if (!consent) { setErr('errConsent', 'You must agree to the Privacy Policy to submit.'); valid = false; }
+      else clearErr('errConsent');
+
+      if (!valid) {
+        // Scroll to first error
+        const firstErr = document.querySelector('.ct-err:not(:empty)');
+        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // Build mailto
+      const toEmail = 'support@sterlingcrestunion.com';
+      const emailSubject = encodeURIComponent(`[${priority}] ${subject} — Sterling Crest Union`);
+      const body = [
+        `Dear Sterling Crest Union Support Team,`,
+        ``,
+        `I am writing to you regarding the following matter:`,
+        ``,
+        `------------------------------------------------------------`,
+        `SUBJECT:    ${subject}`,
+        `PRIORITY:   ${priority}`,
+        `ACCOUNT TYPE: ${acctType}`,
+        `------------------------------------------------------------`,
+        ``,
+        `${message}`,
+        ``,
+        `------------------------------------------------------------`,
+        ``,
+        `Kind regards,`,
+        `${firstName} ${lastName}`,
+        `Email: ${email}`,
+        phone ? `Phone: ${phone}` : null,
+        ``,
+        `[This message was composed via the Sterling Crest Union contact form]`
+      ].filter(line => line !== null).join('\n');
+
+      const mailtoLink = `mailto:${toEmail}?subject=${emailSubject}&body=${encodeURIComponent(body)}`;
+
+      // Open mailto
+      window.location.href = mailtoLink;
+
+      // Show success after short delay
+      setTimeout(() => {
+        document.getElementById('ctFormBody').style.display = 'none';
+        document.getElementById('ctFormSuccess').style.display = 'flex';
+      }, 800);
+    });
+
+    // Reset form
+    document.getElementById('ctResetBtn')?.addEventListener('click', function () {
+      document.getElementById('ctFirstName').value = '';
+      document.getElementById('ctLastName').value = '';
+      document.getElementById('ctEmail').value = '';
+      document.getElementById('ctPhone').value = '';
+      document.getElementById('ctSubject').value = '';
+      document.getElementById('ctMessage').value = '';
+      document.getElementById('ctConsent').checked = false;
+      document.getElementById('charCount').textContent = '0';
+      document.querySelectorAll('.ct-err').forEach(e => e.textContent = '');
+      document.getElementById('ctFormBody').style.display = '';
+      document.getElementById('ctFormSuccess').style.display = 'none';
+    });
+  </script>
+</body>
+</html>

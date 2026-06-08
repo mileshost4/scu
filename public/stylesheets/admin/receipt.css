@@ -1,0 +1,288 @@
+/* ============================================================
+   RECEIPT.CSS — Transaction detail / receipt view page
+   ============================================================ */
+
+.receipt-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.receipt-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.receipt-sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ── Receipt card ────────────────────────────────────────────── */
+.receipt-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+/* Hero strip */
+.receipt-hero {
+  padding: 32px 28px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  position: relative;
+  border-bottom: 1px dashed var(--border-strong);
+}
+
+.receipt-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.04;
+  background: radial-gradient(ellipse at top, var(--accent), transparent 70%);
+  pointer-events: none;
+}
+
+.receipt-status-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.receipt-status-icon.successful { background: var(--success-dim); color: var(--success); box-shadow: 0 0 0 6px var(--success-dim); }
+.receipt-status-icon.pending    { background: var(--warning-dim); color: var(--warning); box-shadow: 0 0 0 6px var(--warning-dim); }
+.receipt-status-icon.unsuccessful{ background: var(--danger-dim); color: var(--danger);  box-shadow: 0 0 0 6px var(--danger-dim); }
+
+.receipt-amount {
+  font-family: var(--font-mono);
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  color: var(--text-primary);
+  margin-top: 4px;
+}
+
+.receipt-amount.credit { color: var(--credit); }
+.receipt-amount.debit  { color: var(--debit);  }
+
+.receipt-type-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.receipt-ref {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  margin-top: 4px;
+}
+
+/* Notch / tear effect */
+.receipt-notch {
+  position: relative;
+  height: 0;
+}
+
+.receipt-notch::before,
+.receipt-notch::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: var(--radius-full);
+  background: var(--bg-root);
+  border: 1px solid var(--border);
+  top: -10px;
+}
+
+.receipt-notch::before { left: -10px; }
+.receipt-notch::after  { right: -10px; }
+
+/* Detail rows */
+.receipt-details {
+  padding: 24px 28px;
+}
+
+.receipt-section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-row:last-child { border-bottom: none; }
+
+.detail-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  flex-shrink: 0;
+  min-width: 120px;
+}
+
+.detail-value {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: right;
+  word-break: break-all;
+}
+
+.detail-value.mono { font-family: var(--font-mono); letter-spacing: -0.01em; }
+.detail-value.muted { color: var(--text-muted); font-weight: 400; }
+
+/* Section divider */
+.receipt-section-divider {
+  border: none;
+  border-top: 1px dashed var(--border-strong);
+  margin: 4px 0;
+}
+
+/* ── Sidebar cards ───────────────────────────────────────────── */
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.info-card-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.info-card-header i {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+}
+
+.info-card-header i.accent  { background: var(--accent-dim);  color: var(--accent);  }
+.info-card-header i.warning { background: var(--warning-dim); color: var(--warning); }
+.info-card-header i.info    { background: var(--info-dim);    color: var(--info);    }
+
+.info-card-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.info-card-body {
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-row-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.info-row-value {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: right;
+}
+
+.info-row-value.mono { font-family: var(--font-mono); }
+
+/* ── Action buttons block ────────────────────────────────────── */
+.receipt-actions {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.receipt-actions .btn { width: 100%; justify-content: center; }
+
+/* ── Proof images ────────────────────────────────────────────── */
+.proof-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.proof-thumb {
+  width: 72px;
+  height: 72px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.proof-thumb:hover {
+  border-color: var(--accent);
+  transform: scale(1.05);
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .receipt-layout {
+    flex-direction: column;
+  }
+  .receipt-sidebar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .receipt-hero { padding: 24px 20px 20px; }
+  .receipt-amount { font-size: 1.7rem; }
+  .receipt-details { padding: 20px; }
+  .detail-label { min-width: 100px; }
+}

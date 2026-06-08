@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Accounts | <%= typeof websiteName !== 'undefined' ? websiteName : 'Banking' %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/account.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/user/my-accounts'; %>
+
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="accounts-page fade-in">
+
+        <!-- ── Page Header ───────────────────────────────────── -->
+        <div class="accounts-page-header">
+          <div>
+            <div class="accounts-page-title">My Accounts</div>
+            <div class="accounts-page-sub">
+              <%= allaccounts.length %> account<%= allaccounts.length !== 1 ? 's' : '' %> &middot; Manage, fund, and track your accounts
+            </div>
+          </div>
+          <button class="btn btn-primary" onclick="openModal('addAccountModal')">
+            <i class="fa-solid fa-plus"></i> New Account
+          </button>
+        </div>
+
+        <!-- ── Total Balance Strip ───────────────────────────── -->
+        <div class="total-balance-strip">
+          <div>
+            <div class="total-balance-label">Total Balance Across All Accounts</div>
+            <div class="total-balance-amount">
+              <span><%= user.basecurrencysymbol || '$' %></span>
+              <span id="totalBalanceDisplay" class="balance-hidden"><%= totalBalance %></span>
+              <button class="balance-toggle-btn" id="balanceToggleBtn" title="Toggle balance visibility" onclick="toggleBalanceVisibility()">
+                <i class="fa-solid fa-eye" id="balanceEyeIcon"></i>
+              </button>
+            </div>
+            <div class="total-balance-meta"><%= allaccounts.length %> active account<%= allaccounts.length !== 1 ? 's' : '' %></div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-ghost btn-sm" onclick="openModal('fundAccountModal')">
+              <i class="fa-solid fa-arrow-right-arrow-left"></i> Move Funds
+            </button>
+          </div>
+        </div>
+
+        <!-- ── Accounts Grid ─────────────────────────────────── -->
+        <% if (allaccounts.length === 0) { %>
+          <div class="accounts-empty">
+            <i class="fa-solid fa-building-columns"></i>
+            <p>You haven't created any accounts yet.</p>
+            <button class="btn btn-primary" onclick="openModal('addAccountModal')">
+              <i class="fa-solid fa-plus"></i> Create Your First Account
+            </button>
+          </div>
+        <% } else { %>
+          <div class="section-heading">Your Accounts</div>
+          <div class="accounts-grid">
+            <% allaccounts.forEach(function(acct) {
+              const type = (acct.accountType || 'Savings').toLowerCase();
+              let iconClass = 'savings', bandClass = 'band-savings', iconName = 'fa-piggy-bank';
+              if (type.includes('current'))  { iconClass = 'current';  bandClass = 'band-current';  iconName = 'fa-briefcase'; }
+              if (type.includes('check'))    { iconClass = 'checking'; bandClass = 'band-checking'; iconName = 'fa-money-check'; }
+              if (type.includes('fixed'))    { iconClass = 'fixed';    bandClass = 'band-fixed';    iconName = 'fa-lock'; }
+            %>
+              <div class="acct-card <%= acct.isDefault ? 'default-acct' : '' %> fade-in">
+                <div class="acct-card-band <%= acct.isDefault ? 'band-primary' : bandClass %>"></div>
+                <div class="acct-card-body">
+
+                  <div class="acct-top-row">
+                    <div class="acct-icon <%= iconClass %>">
+                      <i class="fa-solid <%= iconName %>"></i>
+                    </div>
+                    <div class="acct-name-block">
+                      <div class="acct-display-name">
+                        <%= acct.displayName || acct.accountType %>
+                        <% if (acct.isDefault) { %>
+                          <span class="badge badge-accent" style="font-size:0.58rem;margin-left:6px;vertical-align:middle;">Primary</span>
+                        <% } %>
+                      </div>
+                      <div class="acct-type-label"><%= acct.accountType %></div>
+                    </div>
+                  </div>
+
+                  <div class="acct-balance-row">
+                    <div class="acct-balance balance-hidden acct-balance-val" data-value="<%= user.basecurrencysymbol || '$' %><%= parseFloat(acct.accountWallet).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) %>">
+                      <%= user.basecurrencysymbol || '$' %><%= parseFloat(acct.accountWallet).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) %>
+                    </div>
+                  </div>
+
+                  <div class="acct-number-row">
+                    <div class="acct-number">
+                      •••• •••• <%= String(acct.accountNumber).slice(-4) %>
+                    </div>
+                    <div class="acct-status-dot">
+                      <span class="status-dot <%= acct.status === 'Active' ? 'active' : acct.status === 'Locked' ? 'danger' : 'inactive' %>"></span>
+                      <%= acct.status %>
+                    </div>
+                  </div>
+
+                </div><!-- /.acct-card-body -->
+
+                <div class="acct-card-footer">
+                  <!-- Edit name -->
+                  <button class="acct-footer-btn primary"
+                    onclick="openEditAccount('<%= acct._id %>', '<%= acct.displayName || '' %>')">
+                    <i class="fa-solid fa-pen"></i> Edit
+                  </button>
+
+                  <!-- Fund from another account -->
+                  <button class="acct-footer-btn primary"
+                    onclick="openFundModal('<%= acct._id %>', '<%= acct.displayName || acct.accountType %>')">
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i> Fund
+                  </button>
+
+                  <!-- Statement for this account -->
+                  <a class="acct-footer-btn"
+                    href="/user/account/<%= acct._id %>/transaction-history">
+                    <i class="fa-solid fa-clock-rotate-left"></i> History
+                  </a>
+
+                  <!-- Download statement PDF for this account -->
+                  <a class="acct-footer-btn"
+                    href="/user/account/<%= acct._id %>/statement/download"
+                    title="Download PDF statement">
+                    <i class="fa-solid fa-file-pdf"></i>
+                  </a>
+
+                  <!-- Delete (only for empty, non-default accounts) -->
+                  <% if (!acct.isDefault && parseFloat(acct.accountWallet) === 0) { %>
+                    <button class="acct-footer-btn danger"
+                      onclick="confirmDeleteAccount('<%= acct._id %>', '<%= acct.displayName || acct.accountType %>')">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  <% } else if (!acct.isDefault) { %>
+                    <button class="acct-footer-btn disabled" title="Clear balance before deleting" disabled>
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  <% } %>
+                </div>
+
+              </div><!-- /.acct-card -->
+            <% }); %>
+
+            <!-- Add account tile -->
+            <button class="add-acct-tile" onclick="openModal('addAccountModal')">
+              <i class="fa-solid fa-plus"></i>
+              <span>New Account</span>
+            </button>
+          </div>
+        <% } %>
+
+      </div><!-- /.accounts-page -->
+    </div><!-- /.page-inner -->
+  </div><!-- /.main-content -->
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       ADD ACCOUNT MODAL
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="custom-modal-overlay" id="addAccountModal" onclick="handleOverlayClick(event,'addAccountModal')">
+    <div class="custom-modal" style="max-width:440px">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-building-columns"></i>
+          New Account
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('addAccountModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form action="/user/create-account" method="POST">
+        <div class="custom-modal-body">
+          <div class="form-group">
+            <label class="form-label">Account Name</label>
+            <input type="text" name="displayName" class="form-control" placeholder="e.g. Savings, Emergency Fund…" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Account Type</label>
+            <select name="accountType" class="form-control" required>
+              <option value="Savings">Savings</option>
+              <option value="Current">Current</option>
+              <option value="Checking">Checking</option>
+              <option value="Fixed Deposit">Fixed Deposit</option>
+            </select>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('addAccountModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-plus"></i> Create Account
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       EDIT ACCOUNT MODAL
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="custom-modal-overlay" id="editAccountModal" onclick="handleOverlayClick(event,'editAccountModal')">
+    <div class="custom-modal" style="max-width:420px">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-pen"></i>
+          Edit Account Name
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('editAccountModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="editAccountForm" method="POST">
+        <input type="hidden" name="_method" value="PUT" />
+        <div class="custom-modal-body">
+          <div class="form-group">
+            <label class="form-label">Display Name</label>
+            <input type="text" name="displayName" id="editAccountName" class="form-control" required />
+            <small style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;display:block">
+              This is the nickname shown for your account.
+            </small>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('editAccountModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-floppy-disk"></i> Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       FUND ACCOUNT MODAL
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="custom-modal-overlay" id="fundAccountModal" onclick="handleOverlayClick(event,'fundAccountModal')">
+    <div class="custom-modal" style="max-width:460px">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i>
+          Move Funds Between Accounts
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('fundAccountModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form action="/user/fund-account" method="POST" id="fundForm">
+        <div class="custom-modal-body">
+
+          <div class="form-group">
+            <label class="form-label">From Account</label>
+            <select name="accountFrom" class="form-control" id="fundFrom" required onchange="updateFundPreview()">
+              <option value="">Select source account</option>
+              <% allaccounts.forEach(function(a) { %>
+                <option value="<%= a._id %>"
+                  data-name="<%= a.displayName || a.accountType %>"
+                  data-bal="<%= parseFloat(a.accountWallet).toFixed(2) %>">
+                  <%= a.displayName || a.accountType %> &mdash; <%= user.basecurrencysymbol || '$' %><%= parseFloat(a.accountWallet).toLocaleString(undefined,{minimumFractionDigits:2}) %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">To Account</label>
+            <select name="accountTo" class="form-control" id="fundTo" required onchange="updateFundPreview()">
+              <option value="">Select destination account</option>
+              <% allaccounts.forEach(function(a) { %>
+                <option value="<%= a._id %>" data-name="<%= a.displayName || a.accountType %>">
+                  <%= a.displayName || a.accountType %> &mdash; <%= user.basecurrencysymbol || '$' %><%= parseFloat(a.accountWallet).toLocaleString(undefined,{minimumFractionDigits:2}) %>
+                </option>
+              <% }); %>
+            </select>
+          </div>
+
+          <!-- Transfer preview -->
+          <div class="fund-preview" id="fundPreview" style="display:none">
+            <div class="fund-preview-from">
+              <div class="fund-preview-label">From</div>
+              <div class="fund-preview-name" id="fundPreviewFrom">—</div>
+            </div>
+            <div class="fund-preview-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            <div class="fund-preview-to">
+              <div class="fund-preview-label">To</div>
+              <div class="fund-preview-name" id="fundPreviewTo">—</div>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top:14px">
+            <label class="form-label">Amount</label>
+            <div style="position:relative">
+              <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:0.9rem;">
+                <%= user.basecurrencysymbol || '$' %>
+              </span>
+              <input type="number" name="amount" class="form-control" style="padding-left:30px"
+                placeholder="0.00" min="0.01" step="0.01" required />
+            </div>
+            <small id="fundAvailableHint" style="font-size:0.75rem;color:var(--text-muted);margin-top:4px;display:block"></small>
+          </div>
+
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('fundAccountModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-paper-plane"></i> Move Funds
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════════════════════
+       DELETE ACCOUNT MODAL
+  ═══════════════════════════════════════════════════════════ -->
+  <div class="custom-modal-overlay" id="deleteAccountModal" onclick="handleOverlayClick(event,'deleteAccountModal')">
+    <div class="custom-modal" style="max-width:400px">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title" style="gap:10px">
+          <span style="width:32px;height:32px;border-radius:var(--radius-md);background:var(--danger-dim);color:var(--danger);display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0">
+            <i class="fa-solid fa-trash"></i>
+          </span>
+          Delete Account
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('deleteAccountModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body" style="text-align:center;padding:28px 24px 20px">
+        <div style="width:64px;height:64px;border-radius:50%;background:var(--danger-dim);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem;color:var(--danger)">
+          <i class="fa-solid fa-building-columns"></i>
+        </div>
+        <p style="font-size:0.97rem;font-weight:700;color:var(--text-primary);margin-bottom:6px">Delete this account?</p>
+        <p id="deleteAccountLabel" style="font-size:0.85rem;color:var(--accent);font-weight:600;margin-bottom:8px"></p>
+        <p style="font-size:0.82rem;color:var(--text-secondary)">This action is permanent and cannot be undone.</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('deleteAccountModal')">Cancel</button>
+        <form id="deleteAccountForm" method="POST" style="display:inline">
+          <input type="hidden" name="_method" value="DELETE" />
+          <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa-solid fa-trash"></i> Yes, Delete
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════ SCRIPTS ══════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="/script/partials/navbar.js"></script>
+
+<script>
+    /* ── Balance visibility toggle (uses .balance-hidden from navbar.css) ── */
+    let balanceVisible = false;
+
+    function toggleBalanceVisibility() {
+      balanceVisible = !balanceVisible;
+      const icon = document.getElementById('balanceEyeIcon');
+      const totalEl = document.getElementById('totalBalanceDisplay');
+      const allBalances = document.querySelectorAll('.acct-balance-val');
+
+      if (balanceVisible) {
+        icon.className = 'fa-solid fa-eye-slash';
+        totalEl.classList.remove('balance-hidden');
+        allBalances.forEach(el => el.classList.remove('balance-hidden'));
+      } else {
+        icon.className = 'fa-solid fa-eye';
+        totalEl.classList.add('balance-hidden');
+        allBalances.forEach(el => el.classList.add('balance-hidden'));
+      }
+    }
+
+    /* ── Open edit account modal ── */
+    function openEditAccount(id, currentName) {
+      document.getElementById('editAccountForm').action = '/user/edit-account/' + id + '?_method=PUT';
+      document.getElementById('editAccountName').value = currentName;
+      openModal('editAccountModal');
+    }
+
+    /* ── Open fund modal, pre-select destination ── */
+    function openFundModal(toId, toName) {
+      const toSel = document.getElementById('fundTo');
+      if (toId) {
+        toSel.value = toId;
+      }
+      updateFundPreview();
+      openModal('fundAccountModal');
+    }
+
+    /* ── Fund preview update ── */
+    function updateFundPreview() {
+      const fromSel = document.getElementById('fundFrom');
+      const toSel   = document.getElementById('fundTo');
+      const preview = document.getElementById('fundPreview');
+      const hint    = document.getElementById('fundAvailableHint');
+
+      const fromOpt = fromSel.options[fromSel.selectedIndex];
+      const toOpt   = toSel.options[toSel.selectedIndex];
+
+      const fromName = fromOpt && fromOpt.value ? fromOpt.getAttribute('data-name') : null;
+      const toName   = toOpt   && toOpt.value   ? toOpt.getAttribute('data-name')   : null;
+      const bal      = fromOpt ? parseFloat(fromOpt.getAttribute('data-bal') || 0) : 0;
+
+      if (fromName && toName) {
+        document.getElementById('fundPreviewFrom').textContent = fromName;
+        document.getElementById('fundPreviewTo').textContent   = toName;
+        preview.style.display = 'flex';
+      } else {
+        preview.style.display = 'none';
+      }
+
+      if (fromOpt && fromOpt.value) {
+        hint.textContent = 'Available: <%= user.basecurrencysymbol || "$" %>' + bal.toLocaleString(undefined, {minimumFractionDigits: 2});
+      } else {
+        hint.textContent = '';
+      }
+    }
+
+    /* ── Confirm delete account ── */
+    function confirmDeleteAccount(id, name) {
+      document.getElementById('deleteAccountForm').action = '/user/account/' + id + '/delete' + '?_method=DELETE';
+      document.getElementById('deleteAccountLabel').textContent = name;
+      openModal('deleteAccountModal');
+    }
+  </script>
+
+</body>
+</html>

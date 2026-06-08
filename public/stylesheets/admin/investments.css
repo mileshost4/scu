@@ -1,0 +1,503 @@
+/* ============================================================
+   INVESTMENTS.CSS — Active/Closed/Show Investment Pages
+   Uses theme.css variables exclusively. No overrides of shared styles.
+   ============================================================ */
+
+/* ── Summary Row ─────────────────────────────────────────────── */
+.inv-summary-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.inv-summary-card {
+  flex: 1;
+  min-width: 160px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: var(--transition);
+}
+
+.inv-summary-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.isc-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.isc-icon.accent  { background: var(--accent-dim);   color: var(--accent);   }
+.isc-icon.gold    { background: var(--gold-dim);      color: var(--gold);     }
+.isc-icon.success { background: var(--success-dim);   color: var(--success);  }
+.isc-icon.info    { background: var(--info-dim);      color: var(--info);     }
+.isc-icon.danger  { background: var(--danger-dim);    color: var(--danger);   }
+
+.isc-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.isc-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.isc-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+/* ── Table Card ───────────────────────────────────────────────── */
+.inv-table-card {
+  overflow: hidden;
+}
+
+.inv-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px 16px;
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.inv-table-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inv-table-title i {
+  color: var(--accent);
+}
+
+.inv-table-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0 12px;
+  min-width: 220px;
+}
+
+.inv-table-search i {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.inv-table-search .form-control {
+  border: none;
+  background: transparent;
+  padding: 8px 0;
+  font-size: 0.85rem;
+  box-shadow: none;
+}
+
+.inv-table-search .form-control:focus {
+  box-shadow: none;
+}
+
+/* ── Table ────────────────────────────────────────────────────── */
+.inv-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+.inv-table thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.inv-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s ease;
+}
+
+.inv-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.inv-table tbody tr:hover {
+  background: var(--bg-card-hover);
+}
+
+.inv-table tbody td {
+  padding: 13px 16px;
+  color: var(--text-secondary);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* ── User Cell ────────────────────────────────────────────────── */
+.inv-user-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inv-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: var(--text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.inv-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.inv-user-name {
+  display: block;
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  line-height: 1.2;
+}
+
+.inv-user-email {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+
+/* ── Package Badge ────────────────────────────────────────────── */
+.inv-package-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: var(--gold-dim);
+  color: var(--gold);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.inv-roi {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: var(--accent-dim);
+  color: var(--accent);
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ── Empty State ──────────────────────────────────────────────── */
+.inv-empty {
+  padding: 60px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+}
+
+.inv-empty i {
+  font-size: 2.5rem;
+  color: var(--border-strong);
+}
+
+.inv-empty p {
+  font-size: 0.9rem;
+}
+
+/* ── Investment Show Page ─────────────────────────────────────── */
+.inv-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+  margin-bottom: 4px;
+}
+
+.inv-back-link:hover { color: var(--accent); }
+
+.inv-show-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.inv-show-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inv-show-side {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+/* Stat Row */
+.inv-stat-row {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.inv-stat-card {
+  flex: 1;
+  min-width: 130px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.inv-stat-card.accent-border {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.inv-stat-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.inv-stat-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.inv-stat-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+/* Details Card */
+.inv-details-card {
+  padding: 20px 24px;
+}
+
+.inv-details-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.inv-detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.inv-detail-row:last-child {
+  border-bottom: none;
+}
+
+.inv-detail-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.inv-detail-label i {
+  color: var(--accent);
+  width: 14px;
+  text-align: center;
+}
+
+.inv-detail-value {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: right;
+}
+
+/* Actions Card */
+.inv-actions-card {
+  padding: 20px 24px;
+}
+
+.inv-actions-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inv-actions-title i { color: var(--accent); }
+
+.inv-actions-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Confirm Box */
+.inv-confirm-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--warning-dim);
+  border: 1px solid var(--warning);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--warning);
+}
+
+.inv-confirm-box i { flex-shrink: 0; }
+
+/* Investor Card (sidebar) */
+.inv-investor-card {
+  padding: 20px;
+}
+
+.inv-investor-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.inv-investor-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  color: var(--text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.inv-investor-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.inv-investor-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.inv-investor-email {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.inv-investor-details {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Responsive ───────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .inv-show-side { width: 240px; }
+  .inv-stat-card { min-width: 110px; }
+}
+
+@media (max-width: 800px) {
+  .inv-show-layout {
+    flex-direction: column;
+  }
+  .inv-show-side {
+    width: 100%;
+  }
+  .inv-summary-card {
+    min-width: calc(50% - 8px);
+  }
+}
+
+@media (max-width: 540px) {
+  .inv-summary-row { gap: 10px; }
+  .inv-summary-card { min-width: 100%; padding: 14px 16px; }
+  .inv-stat-card { min-width: 100%; }
+  .inv-table-header { flex-direction: column; align-items: flex-start; }
+  .inv-table-search { width: 100%; min-width: unset; }
+  .inv-actions-row { flex-direction: column; }
+  .inv-actions-row .btn { width: 100%; justify-content: center; }
+}

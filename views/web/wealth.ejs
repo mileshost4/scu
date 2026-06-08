@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Wealth Management — Sterling Crest Union</title>
+  <meta name="description" content="Grow and protect your wealth with Sterling Crest Union — diversified portfolios, expert advisors, and intelligent financial tools."/>
+<link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+
+  <link rel="stylesheet" href="/stylesheets/web/nav.css"/>
+  <link rel="stylesheet" href="/stylesheets/web/footer.css"/>
+  <link rel="stylesheet" href="/stylesheets/web/theme.css"/>
+  <link rel="stylesheet" href="/stylesheets/web/wealth.css"/>
+</head>
+<body>
+
+  <%- include('../partials/nav', { currentPath: '/wealth' }) %>
+
+  <!-- ═══════════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════════════ -->
+  <section class="wealth-hero">
+    <div class="wealth-hero-bg"></div>
+    <div class="wealth-hero-overlay"></div>
+    <div class="wealth-hero-content">
+      <div class="wealth-hero-left">
+        <span class="wh-tag reveal-fade"><i class="fa-solid fa-chart-line"></i> Wealth Management</span>
+        <h1 class="wh-title reveal-up">
+          Your Wealth.<br/><em>Expertly</em><br/>Managed.
+        </h1>
+        <p class="wh-sub reveal-up d1">
+          Institutional-grade portfolio management, intelligent market tools, and dedicated advisors who put your goals first — not the market clock.
+        </p>
+        <div class="wh-actions reveal-up d2">
+          <a href="/register" class="btn-wealth-primary">Start Growing <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="#advisor" class="btn-wealth-outline"><i class="fa-solid fa-headset"></i> Talk to an Advisor</a>
+        </div>
+        <div class="wh-trust-row reveal-up d3">
+          <div class="wh-trust-item"><i class="fa-solid fa-shield-check"></i><span>FDIC Insured</span></div>
+          <div class="wh-trust-item"><i class="fa-solid fa-certificate"></i><span>SEC Registered</span></div>
+          <div class="wh-trust-item"><i class="fa-solid fa-lock"></i><span>ISO 27001</span></div>
+        </div>
+      </div>
+      <div class="wealth-hero-right reveal-up d2">
+        <!-- Animated portfolio card -->
+        <div class="portfolio-preview-card">
+          <div class="ppc-header">
+            <div class="ppc-title-wrap">
+              <span class="ppc-label">Portfolio Overview</span>
+              <span class="ppc-period">Last 12 months</span>
+            </div>
+            <div class="ppc-status"><i class="fa-solid fa-circle-dot"></i> Live</div>
+          </div>
+          <div class="ppc-value-wrap">
+            <span class="ppc-value-label">Total Value</span>
+            <div class="ppc-value">$248,<span class="ppc-v-counter">392</span></div>
+            <div class="ppc-growth">
+              <i class="fa-solid fa-arrow-trend-up"></i>
+              <span>+18.4% YTD</span>
+              <em>+$38,490</em>
+            </div>
+          </div>
+          <div class="ppc-bars">
+            <div class="ppc-bar-wrap">
+              <span>Equities</span>
+              <div class="ppc-bar"><div class="ppc-bar-fill" style="width:62%;background:var(--teal);"></div></div>
+              <span class="ppc-pct">62%</span>
+            </div>
+            <div class="ppc-bar-wrap">
+              <span>Fixed Income</span>
+              <div class="ppc-bar"><div class="ppc-bar-fill" style="width:22%;background:var(--violet);animation-delay:0.2s;"></div></div>
+              <span class="ppc-pct">22%</span>
+            </div>
+            <div class="ppc-bar-wrap">
+              <span>Alternatives</span>
+              <div class="ppc-bar"><div class="ppc-bar-fill" style="width:10%;background:var(--gold);animation-delay:0.4s;"></div></div>
+              <span class="ppc-pct">10%</span>
+            </div>
+            <div class="ppc-bar-wrap">
+              <span>Cash &amp; Others</span>
+              <div class="ppc-bar"><div class="ppc-bar-fill" style="width:6%;background:var(--coral);animation-delay:0.6s;"></div></div>
+              <span class="ppc-pct">6%</span>
+            </div>
+          </div>
+          <div class="ppc-footer">
+            <div class="ppc-advisor">
+              <div class="ppc-advisor-photo"></div>
+              <div>
+                <strong>Olivia R.</strong>
+                <span>Your Wealth Advisor</span>
+              </div>
+              <a href="#" class="ppc-call-btn"><i class="fa-solid fa-video"></i> Call</a>
+            </div>
+          </div>
+        </div>
+        <!-- Floating alerts -->
+        <div class="wh-float wh-float1">
+          <i class="fa-solid fa-arrow-trend-up" style="color:var(--teal);"></i>
+          <div><strong>+8.3%</strong><span>Portfolio this month</span></div>
+        </div>
+        <div class="wh-float wh-float2">
+          <i class="fa-solid fa-bell" style="color:var(--gold);"></i>
+          <div><strong>Rate Alert</strong><span>EUR/USD hit target</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       PLANS / TIERS
+  ═══════════════════════════════════════════════ -->
+  <section class="wealth-plans-section" id="plans">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-layer-group"></i> Wealth Tiers</span>
+        <h2 class="section-title">Choose Your <em>Wealth Journey</em></h2>
+        <p class="section-sub" style="margin:0 auto;">Whether you're growing your first investment or managing a multi-million dollar portfolio, we have a plan designed for you.</p>
+      </div>
+      <div class="plans-row">
+        <div class="plan-card reveal-up" data-tier="starter">
+          <div class="plan-icon"><i class="fa-solid fa-seedling"></i></div>
+          <h3>Growth</h3>
+          <div class="plan-tagline">Start your investment journey</div>
+          <div class="plan-min">Min. <strong>$5,000</strong></div>
+          <ul class="plan-features">
+            <li><i class="fa-solid fa-check"></i> Diversified ETF portfolios</li>
+            <li><i class="fa-solid fa-check"></i> AI-driven rebalancing</li>
+            <li><i class="fa-solid fa-check"></i> Mobile portfolio dashboard</li>
+            <li><i class="fa-solid fa-check"></i> Monthly advisor check-in</li>
+            <li><i class="fa-solid fa-check"></i> Goal-based investing tools</li>
+            <li class="disabled"><i class="fa-solid fa-minus"></i> Dedicated advisor</li>
+            <li class="disabled"><i class="fa-solid fa-minus"></i> Alternative assets</li>
+          </ul>
+          <div class="plan-returns">
+            <span class="pr-label">Target Returns</span>
+            <span class="pr-value pr-teal">8–12% p.a.</span>
+          </div>
+          <a href="/register" class="btn-plan btn-plan-outline">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="plan-card plan-featured reveal-up d1" data-tier="premium">
+          <div class="plan-badge">Most Popular</div>
+          <div class="plan-icon plan-icon-gold"><i class="fa-solid fa-star"></i></div>
+          <h3>Premium</h3>
+          <div class="plan-tagline">Advanced wealth strategies</div>
+          <div class="plan-min">Min. <strong>$50,000</strong></div>
+          <ul class="plan-features">
+            <li><i class="fa-solid fa-check"></i> Multi-asset portfolios</li>
+            <li><i class="fa-solid fa-check"></i> Real-time market analytics</li>
+            <li><i class="fa-solid fa-check"></i> Dedicated wealth advisor</li>
+            <li><i class="fa-solid fa-check"></i> Alternative investment access</li>
+            <li><i class="fa-solid fa-check"></i> FX hedging strategies</li>
+            <li><i class="fa-solid fa-check"></i> Tax optimisation guidance</li>
+            <li><i class="fa-solid fa-check"></i> Priority 24/7 support</li>
+          </ul>
+          <div class="plan-returns">
+            <span class="pr-label">Target Returns</span>
+            <span class="pr-value pr-gold">12–18% p.a.</span>
+          </div>
+          <a href="/register" class="btn-plan btn-plan-primary">Get Started <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+
+        <div class="plan-card reveal-up d2" data-tier="private">
+          <div class="plan-icon plan-icon-violet"><i class="fa-solid fa-crown"></i></div>
+          <h3>Private</h3>
+          <div class="plan-tagline">Bespoke institutional wealth</div>
+          <div class="plan-min">Min. <strong>$500,000</strong></div>
+          <ul class="plan-features">
+            <li><i class="fa-solid fa-check"></i> Fully bespoke strategy</li>
+            <li><i class="fa-solid fa-check"></i> Family office services</li>
+            <li><i class="fa-solid fa-check"></i> Private equity access</li>
+            <li><i class="fa-solid fa-check"></i> Real estate & ESG funds</li>
+            <li><i class="fa-solid fa-check"></i> Estate & succession planning</li>
+            <li><i class="fa-solid fa-check"></i> Concierge banking access</li>
+            <li><i class="fa-solid fa-check"></i> Offshore structuring advisory</li>
+          </ul>
+          <div class="plan-returns">
+            <span class="pr-label">Target Returns</span>
+            <span class="pr-value pr-violet">15–25%+ p.a.</span>
+          </div>
+          <a href="/contact" class="btn-plan btn-plan-outline btn-plan-violet">Speak to Us <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       INVESTMENT UNIVERSE
+  ═══════════════════════════════════════════════ -->
+  <section class="investment-universe-section">
+    <div class="container">
+      <div class="iu-inner">
+        <div class="iu-left reveal-up">
+          <span class="section-tag"><i class="fa-solid fa-earth-americas"></i> Investment Universe</span>
+          <h2 class="section-title">Access Every <em>Asset Class</em></h2>
+          <p class="section-sub">Build a truly diversified portfolio across the world's most liquid and highest-performing asset classes — all through one intelligent platform.</p>
+          <div class="asset-pills">
+            <div class="asset-pill ap-teal"><i class="fa-solid fa-chart-line"></i> Global Equities</div>
+            <div class="asset-pill ap-violet"><i class="fa-solid fa-building-columns"></i> Government Bonds</div>
+            <div class="asset-pill ap-gold"><i class="fa-solid fa-coins"></i> Commodities</div>
+            <div class="asset-pill ap-coral"><i class="fa-solid fa-house"></i> Real Estate (REITs)</div>
+            <div class="asset-pill ap-teal"><i class="fa-solid fa-seedling"></i> ESG & Green Funds</div>
+            <div class="asset-pill ap-violet"><i class="fa-solid fa-sitemap"></i> Private Equity</div>
+            <div class="asset-pill ap-gold"><i class="fa-solid fa-globe"></i> Emerging Markets</div>
+            <div class="asset-pill ap-coral"><i class="fa-solid fa-chart-pie"></i> ETFs & Index Funds</div>
+          </div>
+          <a href="/register" class="btn-primary" style="margin-top:2rem;">Explore Investments <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="iu-right reveal-up d2">
+          <div class="iu-image-stack">
+            <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=700&q=80" alt="Investment Markets" class="iu-main-img" loading="lazy"/>
+            <div class="iu-stat-card iu-card1">
+              <i class="fa-solid fa-arrow-trend-up" style="color:var(--teal);"></i>
+              <div>
+                <strong>+22.4%</strong>
+                <span>Avg. premium portfolio return 2024</span>
+              </div>
+            </div>
+            <div class="iu-stat-card iu-card2">
+              <i class="fa-solid fa-coins" style="color:var(--gold);"></i>
+              <div>
+                <strong>40+ Asset Classes</strong>
+                <span>Fully accessible</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       HOW WEALTH MANAGEMENT WORKS
+  ═══════════════════════════════════════════════ -->
+  <section class="wm-how-section">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag white"><i class="fa-solid fa-list-check"></i> Our Process</span>
+        <h2 class="section-title white">How It <em style="color:#f0c97e;">Works</em></h2>
+        <p class="section-sub white" style="margin:0 auto;">A structured, transparent, and highly personalised investment process — designed to maximise your returns while managing risk.</p>
+      </div>
+      <div class="wm-steps">
+        <div class="wm-step reveal-up">
+          <div class="wm-step-icon step-icon-teal">
+            <i class="fa-solid fa-user-pen"></i>
+            <span class="wm-step-num">01</span>
+          </div>
+          <h4>Profile & Discovery</h4>
+          <p>We begin by understanding you — your goals, timeline, risk tolerance, existing assets, and long-term financial aspirations through a structured discovery session.</p>
+        </div>
+        <div class="wm-step-connector"></div>
+        <div class="wm-step reveal-up d1">
+          <div class="wm-step-icon step-icon-violet">
+            <i class="fa-solid fa-sliders"></i>
+            <span class="wm-step-num">02</span>
+          </div>
+          <h4>Strategy Design</h4>
+          <p>Your dedicated advisor designs a bespoke investment strategy — selecting the ideal mix of asset classes, geographies, and instruments aligned to your profile.</p>
+        </div>
+        <div class="wm-step-connector"></div>
+        <div class="wm-step reveal-up d2">
+          <div class="wm-step-icon step-icon-gold">
+            <i class="fa-solid fa-rocket"></i>
+            <span class="wm-step-num">03</span>
+          </div>
+          <h4>Portfolio Launch</h4>
+          <p>Your portfolio goes live with precision execution — institutional-grade order routing, optimal entry points, and full transaction transparency from day one.</p>
+        </div>
+        <div class="wm-step-connector"></div>
+        <div class="wm-step reveal-up d3">
+          <div class="wm-step-icon step-icon-coral">
+            <i class="fa-solid fa-chart-line"></i>
+            <span class="wm-step-num">04</span>
+          </div>
+          <h4>Monitor & Rebalance</h4>
+          <p>AI monitors your portfolio 24/7, while your advisor meets regularly to review performance, rebalance allocations, and refine strategy as markets evolve.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       KEY FEATURES
+  ═══════════════════════════════════════════════ -->
+  <section class="wm-features-section">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag navy"><i class="fa-solid fa-sparkles"></i> Platform Features</span>
+        <h2 class="section-title">Tools Built to <em>Outperform</em></h2>
+        <p class="section-sub" style="margin:0 auto;">Our wealth platform combines AI-driven analytics, global market access, and institutional-grade risk management in a single, beautiful interface.</p>
+      </div>
+      <div class="wm-features-grid">
+        <div class="wm-feat-card wm-feat-large reveal-up" data-color="teal">
+          <div class="wm-feat-img">
+            <img src="https://images.unsplash.com/photo-1642790551116-18e150f248e3?w=700&q=80" alt="AI Portfolio Analytics" loading="lazy"/>
+          </div>
+          <div class="wm-feat-body">
+            <div class="wm-feat-icon"><i class="fa-solid fa-robot"></i></div>
+            <h3>AI Portfolio Intelligence</h3>
+            <p>Our proprietary AI engine analyses thousands of market signals in real time — surfacing opportunities, flagging risks, and automatically rebalancing your portfolio to stay aligned with your goals.</p>
+            <a href="/register" class="wm-feat-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="wm-feat-col">
+          <div class="wm-feat-card reveal-up d1" data-color="violet" style="padding: 15px;">
+            <div class="wm-feat-icon"><i class="fa-solid fa-chart-pie"></i></div>
+            <h3>Live Market Analytics</h3>
+            <p>Real-time data across equities, FX, commodities, and bonds — with predictive insights powered by 20+ years of proprietary data.</p>
+            <a href="#" class="wm-feat-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="wm-feat-card reveal-up d2" data-color="gold" style="padding: 15px;">
+            <div class="wm-feat-icon"><i class="fa-solid fa-umbrella"></i></div>
+            <h3>Risk Management</h3>
+            <p>Dynamic hedging, stop-loss protocols, and stress-testing ensure your portfolio is resilient — even in extreme market conditions.</p>
+            <a href="#" class="wm-feat-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="wm-feat-card reveal-up d3" data-color="coral" style="padding: 15px;">
+            <div class="wm-feat-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+            <h3>Tax Optimisation</h3>
+            <p>Automated tax-loss harvesting, efficient asset location, and year-end reporting — maximising your after-tax returns at every step.</p>
+            <a href="#" class="wm-feat-link">Learn more <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       MARKET PERFORMANCE STRIP
+  ═══════════════════════════════════════════════ -->
+  <section class="market-strip-section">
+    <div class="container">
+      <div class="ms-header reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-signal"></i> Live Market Snapshot</span>
+        <h2 class="section-title">Markets, <em>Right Now</em></h2>
+      </div>
+      <div class="market-tickers reveal-up d1">
+        <div class="ticker-card tc-up">
+          <div class="ticker-symbol">S&P 500</div>
+          <div class="ticker-val">5,432.61</div>
+          <div class="ticker-change up"><i class="fa-solid fa-caret-up"></i> +1.24%</div>
+        </div>
+        <div class="ticker-card tc-up">
+          <div class="ticker-symbol">NASDAQ</div>
+          <div class="ticker-val">17,891.02</div>
+          <div class="ticker-change up"><i class="fa-solid fa-caret-up"></i> +0.87%</div>
+        </div>
+        <div class="ticker-card tc-down">
+          <div class="ticker-symbol">FTSE 100</div>
+          <div class="ticker-val">8,224.33</div>
+          <div class="ticker-change down"><i class="fa-solid fa-caret-down"></i> -0.32%</div>
+        </div>
+        <div class="ticker-card tc-up">
+          <div class="ticker-symbol">Gold</div>
+          <div class="ticker-val">$2,341/oz</div>
+          <div class="ticker-change up"><i class="fa-solid fa-caret-up"></i> +0.55%</div>
+        </div>
+        <div class="ticker-card tc-up">
+          <div class="ticker-symbol">EUR/USD</div>
+          <div class="ticker-val">1.0842</div>
+          <div class="ticker-change up"><i class="fa-solid fa-caret-up"></i> +0.21%</div>
+        </div>
+        <div class="ticker-card tc-down">
+          <div class="ticker-symbol">Crude Oil</div>
+          <div class="ticker-val">$78.44</div>
+          <div class="ticker-change down"><i class="fa-solid fa-caret-down"></i> -1.05%</div>
+        </div>
+      </div>
+      <p class="market-disclaimer">Market data is indicative and for illustration purposes only. Past performance is not a guarantee of future returns.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       ADVISOR SECTION
+  ═══════════════════════════════════════════════ -->
+  <section class="advisor-section" id="advisor">
+    <div class="container">
+      <div class="advisor-inner">
+        <div class="advisor-text reveal-up">
+          <span class="section-tag"><i class="fa-solid fa-user-tie"></i> Expert Advisors</span>
+          <h2 class="section-title">Meet Your <em>Wealth Advisor</em></h2>
+          <p class="section-sub">Every client is paired with a dedicated wealth advisor — an experienced professional who builds a deep understanding of your financial life and serves as your trusted guide through every market cycle.</p>
+          <div class="advisor-promises">
+            <div class="ap-item">
+              <i class="fa-solid fa-phone" style="color:var(--teal);"></i>
+              <div><strong>Direct Line Access</strong><span>Reach your advisor whenever you need — phone, video, or chat.</span></div>
+            </div>
+            <div class="ap-item">
+              <i class="fa-solid fa-calendar-check" style="color:var(--violet);"></i>
+              <div><strong>Regular Portfolio Reviews</strong><span>Structured review sessions every month — or more frequently as needed.</span></div>
+            </div>
+            <div class="ap-item">
+              <i class="fa-solid fa-shield-halved" style="color:var(--gold);"></i>
+              <div><strong>Fiduciary Duty</strong><span>We are legally obligated to act in your best interests — always.</span></div>
+            </div>
+            <div class="ap-item">
+              <i class="fa-solid fa-graduation-cap" style="color:var(--coral);"></i>
+              <div><strong>CFA & CFP Certified</strong><span>All advisors hold the highest international certifications in wealth management.</span></div>
+            </div>
+          </div>
+          <a href="/contact" class="btn-primary" style="margin-top:2rem;">Book a Consultation <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="advisor-visual reveal-up d2">
+          <img src="https://images.unsplash.com/photo-1664575602276-acd073f104c1?w=700&q=80" alt="Wealth Advisor" class="advisor-img" loading="lazy"/>
+          <div class="advisor-card-badge">
+            <div class="acb-photo" style="background-image:url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&q=80');"></div>
+            <div>
+              <strong>Amara Osei-Bonsu, CFO</strong>
+              <span>Chief Financial Officer</span>
+              <div class="acb-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i> 5.0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       PERFORMANCE STATS
+  ═══════════════════════════════════════════════ -->
+  <section class="wm-stats-section">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag white"><i class="fa-solid fa-chart-bar"></i> Track Record</span>
+        <h2 class="section-title white">Numbers That <em style="color:#f0c97e;">Speak</em></h2>
+      </div>
+      <div class="wm-stats-row">
+        <div class="wm-stat reveal-up">
+          <span class="wm-stat-num"><span class="wm-count" data-count="18">0</span>%</span>
+          <p>Average annual return across Premium portfolios</p>
+        </div>
+        <div class="wm-stat-div"></div>
+        <div class="wm-stat reveal-up d1">
+          <span class="wm-stat-num">$<span class="wm-count" data-count="48">0</span>B+</span>
+          <p>Assets under management globally</p>
+        </div>
+        <div class="wm-stat-div"></div>
+        <div class="wm-stat reveal-up d2">
+          <span class="wm-stat-num"><span class="wm-count" data-count="96">0</span>%</span>
+          <p>Client retention rate over 5 years</p>
+        </div>
+        <div class="wm-stat-div"></div>
+        <div class="wm-stat reveal-up d3">
+          <span class="wm-stat-num"><span class="wm-count" data-count="40">0</span>+</span>
+          <p>Asset classes and instruments available</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       TESTIMONIALS (WEALTH-SPECIFIC)
+  ═══════════════════════════════════════════════ -->
+  <section class="wm-testi-section">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-comments"></i> Client Success Stories</span>
+        <h2 class="section-title">Wealth, <em>Transformed</em></h2>
+      </div>
+      <div class="wm-testi-row">
+        <div class="wm-testi-card wm-tc-teal reveal-up">
+          <div class="wm-testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p>"I've used many banks, but none come close. The wealth management dashboard alone is worth switching. I grew my portfolio 22% last year using their guided tools and advisor support."</p>
+          <div class="wm-testi-author">
+            <div class="wm-testi-avatar" style="background:linear-gradient(135deg,var(--violet),var(--violet-light));">MK</div>
+            <div><strong>Marcus K.</strong><span>Investment Analyst, New York</span></div>
+          </div>
+        </div>
+        <div class="wm-testi-card wm-tc-gold reveal-up d1">
+          <div class="wm-testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p>"Moved my entire portfolio to SCU's Private Wealth tier 18 months ago. The personalised strategy and estate planning support have been genuinely exceptional — far beyond what I expected."</p>
+          <div class="wm-testi-author">
+            <div class="wm-testi-avatar" style="background:linear-gradient(135deg,var(--gold),var(--gold-light));">CE</div>
+            <div><strong>Stacey E.</strong><span>Entrepreneur, Canada</span></div>
+          </div>
+        </div>
+        <div class="wm-testi-card wm-tc-violet reveal-up d2">
+          <div class="wm-testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+          <p>"As a first-time investor, I was nervous. My advisor took the time to explain everything, set realistic goals, and built a portfolio that has consistently outperformed my expectations."</p>
+          <div class="wm-testi-author">
+            <div class="wm-testi-avatar" style="background:linear-gradient(135deg,var(--teal),var(--teal-light));">AP</div>
+            <div><strong>Aisha P.</strong><span>Software Engineer, Dubai</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       FAQ
+  ═══════════════════════════════════════════════ -->
+  <section class="wm-faq-section">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-circle-question"></i> FAQs</span>
+        <h2 class="section-title">Your Questions, <em>Answered</em></h2>
+      </div>
+      <div class="wm-faq-list reveal-up d1">
+        <div class="wm-faq-item">
+          <button class="wm-faq-trigger">What is the minimum investment amount? <i class="fa-solid fa-plus"></i></button>
+          <div class="wm-faq-body"><p>Our Growth plan starts from $5,000, Premium from $50,000, and Private Wealth from $500,000. We also offer a Starter plan at $500 for those just beginning their investment journey.</p></div>
+        </div>
+        <div class="wm-faq-item">
+          <button class="wm-faq-trigger">How are fees structured? <i class="fa-solid fa-plus"></i></button>
+          <div class="wm-faq-body"><p>We charge an annual management fee of 0.5%–1.2% of AUM depending on your tier, with no hidden transaction charges. Performance fees apply only on Private Wealth portfolios above a defined hurdle rate.</p></div>
+        </div>
+        <div class="wm-faq-item">
+          <button class="wm-faq-trigger">Can I withdraw my funds at any time? <i class="fa-solid fa-plus"></i></button>
+          <div class="wm-faq-body"><p>Yes. All liquid assets can be withdrawn at any time with no penalties. Fixed income and alternative positions may have standard settlement periods (typically T+2 to T+5 depending on the instrument).</p></div>
+        </div>
+        <div class="wm-faq-item">
+          <button class="wm-faq-trigger">How is my portfolio protected? <i class="fa-solid fa-plus"></i></button>
+          <div class="wm-faq-body"><p>All client assets are held in segregated custodian accounts — completely separate from Sterling Crest's own assets. Portfolios are insured under FDIC (or local equivalent) and covered by SIPC for eligible US accounts up to $500,000.</p></div>
+        </div>
+        <div class="wm-faq-item">
+          <button class="wm-faq-trigger">What markets and instruments do you invest in? <i class="fa-solid fa-plus"></i></button>
+          <div class="wm-faq-body"><p>We provide access to global equities, government and corporate bonds, ETFs, REITs, commodities, currencies, private equity, and ESG funds across 40+ markets and 180+ countries.</p></div>
+        </div>
+        <div class="wm-faq-item">
+          <button class="wm-faq-trigger">How do I get started? <i class="fa-solid fa-plus"></i></button>
+          <div class="wm-faq-body"><p>Simply open an account online, fund it to the minimum for your chosen tier, and you'll be matched with a wealth advisor within 24 hours. Your first consultation is completely free.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       CTA
+  ═══════════════════════════════════════════════ -->
+  <section class="wm-cta-section">
+    <div class="container">
+      <div class="wm-cta-inner reveal-up">
+        <div class="wm-cta-icon"><i class="fa-solid fa-chart-line"></i></div>
+        <h2>Ready to <em>Build Wealth</em> That Lasts?</h2>
+        <p>Join thousands of investors growing their wealth with Sterling Crest Union. Your first consultation is free — no commitment required.</p>
+        <div class="wm-cta-actions">
+          <a href="/register" class="btn-wealth-primary">Open Investment Account <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/contact" class="btn-wealth-outline">Book Free Consultation</a>
+        </div>
+        <p class="wm-cta-note"><i class="fa-solid fa-circle-info"></i> Capital at risk. Investments can go down as well as up. Past performance is not a guarantee of future results.</p>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../partials/footer') %>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // Reveal
+    const revEls = document.querySelectorAll('.reveal-up, .reveal-fade');
+    const revObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); revObs.unobserve(e.target); }});
+    }, { threshold: 0.07 });
+    revEls.forEach(el => revObs.observe(el));
+
+    // Count-up
+    function countUp(el) {
+      const target = parseFloat(el.dataset.count);
+      const duration = 1500;
+      const startTime = performance.now();
+      const step = (now) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(target * eased);
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = target;
+      };
+      requestAnimationFrame(step);
+    }
+    const cObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { countUp(e.target); cObs.unobserve(e.target); }});
+    }, { threshold: 0.5 });
+    document.querySelectorAll('.wm-count').forEach(el => cObs.observe(el));
+
+    // FAQ
+    document.querySelectorAll('.wm-faq-trigger').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.wm-faq-item');
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.wm-faq-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+
+    // Animate portfolio bars on scroll
+    const barObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.ppc-bar-fill').forEach(b => b.classList.add('animated'));
+          barObs.disconnect();
+        }
+      });
+    }, { threshold: 0.3 });
+    const ppc = document.querySelector('.portfolio-preview-card');
+    if (ppc) barObs.observe(ppc);
+  </script>
+</body>
+</html>

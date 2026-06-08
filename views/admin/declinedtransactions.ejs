@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Declined Transactions | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/transactions.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/admin/admin.declined-transactions'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <%- include('../partials/flash') %>
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Declined Transactions</h1>
+            <p class="page-subtitle">Transactions that were rejected or marked unsuccessful.</p>
+          </div>
+          <div class="page-header-right">
+            <a href="/admin/admin.approved-transactions" class="btn btn-ghost btn-sm">
+              <i class="fa-solid fa-check-double"></i> Approved
+            </a>
+            <a href="/admin/admin.pending-transactions" class="btn btn-ghost btn-sm">
+              <i class="fa-solid fa-clock"></i> Pending
+            </a>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon danger"><i class="fa-solid fa-ban"></i></div>
+            <div class="stat-body">
+              <div class="stat-value"><%= declinedTrans.length %></div>
+              <div class="stat-label">Total Declined</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon info"><i class="fa-solid fa-arrow-trend-up"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="statCredit">0</div>
+              <div class="stat-label">Inflows Declined</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon warning"><i class="fa-solid fa-arrow-trend-down"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="statDebit">0</div>
+              <div class="stat-label">Outflows Declined</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon gold"><i class="fa-solid fa-circle-dollar-to-slot"></i></div>
+            <div class="stat-body">
+              <div class="stat-value amount" id="statVolume">$0</div>
+              <div class="stat-label">Declined Volume</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by user name, ref code…" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Type</span>
+            <select id="filterType">
+              <option value="">All types</option>
+              <option value="Credit">Credit</option>
+              <option value="Debit">Debit</option>
+              <option value="Transfer">Transfer</option>
+              <option value="Deposit">Deposit</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">From</span>
+            <input type="date" id="filterFrom" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">To</span>
+            <input type="date" id="filterTo" />
+          </div>
+          <button class="btn btn-ghost btn-sm" id="clearFilters">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <div>
+              <div class="table-card-title">Unsuccessful Transactions</div>
+              <div class="table-card-meta" id="visibleCount"></div>
+            </div>
+          </div>
+
+          <div class="tx-table-wrap">
+            <table class="tx-table" id="txTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>User</th>
+                  <th>Ref Code</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>Receiver</th>
+                  <th class="col-amount">Amount</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="txBody">
+                <% if (declinedTrans && declinedTrans.length > 0) { %>
+                  <% declinedTrans.forEach(function(tx) { %>
+                    <%
+                      const isCredit = ['Credit','Deposit'].includes(tx.transactionType);
+                      const userObj = users.find(u => u._id.toString() === (tx.validateUser ? tx.validateUser.toString() : ''));
+                      const fullName = userObj ? userObj.firstname + ' ' + userObj.lastname : (tx.senderAccountName || 'Unknown');
+                      const userId = userObj ? userObj._id : '';
+                      const initials = fullName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+                      const txDate = tx.date ? new Date(tx.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+                      const txTime = tx.date ? new Date(tx.date).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : '';
+                      const typeClass = tx.transactionType === 'Credit' ? 'credit' : tx.transactionType === 'Deposit' ? 'deposit' : tx.transactionType === 'Transfer' ? 'transfer' : 'debit';
+                      const amtClass = isCredit ? 'credit' : 'debit';
+                      const amtPrefix = isCredit ? '+' : '-';
+                    %>
+                    <tr data-user="<%= fullName.toLowerCase() %>"
+                        data-type="<%= tx.transactionType %>"
+                        data-date="<%= tx.date ? new Date(tx.date).toISOString().split('T')[0] : '' %>"
+                        data-ref="<%= (tx.refCode||'').toLowerCase() %>"
+                        data-amount="<%= tx.amount || 0 %>">
+                      <td>
+                        <div style="font-size:0.85rem;font-weight:600;color:var(--text-primary)"><%= txDate %></div>
+                        <div style="font-size:0.72rem;color:var(--text-muted)"><%= txTime %></div>
+                      </td>
+                      <td>
+                        <div class="user-cell">
+                          <div class="user-avatar-sm"><%= initials %></div>
+                          <div class="user-cell-info">
+                            <% if (userId) { %>
+                              <a href="/admin/admin.user/<%= userId %>" class="user-name" style="text-decoration:none;color:inherit;"><%= fullName %></a>
+                            <% } else { %>
+                              <div class="user-name"><%= fullName %></div>
+                            <% } %>
+                            <div class="user-acct"><%= tx.senderAccountNumber || '—' %></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td><span class="ref-code"><%= tx.refCode || '—' %></span></td>
+                      <td>
+                        <span class="tx-type <%= typeClass %>">
+                          <%= tx.transactionType %><% if (tx.transferType) { %> · <%= tx.transferType %><% } %>
+                        </span>
+                      </td>
+                      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary);font-size:0.82rem;">
+                        <%= tx.description || '—' %>
+                      </td>
+                      <td>
+                        <div style="font-size:0.82rem;color:var(--text-secondary);">
+                          <div><%= tx.receiverAccountName || '—' %></div>
+                          <% if (tx.bankTo) { %><div style="font-size:0.72rem;color:var(--text-muted);"><%= tx.bankTo %></div><% } %>
+                        </div>
+                      </td>
+                      <td class="col-amount">
+                        <span class="amount-cell <%= amtClass %>">
+                          <%= amtPrefix %>$<%= parseFloat(tx.amount||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+                        </span>
+                      </td>
+                      <td>
+                        <div class="tx-actions">
+                          <a href="/admin/<%= tx._id %>/admin.receipt" class="tx-action-btn" title="View">
+                            <i class="fa-solid fa-eye"></i>
+                          </a>
+                          <!-- Re-approve -->
+                          <form action="/admin/admin.transaction/<%= tx._id %>/approve?_method=PUT" method="POST" style="display:inline;">
+                            <button type="submit" class="tx-action-btn success" title="Re-approve"
+                              onclick="return confirm('Approve this transaction?')">
+                              <i class="fa-solid fa-rotate-left"></i>
+                            </button>
+                          </form>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr id="emptyRow">
+                    <td colspan="8">
+                      <div class="empty-state">
+                        <div class="empty-icon"><i class="fa-solid fa-ban"></i></div>
+                        <div class="empty-title">No declined transactions</div>
+                        <div class="empty-sub">There are no unsuccessful transactions to display.</div>
+                      </div>
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pagination-bar">
+            <div class="pagination-info" id="paginationInfo"></div>
+            <div class="pagination-controls" id="paginationControls"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    const rows = Array.from(document.querySelectorAll('#txBody tr[data-user]'));
+    const PAGE_SIZE = 25;
+    let currentPage = 1;
+    let filteredRows = [...rows];
+
+    function computeStats(rowSet) {
+      let credit = 0, debit = 0, volume = 0;
+      rowSet.forEach(r => {
+        const type = r.dataset.type;
+        const amt = parseFloat(r.dataset.amount) || 0;
+        if (['Credit','Deposit'].includes(type)) credit++; else debit++;
+        volume += amt;
+      });
+      document.getElementById('statCredit').textContent = credit;
+      document.getElementById('statDebit').textContent = debit;
+      document.getElementById('statVolume').textContent = '$' + volume.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    function applyFilters() {
+      const q    = document.getElementById('searchInput').value.toLowerCase().trim();
+      const type = document.getElementById('filterType').value;
+      const from = document.getElementById('filterFrom').value;
+      const to   = document.getElementById('filterTo').value;
+      filteredRows = rows.filter(r => {
+        return (!q    || r.dataset.user.includes(q) || r.dataset.ref.includes(q))
+            && (!type || r.dataset.type === type)
+            && (!from || r.dataset.date >= from)
+            && (!to   || r.dataset.date <= to);
+      });
+      currentPage = 1;
+      render();
+    }
+
+    function render() {
+      rows.forEach(r => r.style.display = 'none');
+      const start = (currentPage - 1) * PAGE_SIZE;
+      filteredRows.slice(start, start + PAGE_SIZE).forEach(r => r.style.display = '');
+      const emptyRow = document.getElementById('emptyRow');
+      if (emptyRow) emptyRow.style.display = filteredRows.length === 0 ? '' : 'none';
+      document.getElementById('visibleCount').textContent =
+        `Showing ${Math.min(start+1,filteredRows.length)}–${Math.min(start+PAGE_SIZE,filteredRows.length)} of ${filteredRows.length}`;
+      computeStats(filteredRows);
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const total = Math.ceil(filteredRows.length / PAGE_SIZE);
+      const ctrl  = document.getElementById('paginationControls');
+      ctrl.innerHTML = '';
+      document.getElementById('paginationInfo').textContent = `Page ${currentPage} of ${Math.max(total,1)}`;
+      if (total <= 1) return;
+      const mkBtn = (l, p) => {
+        const b = document.createElement('button');
+        b.className = 'page-btn' + (p === currentPage ? ' active' : '');
+        b.textContent = l;
+        b.onclick = () => { currentPage = p; render(); };
+        return b;
+      };
+      if (currentPage > 1) ctrl.appendChild(mkBtn('‹', currentPage - 1));
+      for (let i = 1; i <= total; i++) ctrl.appendChild(mkBtn(i, i));
+      if (currentPage < total) ctrl.appendChild(mkBtn('›', currentPage + 1));
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('filterType').addEventListener('change', applyFilters);
+    document.getElementById('filterFrom').addEventListener('change', applyFilters);
+    document.getElementById('filterTo').addEventListener('change', applyFilters);
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('filterType').value  = '';
+      document.getElementById('filterFrom').value  = '';
+      document.getElementById('filterTo').value    = '';
+      applyFilters();
+    });
+
+    render();
+  </script>
+</body>
+</html>

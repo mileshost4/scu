@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sterling Crest Union — Private Banking, Redefined</title>
+  <meta name="description" content="Sterling Crest Union — premium banking services with institutional security, intelligent wealth tools and concierge support."/>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- Bootstrap 5 (utility-only) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+
+  <link rel="stylesheet" href="/stylesheets/web/nav.css"/>
+  <link rel="stylesheet" href="/stylesheets/web/footer.css"/>
+  <link rel="stylesheet" href="/stylesheets/web/theme.css"/>
+  <link rel="stylesheet" href="/stylesheets/web/home.css"/>
+</head>
+<body>
+
+  <!-- NAV PLACEHOLDER -->
+  <%- include('../partials/nav', { currentPath: '/' }) %>
+
+  <!-- ═══════════════════════════════════════════════════
+       HERO — FULLSCREEN IMAGE SLIDER
+  ═══════════════════════════════════════════════════════ -->
+  <section class="hero" id="hero">
+
+    <!-- Background slides -->
+    <div class="hero-slides">
+      <div class="hero-slide active" data-slide="1"></div>
+      <div class="hero-slide" data-slide="2"></div>
+      <div class="hero-slide" data-slide="3"></div>
+      <div class="hero-slide" data-slide="4"></div>
+    </div>
+
+    <!-- Slide content overlays -->
+    <div class="slide-content active" data-slide="1">
+      <div class="slide-inner">
+        <span class="slide-tag"><i class="fa-solid fa-shield-halved"></i> Trusted by 3 Million+ customers</span>
+        <h1 class="slide-title">Banking Built<br/>For <em>Those Who</em><br/>Demand More.</h1>
+        <p class="slide-sub">Institutional-grade security. Intelligent wealth tools. Concierge-level service. Welcome to <strong>Sterling Crest Union</strong>.</p>
+        <div class="slide-actions">
+          <a href="/register" class="btn-hero-primary">Open Free Account <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/services" class="btn-hero-outline"><i class="fa-solid fa-grid-2"></i> Our Services</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-content" data-slide="2">
+      <div class="slide-inner">
+        <span class="slide-tag"><i class="fa-solid fa-chart-line"></i> Wealth Management</span>
+        <h1 class="slide-title">Grow Your Wealth<br/>With <em>Expert</em><br/>Guidance.</h1>
+        <p class="slide-sub">Diversified portfolios, live market insights, and dedicated advisors who work around your goals — not the other way around.</p>
+        <div class="slide-actions">
+          <a href="/services" class="btn-hero-primary">Explore Wealth Plans <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/contact" class="btn-hero-outline"><i class="fa-solid fa-headset"></i> Speak to an Advisor</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-content" data-slide="3">
+      <div class="slide-inner">
+        <span class="slide-tag"><i class="fa-solid fa-building"></i> Business Banking</span>
+        <h1 class="slide-title">Power Your<br/><em>Business</em> With<br/>Smart Accounts.</h1>
+        <p class="slide-sub">Multi-user access, payroll integrations, bulk payments and a dedicated relationship manager — everything your enterprise needs.</p>
+        <div class="slide-actions">
+          <a href="/register" class="btn-hero-primary">Open Business Account <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/services" class="btn-hero-outline"><i class="fa-solid fa-briefcase"></i> Business Features</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="slide-content" data-slide="4">
+      <div class="slide-inner">
+        <span class="slide-tag"><i class="fa-solid fa-lock"></i> Bank-Grade Security</span>
+        <h1 class="slide-title">Your Money,<br/>Protected By <em>Fort<br/>Knox</em> Standards.</h1>
+        <p class="slide-sub">Military-grade encryption, real-time AI fraud detection, and multi-layer authentication — your funds are always safe with us.</p>
+        <div class="slide-actions">
+          <a href="/register" class="btn-hero-primary">Get Started — Free <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/about" class="btn-hero-outline"><i class="fa-solid fa-info-circle"></i> Learn About Security</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="hero-controls">
+      <div class="hero-dots">
+        <button class="hero-dot active" data-slide="0"></button>
+        <button class="hero-dot" data-slide="1"></button>
+        <button class="hero-dot" data-slide="2"></button>
+        <button class="hero-dot" data-slide="3"></button>
+      </div>
+      <div class="hero-arrows">
+        <button class="hero-arrow" id="heroPrev"><i class="fa-solid fa-chevron-left"></i></button>
+        <button class="hero-arrow" id="heroNext"><i class="fa-solid fa-chevron-right"></i></button>
+      </div>
+    </div>
+
+    <!-- Stats bar (desktop only) -->
+    <div class="hero-stats">
+      <div class="stat-item">
+        <div class="stat-row">
+          <span class="stat-num" data-count="3">0</span><span class="stat-unit">M+</span>
+        </div>
+        <span class="stat-label">Customers</span>
+      </div>
+      <div class="stat-item">
+        <div class="stat-row">
+          <span class="stat-num" data-count="48">0</span><span class="stat-unit">B+</span>
+        </div>
+        <span class="stat-label">Assets Managed</span>
+      </div>
+      <div class="stat-item">
+        <div class="stat-row">
+          <span class="stat-num" data-count="99">0</span><span class="stat-unit">.9%</span>
+        </div>
+        <span class="stat-label">Uptime SLA</span>
+      </div>
+      <div class="stat-item">
+        <div class="stat-row">
+          <span class="stat-num" data-count="24">0</span><span class="stat-unit">/7</span>
+        </div>
+        <span class="stat-label">Support</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       TRUST STRIP
+  ═══════════════════════════════════════════════════════ -->
+  <section class="trust-strip">
+    <div class="trust-inner">
+      <div class="trust-item"><i class="fa-solid fa-shield-check"></i><span>256-bit SSL Encryption</span></div>
+      <div class="trust-sep"></div>
+      <div class="trust-item"><i class="fa-solid fa-building-columns"></i><span>FCA & SEC Regulated</span></div>
+      <div class="trust-sep"></div>
+      <div class="trust-item"><i class="fa-solid fa-certificate"></i><span>FDIC Insured Deposits</span></div>
+      <div class="trust-sep"></div>
+      <div class="trust-item"><i class="fa-solid fa-lock"></i><span>Two-Factor Authentication</span></div>
+      <div class="trust-sep"></div>
+      <div class="trust-item"><i class="fa-solid fa-star"></i><span>4.9/5 Customer Rating</span></div>
+      <div class="trust-sep"></div>
+      <div class="trust-item"><i class="fa-solid fa-globe"></i><span>180+ Countries Served</span></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       SERVICES
+  ═══════════════════════════════════════════════════════ -->
+  <section class="services-section" id="services">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-grid-2"></i> What We Offer</span>
+        <h2 class="section-title">Premium Services <em>Crafted</em> For You</h2>
+        <p class="section-sub">Every financial need, covered under one roof — with the precision and care you deserve.</p>
+      </div>
+      <div class="services-grid">
+        <div class="service-card reveal-up" data-color="teal">
+          <div class="service-icon-wrap"><i class="fa-solid fa-wallet"></i></div>
+          <h3>Personal Banking</h3>
+          <p>Smart accounts with zero hidden fees, instant transfers, real-time notifications, and AI-powered budgeting insights.</p>
+          <a href="/services" class="service-link">Explore <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="service-card reveal-up d1" data-color="violet">
+          <div class="service-icon-wrap"><i class="fa-solid fa-chart-line"></i></div>
+          <h3>Wealth Management</h3>
+          <p>Grow and protect your wealth with diversified portfolios, live market data, and expert advisors on demand.</p>
+          <a href="/services" class="service-link">Explore <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="service-card reveal-up d2" data-color="gold">
+          <div class="service-icon-wrap"><i class="fa-solid fa-building"></i></div>
+          <h3>Business Accounts</h3>
+          <p>Power your enterprise with multi-user access, payroll integrations, bulk payments, and a dedicated relationship manager.</p>
+          <a href="/services" class="service-link">Explore <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="service-card reveal-up d1" data-color="coral">
+          <div class="service-icon-wrap"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+          <h3>Loans & Credit</h3>
+          <p>Competitive rates on personal and business loans with fast approvals, flexible tenures, and zero pre-payment penalties.</p>
+          <a href="/services" class="service-link">Explore <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="service-card reveal-up d2" data-color="teal">
+          <div class="service-icon-wrap"><i class="fa-solid fa-money-bill-transfer"></i></div>
+          <h3>Global Transfers</h3>
+          <p>Send money to 180+ countries instantly at the best exchange rates, with full compliance tracking and instant receipts.</p>
+          <a href="/services" class="service-link">Explore <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="service-card reveal-up d3" data-color="violet">
+          <div class="service-icon-wrap"><i class="fa-solid fa-shield-halved"></i></div>
+          <h3>Insurance & Protection</h3>
+          <p>Protect what matters most — life, health, property and business — with tailored plans from trusted global partners.</p>
+          <a href="/services" class="service-link">Explore <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       PARTNER LOGOS
+  ═══════════════════════════════════════════════════════ -->
+  <section class="partners-section">
+    <div class="container">
+      <p class="partners-label">Trusted integrations & global partnerships</p>
+      <div class="partners-row">
+        <div class="partner-logo"><i class="fa-brands fa-cc-visa"></i> Visa</div>
+        <div class="partner-logo"><i class="fa-brands fa-cc-mastercard"></i> Mastercard</div>
+        <div class="partner-logo"><i class="fa-solid fa-university"></i> IMF Compliant</div>
+        <div class="partner-logo"><i class="fa-brands fa-swift"></i> SWIFT</div>
+        <div class="partner-logo"><i class="fa-solid fa-certificate"></i> FDIC</div>
+        <div class="partner-logo"><i class="fa-solid fa-shield-halved"></i> ISO 27001</div>
+        <div class="partner-logo"><i class="fa-solid fa-globe"></i> SEPA</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       WHY CHOOSE US
+  ═══════════════════════════════════════════════════════ -->
+  <section class="why-section" id="why">
+    <div class="container">
+      <div class="why-inner">
+        <div class="reveal-up">
+          <span class="section-tag white"><i class="fa-solid fa-trophy"></i> Why Sterling Crest</span>
+          <h2 class="section-title white">The Difference Is In <em>The Details</em></h2>
+          <p class="section-sub white">We didn't just build a bank — we engineered an experience. Every feature, every interaction, every support call is designed to leave you with one thought: this is how banking should feel.</p>
+          <ul class="why-list">
+            <li class="why-item-teal">
+              <i class="fa-solid fa-user-tie"></i>
+              <div><strong>Dedicated Relationship Manager</strong><span>Assigned to you from day one, available whenever you need them.</span></div>
+            </li>
+            <li class="why-item-violet">
+              <i class="fa-solid fa-bolt"></i>
+              <div><strong>Zero-Fee Internal Transfers</strong><span>Move money within the Sterling Crest network for free, instantly.</span></div>
+            </li>
+            <li class="why-item-gold">
+              <i class="fa-solid fa-robot"></i>
+              <div><strong>AI-Powered Fraud Detection</strong><span>Real-time monitoring that catches anomalies before you even notice.</span></div>
+            </li>
+            <li class="why-item-coral">
+              <i class="fa-solid fa-stopwatch"></i>
+              <div><strong>5-Minute Account Setup</strong><span>Fully verified and compliant account opening — no branch visit required.</span></div>
+            </li>
+            <li class="why-item-teal">
+              <i class="fa-brands fa-cc-visa"></i>
+              <div><strong>Premium Visa Card</strong><span>Worldwide acceptance with zero foreign transaction fees on select plans.</span></div>
+            </li>
+          </ul>
+          <a href="/about" class="btn-primary" style="margin-top:2rem;">Our Story <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="why-image-stack reveal-up d2">
+          <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=700&q=80" alt="Digital Banking" class="why-img-main" loading="lazy"/>
+          <img src="https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=400&q=80" alt="Secure Banking" class="why-img-accent" loading="lazy"/>
+          <div class="why-badge"><i class="fa-solid fa-award"></i><span>Best Digital Bank 2024</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       NUMBERS
+  ═══════════════════════════════════════════════════════ -->
+  <section class="numbers-section reveal-up">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-chart-bar"></i> By The Numbers</span>
+        <h2 class="section-title">Scale That Speaks <em>Volumes</em></h2>
+      </div>
+      <div class="numbers-grid">
+        <div class="number-card reveal-up" data-accent="teal">
+          <i class="fa-solid fa-users"></i>
+          <span class="n-count" data-count="3">0</span><span class="n-unit">M+</span>
+          <p>Active Customers</p>
+        </div>
+        <div class="number-card reveal-up d1" data-accent="violet">
+          <i class="fa-solid fa-coins"></i>
+          <span class="n-count" data-count="48">0</span><span class="n-unit">B+</span>
+          <p>Assets Under Management</p>
+        </div>
+        <div class="number-card reveal-up d2" data-accent="gold">
+          <i class="fa-solid fa-globe"></i>
+          <span class="n-count" data-count="180">0</span><span class="n-unit">+</span>
+          <p>Countries Supported</p>
+        </div>
+        <div class="number-card reveal-up d3" data-accent="coral">
+          <i class="fa-solid fa-star"></i>
+          <span class="n-count" data-count="4">0</span><span class="n-unit">.9★</span>
+          <p>App Store Rating</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       HOW IT WORKS
+  ═══════════════════════════════════════════════════════ -->
+  <section class="how-section" id="how">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-list-check"></i> Simple Process</span>
+        <h2 class="section-title">Up and Running in <em>Minutes</em></h2>
+        <p class="section-sub" style="margin:0 auto;">No paperwork. No queues. Just a fast, secure onboarding that respects your time.</p>
+      </div>
+      <div class="how-steps">
+        <div class="how-step reveal-up">
+          <div class="step-circle step-teal">
+            <i class="fa-solid fa-user-plus"></i>
+            <span class="step-num-badge">01</span>
+          </div>
+          <div>
+            <h4>Create Account</h4>
+            <p>Register with your email and government ID in under 3 minutes. Fully verified, fully compliant.</p>
+          </div>
+        </div>
+        <div class="how-step reveal-up d1">
+          <div class="step-circle step-violet">
+            <i class="fa-solid fa-id-card"></i>
+            <span class="step-num-badge">02</span>
+          </div>
+          <div>
+            <h4>Verify Identity</h4>
+            <p>Upload a government ID and selfie. Our AI verifies you instantly — no branch visit needed.</p>
+          </div>
+        </div>
+        <div class="how-step reveal-up d2">
+          <div class="step-circle step-gold">
+            <i class="fa-solid fa-credit-card"></i>
+            <span class="step-num-badge">03</span>
+          </div>
+          <div>
+            <h4>Fund & Activate</h4>
+            <p>Make your first deposit and your account goes live immediately. Card delivered in 3–5 days.</p>
+          </div>
+        </div>
+        <div class="how-step reveal-up d3">
+          <div class="step-circle step-coral">
+            <i class="fa-solid fa-rocket"></i>
+            <span class="step-num-badge">04</span>
+          </div>
+          <div>
+            <h4>Start Banking</h4>
+            <p>Transact, invest, transfer, and grow — everything you need is right in your pocket.</p>
+          </div>
+        </div>
+      </div>
+      <div class="text-center mt-5">
+        <a href="/register" class="btn-primary">Get Started Now <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       RATES & PRODUCTS
+  ═══════════════════════════════════════════════════════ -->
+  <section class="rates-section">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag white"><i class="fa-solid fa-percent"></i> Competitive Rates</span>
+        <h2 class="section-title white">Products Built to <em>Reward</em> You</h2>
+        <p class="section-sub white" style="margin:0 auto;">Transparent pricing. No hidden charges. Just value that compounds over time.</p>
+      </div>
+      <div class="rates-grid">
+        <div class="rate-card reveal-up">
+          <i class="fa-solid fa-piggy-bank"></i>
+          <h3>Savings Account</h3>
+          <div class="rate-value">8<span>% p.a.</span></div>
+          <p>Earn high interest on everyday savings with flexible withdrawal options and no lock-in.</p>
+          <a href="/register" class="btn-rate">Open Savings <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="rate-card featured reveal-up d1">
+          <div class="rate-badge">Most Popular</div>
+          <i class="fa-solid fa-chart-pie"></i>
+          <h3>Fixed Deposit</h3>
+          <div class="rate-value">15<span>% p.a.</span></div>
+          <p>Lock in higher returns with our fixed deposit plans from 30 days to 2 years with guaranteed yields.</p>
+          <a href="/register" class="btn-rate">Start Investing <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="rate-card reveal-up d2">
+          <i class="fa-solid fa-hand-holding-dollar"></i>
+          <h3>Personal Loan</h3>
+          <div class="rate-value">6.9<span>% p.a.</span></div>
+          <p>Low-rate personal loans approved in 24 hours — no collateral required for qualifying customers worldwide.</p>
+          <a href="/register" class="btn-rate">Apply Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       GLOBAL REACH SECTION (NEW)
+  ═══════════════════════════════════════════════════════ -->
+  <section class="global-section">
+    <div class="container">
+      <div class="global-inner">
+        <div class="reveal-up">
+          <span class="section-tag"><i class="fa-solid fa-globe"></i> Global Presence</span>
+          <h2 class="section-title">Banking Without <em>Borders</em></h2>
+          <p class="section-sub">Whether you're in New York, London, Dubai, or Singapore — Sterling Crest Union is with you every step of the way. Multi-currency accounts, real-time FX rates, and local compliance in 180+ countries.</p>
+          <div class="global-pillars">
+            <div class="global-pill" data-color="teal">
+              <i class="fa-solid fa-coins"></i>
+              <div>
+                <strong>40+ Currencies</strong>
+                <span>Hold, exchange &amp; transfer in major world currencies</span>
+              </div>
+            </div>
+            <div class="global-pill" data-color="violet">
+              <i class="fa-solid fa-scale-balanced"></i>
+              <div>
+                <strong>Local Compliance</strong>
+                <span>Fully regulated in every jurisdiction we operate</span>
+              </div>
+            </div>
+            <div class="global-pill" data-color="gold">
+              <i class="fa-solid fa-clock-rotate-left"></i>
+              <div>
+                <strong>Real-Time FX</strong>
+                <span>Live exchange rates — no hidden spreads or markups</span>
+              </div>
+            </div>
+            <div class="global-pill" data-color="coral">
+              <i class="fa-solid fa-headset"></i>
+              <div>
+                <strong>Multilingual Support</strong>
+                <span>Customer service in 18 languages, 24/7</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="global-image-wrap reveal-up d2">
+          <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=700&q=80" alt="Global Banking Network" loading="lazy" class="global-img"/>
+          <div class="global-float-badge badge-london">
+            <i class="fa-solid fa-circle-dot" style="color:#1a8f82;"></i> London — Active
+          </div>
+          <div class="global-float-badge badge-dubai">
+            <i class="fa-solid fa-circle-dot" style="color:#c08a2e;"></i> Dubai — Active
+          </div>
+          <div class="global-float-badge badge-ny">
+            <i class="fa-solid fa-circle-dot" style="color:#7c3aed;"></i> New York — Active
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       APP PROMO
+  ═══════════════════════════════════════════════════════ -->
+  <section class="app-section">
+    <div class="container">
+      <div class="app-inner">
+        <div class="app-phones reveal-up">
+          <img src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=400&q=80" alt="Mobile Banking App" class="phone-img" loading="lazy"/>
+          <div class="app-notification">
+            <i class="fa-solid fa-check-circle" style="color:#1a8f82;font-size:1.2rem;flex-shrink:0;"></i>
+            <div>
+              <strong>Transfer Successful</strong>
+              <span>$2,500 sent to James W.</span>
+            </div>
+          </div>
+          <div class="app-notification n2">
+            <i class="fa-solid fa-chart-line" style="color:#c08a2e;font-size:1.2rem;flex-shrink:0;"></i>
+            <div>
+              <strong>Portfolio Up +8.3%</strong>
+              <span>Your investments are growing</span>
+            </div>
+          </div>
+          <div class="app-notification n3">
+            <i class="fa-solid fa-globe" style="color:#7c3aed;font-size:1.2rem;flex-shrink:0;"></i>
+            <div>
+              <strong>FX Rate Alert</strong>
+              <span>EUR/USD at your target level</span>
+            </div>
+          </div>
+        </div>
+        <div class="app-text reveal-up d2">
+          <span class="section-tag"><i class="fa-solid fa-mobile-screen"></i> Mobile App</span>
+          <h2 class="section-title">Your Bank,<br/><em>In Your Pocket</em></h2>
+          <p class="section-sub">The Sterling Crest Union app puts full banking power at your fingertips — transfers, bills, investments, analytics and more, all in a beautifully designed interface.</p>
+          <ul class="app-features">
+            <li><i class="fa-solid fa-fingerprint"></i> Biometric Login</li>
+            <li><i class="fa-solid fa-bell"></i> Instant Push Alerts</li>
+            <li><i class="fa-solid fa-chart-pie"></i> Spend Analytics</li>
+            <li><i class="fa-solid fa-qrcode"></i> QR Payments</li>
+            <li><i class="fa-solid fa-coins"></i> Multi-Currency</li>
+            <li><i class="fa-solid fa-robot"></i> AI Insights</li>
+          </ul>
+          <div class="app-store-btns">
+            <a href="#" class="store-btn">
+              <i class="fa-brands fa-apple"></i>
+              <div><span>Download on the</span><strong>App Store</strong></div>
+            </a>
+            <a href="#" class="store-btn">
+              <i class="fa-brands fa-google-play"></i>
+              <div><span>Get it on</span><strong>Google Play</strong></div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       TESTIMONIALS
+  ═══════════════════════════════════════════════════════ -->
+  <section class="testimonials-section" id="testimonials">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-comments"></i> Client Stories</span>
+        <h2 class="section-title">Trusted By Millions, <em>Loved</em> By All</h2>
+        <p class="section-sub">Don't take our word for it — hear from the people we serve every day.</p>
+      </div>
+      <div class="testimonials-track" id="testiTrack">
+        <div class="testi-card testi-teal">
+          <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p>"Sterling Crest changed how I manage my money entirely. The app is flawless, transfers are instant, and my relationship manager actually picks up the phone."</p>
+          <div class="testi-author">
+            <div class="testi-avatar av-teal">SL</div>
+            <div><strong>Sarah L.</strong><span>Business Owner, London</span></div>
+          </div>
+        </div>
+        <div class="testi-card testi-violet">
+          <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p>"I've used many banks, but none come close. The wealth management dashboard alone is worth switching. Grew my portfolio 18% last year with their guided tools."</p>
+          <div class="testi-author">
+            <div class="testi-avatar av-violet">MK</div>
+            <div><strong>Marcus K.</strong><span>Investment Analyst, New York</span></div>
+          </div>
+        </div>
+        <div class="testi-card testi-gold">
+          <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p>"Setting up my business account took 7 minutes. The team is incredibly responsive. I've recommended Sterling Crest to every entrepreneur I know across three continents."</p>
+          <div class="testi-author">
+            <div class="testi-avatar av-gold">RP</div>
+            <div><strong>Riya P.</strong><span>Founder, TechVenture, Singapore</span></div>
+          </div>
+        </div>
+        <div class="testi-card testi-coral">
+          <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+          <p>"International transfers used to cost a fortune. With Sterling Crest, I send money overseas for a fraction of the price and it arrives in minutes, anywhere in the world."</p>
+          <div class="testi-author">
+            <div class="testi-avatar av-teal">FN</div>
+            <div><strong>François N.</strong><span>Finance Director, Dubai</span></div>
+          </div>
+        </div>
+        <div class="testi-card testi-teal">
+          <div class="testi-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i></div>
+          <p>"The fixed deposit rates are genuinely competitive. I've been earning more in 3 months with SCU than I did all year with my old bank. Incredible product for savers."</p>
+          <div class="testi-author">
+            <div class="testi-avatar av-violet">JW</div>
+            <div><strong>James W.</strong><span>Civil Engineer, Sydney</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-dots" id="testiDots">
+        <button class="dot active" data-idx="0"></button>
+        <button class="dot" data-idx="1"></button>
+        <button class="dot" data-idx="2"></button>
+        <button class="dot" data-idx="3"></button>
+        <button class="dot" data-idx="4"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       SECURITY SECTION
+  ═══════════════════════════════════════════════════════ -->
+  <section class="security-section">
+    <div class="container">
+      <div class="security-inner">
+        <div class="reveal-up">
+          <span class="section-tag"><i class="fa-solid fa-lock"></i> Bank-Grade Security</span>
+          <h2 class="section-title">Your Money.<br/><em>Fort Knox</em> Protection.</h2>
+          <p class="section-sub">We deploy military-grade encryption, multi-layer authentication, and real-time AI fraud detection to ensure your funds and data are always secure.</p>
+          <div class="security-grid" style="margin-top:2rem;">
+            <div class="security-tile st-teal">
+              <i class="fa-solid fa-shield-check"></i>
+              <h5>256-bit AES Encryption</h5>
+              <p>All data in transit and at rest is protected with military-grade encryption standards.</p>
+            </div>
+            <div class="security-tile st-violet">
+              <i class="fa-solid fa-mobile-screen"></i>
+              <h5>Two-Factor Authentication</h5>
+              <p>Every login requires a second verification step — SMS, email or authenticator app.</p>
+            </div>
+            <div class="security-tile st-gold">
+              <i class="fa-solid fa-robot"></i>
+              <h5>AI Fraud Detection</h5>
+              <p>Our machine learning engine reviews every transaction in real time, 24/7.</p>
+            </div>
+            <div class="security-tile st-coral">
+              <i class="fa-solid fa-server"></i>
+              <h5>Geo-Redundant Infrastructure</h5>
+              <p>Your data is replicated across multiple secure data centers for 99.9% uptime.</p>
+            </div>
+            <div class="security-tile st-teal">
+              <i class="fa-solid fa-eye"></i>
+              <h5>24/7 Transaction Monitoring</h5>
+              <p>Dedicated security team reviews flagged activity around the clock, every day.</p>
+            </div>
+            <div class="security-tile st-violet">
+              <i class="fa-solid fa-user-shield"></i>
+              <h5>ISO 27001 Certified</h5>
+              <p>Our information security management system meets the highest international standards.</p>
+            </div>
+          </div>
+        </div>
+        <div class="reveal-up d2">
+          <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=700&q=80" alt="Security" loading="lazy" style="width:100%;border-radius:20px;box-shadow:0 16px 48px rgba(26,46,74,0.12);" />
+          <div style="margin-top:1.5rem;padding:1.5rem;background:var(--bg-off);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:1rem;">
+            <i class="fa-solid fa-certificate" style="font-size:2rem;color:var(--teal);flex-shrink:0;"></i>
+            <div>
+              <strong style="display:block;color:var(--navy);font-size:0.9rem;margin-bottom:0.2rem;">FCA, SEC & MAS Licensed — FDIC Insured</strong>
+              <span style="font-size:0.82rem;color:var(--text-muted);">Your deposits are insured up to $250,000 (or local equivalent) by the relevant deposit protection authority in your country.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       COMPARISON TABLE
+  ═══════════════════════════════════════════════════════ -->
+  <!-- <section class="compare-section">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-table"></i> How We Compare</span>
+        <h2 class="section-title">See Why Customers <em>Choose Us</em></h2>
+        <p class="section-sub" style="margin:0 auto;">An honest look at what we offer versus traditional and digital banks.</p>
+      </div>
+      <div class="reveal-up d1">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="highlight-col">Sterling Crest Union<span class="col-badge">Recommended</span></th>
+              <th>Traditional Banks</th>
+              <th>Other Digital Banks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Account Opening Time</td>
+              <td class="highlight-col"><i class="fa-solid fa-check check"></i> Under 5 minutes</td>
+              <td><i class="fa-solid fa-xmark cross"></i> 1–3 business days</td>
+              <td><i class="fa-solid fa-check check"></i> Under 10 minutes</td>
+            </tr>
+            <tr>
+              <td>Monthly Maintenance Fee</td>
+              <td class="highlight-col"><i class="fa-solid fa-check check"></i> Zero</td>
+              <td><i class="fa-solid fa-xmark cross"></i> $10–$25/mo</td>
+              <td><i class="fa-solid fa-check check"></i> Zero</td>
+            </tr>
+            <tr>
+              <td>Dedicated Relationship Manager</td>
+              <td class="highlight-col"><i class="fa-solid fa-check check"></i> Included</td>
+              <td><i class="fa-solid fa-minus partial"></i> Premium tier only</td>
+              <td><i class="fa-solid fa-xmark cross"></i> Not available</td>
+            </tr>
+            <tr>
+              <td>International Transfers</td>
+              <td class="highlight-col"><i class="fa-solid fa-check check"></i> 180+ countries</td>
+              <td><i class="fa-solid fa-minus partial"></i> Limited countries</td>
+              <td><i class="fa-solid fa-minus partial"></i> Selected countries</td>
+            </tr>
+            <tr>
+              <td>Savings Interest Rate</td>
+              <td class="highlight-col"><i class="fa-solid fa-check check"></i> Up to 15% p.a.</td>
+              <td><i class="fa-solid fa-xmark cross"></i> 0.5–2% p.a.</td>
+              <td><i class="fa-solid fa-minus partial"></i> 3–6% p.a.</td>
+            </tr>
+            <tr>
+              <td>Customer Support</td>
+              <td class="highlight-col"><i class="fa-solid fa-check check"></i> 24/7 Live Support</td>
+              <td><i class="fa-solid fa-minus partial"></i> Business hours only</td>
+              <td><i class="fa-solid fa-minus partial"></i> Chatbot + limited hours</td>
+            </tr>
+            <tr>
+              <td>Multi-Currency Accounts</td>
+              <td class="highlight-col"><i class="fa-solid fa-check check"></i> 40+ currencies</td>
+              <td><i class="fa-solid fa-xmark cross"></i> Single currency</td>
+              <td><i class="fa-solid fa-minus partial"></i> 5–10 currencies</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section> -->
+
+  <!-- ═══════════════════════════════════════════════════
+       AWARDS
+  ═══════════════════════════════════════════════════════ -->
+  <section class="awards-section">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag gold"><i class="fa-solid fa-award"></i> Recognition</span>
+        <h2 class="section-title">Industry-Recognised <em>Excellence</em></h2>
+      </div>
+      <div class="awards-grid">
+        <div class="award-card reveal-up">
+          <div class="award-icon award-teal"><i class="fa-solid fa-trophy"></i></div>
+          <h5>Best Digital Bank</h5>
+          <span>Global FinTech Awards 2024</span>
+        </div>
+        <div class="award-card reveal-up d1">
+          <div class="award-icon award-violet"><i class="fa-solid fa-shield-halved"></i></div>
+          <h5>Most Secure Platform</h5>
+          <span>World Banking Summit 2024</span>
+        </div>
+        <div class="award-card reveal-up d2">
+          <div class="award-icon award-gold"><i class="fa-solid fa-star"></i></div>
+          <h5>Top Customer Experience</h5>
+          <span>FinTech Europe Awards 2023</span>
+        </div>
+        <div class="award-card reveal-up d3">
+          <div class="award-icon award-coral"><i class="fa-solid fa-rocket"></i></div>
+          <h5>Fastest Growing Bank</h5>
+          <span>Bloomberg Finance Report 2023</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       FAQ
+  ═══════════════════════════════════════════════════════ -->
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-circle-question"></i> Frequently Asked</span>
+        <h2 class="section-title">Questions? <em>We Have Answers.</em></h2>
+      </div>
+      <div class="faq-grid reveal-up d1">
+        <div class="faq-item">
+          <button class="faq-trigger">How do I open an account? <i class="fa-solid fa-plus"></i></button>
+          <div class="faq-body"><p>Visit our registration page, enter your email and a valid government-issued ID. The whole process takes under 5 minutes from any device, anywhere in the world.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-trigger">Is my money safe with Sterling Crest? <i class="fa-solid fa-plus"></i></button>
+          <div class="faq-body"><p>Yes. We are fully licensed by FCA, SEC, and MAS. Your deposits are insured up to $250,000 (or local equivalent). We deploy 256-bit AES encryption and AI-based fraud monitoring.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-trigger">What are the fees for transfers? <i class="fa-solid fa-plus"></i></button>
+          <div class="faq-body"><p>Transfers within the Sterling Crest network are completely free. International transfers are charged at a flat $1.50 per transaction — one of the lowest in the industry globally.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-trigger">How do I get my debit card? <i class="fa-solid fa-plus"></i></button>
+          <div class="faq-body"><p>Once your account is activated and funded, your Visa card is automatically ordered and delivered to your registered address within 3–7 business days, worldwide.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-trigger">Can I open a business account? <i class="fa-solid fa-plus"></i></button>
+          <div class="faq-body"><p>Absolutely. Our business accounts come with multi-user access, payroll integrations, bulk payment tools, and a dedicated relationship manager. Registration takes about 10 minutes.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-trigger">Which currencies do you support? <i class="fa-solid fa-plus"></i></button>
+          <div class="faq-body"><p>We support 40+ currencies including USD, EUR, GBP, AED, SGD, CAD, AUD, JPY, CHF and many more. You can hold, exchange, and transfer in any supported currency with live market rates.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       CTA BAND
+  ═══════════════════════════════════════════════════════ -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-inner reveal-up">
+        <h2 class="cta-headline">Ready to <em>Transform</em> Your Financial Life?</h2>
+        <p class="cta-sub">Join over 3 million customers who made the smartest financial decision of their lives. It starts with one click.</p>
+        <div class="cta-actions">
+          <a href="/register" class="btn-cta-primary">Open Your Account — Free <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/contact" class="btn-cta-outline"><i class="fa-solid fa-headset"></i> Talk to Us First</a>
+        </div>
+        <p class="cta-note"><i class="fa-solid fa-circle-info"></i> No minimum balance. No monthly fees. Cancel anytime.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       NEWS
+  ═══════════════════════════════════════════════════════ -->
+  <section class="news-section">
+    <div class="container">
+      <div class="section-header reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-newspaper"></i> Latest News</span>
+        <h2 class="section-title">Stay Informed, <em>Stay Ahead</em></h2>
+      </div>
+      <div class="news-grid">
+        <div class="news-card reveal-up">
+          <div class="news-img"><div class="news-img-inner" style="background-image:url('https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&q=80')"></div></div>
+          <div class="news-body">
+            <span class="news-cat news-cat-teal">Fintech</span>
+            <h4>Sterling Crest Launches AI-Powered Spending Insights for All Customers</h4>
+            <p>Our latest update introduces intelligent categorisation and predictive savings recommendations powered by our proprietary AI engine.</p>
+            <a href="#" class="news-read">Read More <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="news-card reveal-up d1">
+          <div class="news-img"><div class="news-img-inner" style="background-image:url('https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=600&q=80')"></div></div>
+          <div class="news-body">
+            <span class="news-cat news-cat-violet">Growth</span>
+            <h4>Sterling Crest Reaches 3 Million Customers Across 180+ Countries</h4>
+            <p>A testament to the trust you've placed in us globally. This is only the beginning of our journey together.</p>
+            <a href="#" class="news-read">Read More <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+        <div class="news-card reveal-up d2">
+          <div class="news-img"><div class="news-img-inner" style="background-image:url('https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=600&q=80')"></div></div>
+          <div class="news-body">
+            <span class="news-cat news-cat-gold">Regulation</span>
+            <h4>Sterling Crest Achieves ISO 27001 Certification for Information Security</h4>
+            <p>Our commitment to your security just received its highest third-party validation yet — valid across all operating regions.</p>
+            <a href="#" class="news-read">Read More <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════
+       CONTACT STRIP
+  ═══════════════════════════════════════════════════════ -->
+  <section class="contact-strip">
+    <div class="container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-headset"></i> Get In Touch</span>
+        <h2 class="section-title">We're Here <em>Whenever You Need Us</em></h2>
+      </div>
+      <div class="contact-strip-inner">
+        <div class="contact-option contact-teal reveal-up">
+          <i class="fa-solid fa-phone"></i>
+          <h5>Call Us</h5>
+          <p>Mon–Fri, 8am–8pm (your local time)</p>
+          <a href="tel:+18005551234">+1 800 555 1234</a>
+        </div>
+        <div class="contact-option contact-violet reveal-up d1">
+          <i class="fa-solid fa-envelope"></i>
+          <h5>Email Us</h5>
+          <p>We reply within 2 business hours</p>
+          <a href="mailto:support@sterlingcrestunion.com">support@sterlingcrestunion.com</a>
+        </div>
+        <div class="contact-option contact-gold reveal-up d2">
+          <i class="fa-solid fa-comments"></i>
+          <h5>Live Chat</h5>
+          <p>Available 24/7 on the app</p>
+          <a href="/register">Open an Account</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER PLACEHOLDER -->
+  <%- include('../partials/footer') %>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // ── Hero Slider ──
+    const slides = document.querySelectorAll('.hero-slide');
+    const contents = document.querySelectorAll('.slide-content');
+    const dots = document.querySelectorAll('.hero-dot');
+    let current = 0;
+    let timer;
+
+    function goTo(idx) {
+      slides[current].classList.remove('active');
+      contents[current].classList.remove('active');
+      dots[current].classList.remove('active');
+      current = (idx + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      contents[current].classList.add('active');
+      dots[current].classList.add('active');
+    }
+
+    function startAuto() {
+      clearInterval(timer);
+      timer = setInterval(() => goTo(current + 1), 6000);
+    }
+
+    dots.forEach((d, i) => d.addEventListener('click', () => { goTo(i); startAuto(); }));
+    document.getElementById('heroPrev')?.addEventListener('click', () => { goTo(current - 1); startAuto(); });
+    document.getElementById('heroNext')?.addEventListener('click', () => { goTo(current + 1); startAuto(); });
+    startAuto();
+
+    // ── Smooth scroll ──
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    });
+
+    // ── Scroll reveal ──
+    const revEls = document.querySelectorAll('.reveal-up');
+    const revObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); revObs.unobserve(e.target); }});
+    }, { threshold: 0.08 });
+    revEls.forEach(el => revObs.observe(el));
+
+    // ── Count-up ──
+    function countUp(el) {
+      const target = parseFloat(el.dataset.count);
+      const isFloat = target % 1 !== 0;
+      let start = 0;
+      const duration = 1400;
+      const startTime = performance.now();
+      const step = (now) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = target * eased;
+        el.textContent = isFloat ? current.toFixed(1) : Math.floor(current);
+        if (progress < 1) requestAnimationFrame(step);
+        else el.textContent = isFloat ? target.toFixed(1) : target;
+      };
+      requestAnimationFrame(step);
+    }
+    const cObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { countUp(e.target); cObs.unobserve(e.target); }});
+    }, { threshold: 0.5 });
+    document.querySelectorAll('[data-count]').forEach(el => cObs.observe(el));
+
+    // ── Testimonial carousel ──
+    const track = document.getElementById('testiTrack');
+    const testiDots = document.querySelectorAll('.dot');
+    let testiCurrent = 0;
+    function testiGoTo(idx) {
+      testiCurrent = idx;
+      const cards = document.querySelectorAll('.testi-card');
+      const w = cards[0].offsetWidth + 24;
+      track.scrollTo({ left: w * idx, behavior: 'smooth' });
+      testiDots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+    testiDots.forEach(d => d.addEventListener('click', () => testiGoTo(parseInt(d.dataset.idx))));
+    setInterval(() => {
+      const cards = document.querySelectorAll('.testi-card');
+      testiGoTo((testiCurrent + 1) % cards.length);
+    }, 5000);
+
+    // ── FAQ accordion ──
+    document.querySelectorAll('.faq-trigger').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+
+    // ── Icon pulse on hover for service cards ──
+    document.querySelectorAll('.service-card').forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        const icon = card.querySelector('.service-icon-wrap i');
+        icon.style.animation = 'none';
+        requestAnimationFrame(() => {
+          icon.style.animation = '';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

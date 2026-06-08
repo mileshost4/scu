@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Investment Plans | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/plans.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/admin/admin.investment-plans'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Investment Plans</h1>
+            <p class="page-subtitle">Manage and configure investment packages offered to users</p>
+          </div>
+          <div class="page-header-right">
+            <button class="btn btn-primary btn-sm" onclick="openModal('addPlanModal')">
+              <i class="fa-solid fa-plus"></i> Add New Plan
+            </button>
+          </div>
+        </div>
+
+        <!-- Plans Grid -->
+        <% if (plans.length === 0) { %>
+          <div class="card plans-empty">
+            <i class="fa-solid fa-layer-group"></i>
+            <p>No investment plans yet. Create one to get started.</p>
+            <button class="btn btn-primary btn-sm" onclick="openModal('addPlanModal')">
+              <i class="fa-solid fa-plus"></i> Add First Plan
+            </button>
+          </div>
+        <% } else { %>
+          <div class="plans-grid">
+            <% for (let plan of plans) { %>
+              <div class="plan-card card">
+                <div class="plan-card-header">
+                  <% if (plan.image && plan.image.length > 0) { %>
+                    <img src="<%= plan.image[0].url %>" alt="<%= plan.name %>" class="plan-img" />
+                  <% } else { %>
+                    <div class="plan-img-placeholder"><i class="fa-solid fa-chart-pie"></i></div>
+                  <% } %>
+                  <div class="plan-card-actions">
+                    <button class="btn btn-icon" title="Edit" onclick="openEditModal('<%= plan._id %>', '<%= plan.name %>', '<%= plan.minamount %>', '<%= plan.maxamount %>', '<%= plan.duration %>', '<%= plan.roi %>')">
+                      <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button class="btn btn-icon btn-icon-danger" title="Delete" onclick="openDeleteModal('<%= plan._id %>', '<%= plan.name %>')">
+                      <i class="fa-solid fa-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="plan-card-body">
+                  <h3 class="plan-name"><%= plan.name %></h3>
+                  <div class="plan-meta-row">
+                    <span class="plan-meta-item"><i class="fa-solid fa-arrow-trend-up"></i> ROI: <strong><%= plan.roi || '—' %></strong></span>
+                    <span class="plan-meta-item"><i class="fa-solid fa-clock"></i> <strong><%= plan.duration || '—' %></strong></span>
+                  </div>
+                  <div class="plan-range">
+                    <span class="plan-range-label">Min</span>
+                    <span class="plan-range-value amount">$<%= (parseFloat(plan.minamount)||0).toLocaleString() %></span>
+                    <span class="plan-range-sep">—</span>
+                    <span class="plan-range-label">Max</span>
+                    <span class="plan-range-value amount">$<%= (parseFloat(plan.maxamount)||0).toLocaleString() %></span>
+                  </div>
+                  <% if (plan.description) { %>
+                    <p class="plan-desc"><%= plan.description %></p>
+                  <% } %>
+                </div>
+              </div>
+            <% } %>
+          </div>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ ADD PLAN MODAL ══════════════ -->
+  <div class="custom-modal-overlay" id="addPlanModal">
+    <div class="custom-modal" style="max-width:520px;">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-plus-circle"></i> New Investment Plan
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('addPlanModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form action="/admin/admin.investment-plans" method="POST" enctype="multipart/form-data">
+        <div class="custom-modal-body">
+          <div class="form-group">
+            <label class="form-label">Plan Name</label>
+            <input type="text" name="name" class="form-control" placeholder="e.g. Gold Plan" required />
+          </div>
+          <div class="plans-form-row">
+            <div class="form-group">
+              <label class="form-label">Min Amount ($)</label>
+              <input type="number" name="minamount" class="form-control" placeholder="500" min="0" step="0.01" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Max Amount ($)</label>
+              <input type="number" name="maxamount" class="form-control" placeholder="50000" min="0" step="0.01" required />
+            </div>
+          </div>
+          <div class="plans-form-row">
+            <div class="form-group">
+              <label class="form-label">Duration</label>
+              <input type="text" name="duration" class="form-control" placeholder="e.g. 30 Days" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ROI</label>
+              <input type="text" name="roi" class="form-control" placeholder="e.g. 15%" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Plan Image</label>
+            <input type="file" name="image" class="form-control" accept="image/*" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Description (optional)</label>
+            <textarea name="description" class="form-control" rows="3" placeholder="Short description of this plan..."></textarea>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('addPlanModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-save"></i> Save Plan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════ EDIT PLAN MODAL ══════════════ -->
+  <div class="custom-modal-overlay" id="editPlanModal">
+    <div class="custom-modal" style="max-width:520px;">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-pen"></i> Edit Investment Plan
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('editPlanModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="editPlanForm" method="POST">
+        <input type="hidden" name="_method" value="PUT" />
+        <div class="custom-modal-body">
+          <div class="form-group">
+            <label class="form-label">Plan Name</label>
+            <input type="text" name="name" id="editName" class="form-control" required />
+          </div>
+          <div class="plans-form-row">
+            <div class="form-group">
+              <label class="form-label">Min Amount ($)</label>
+              <input type="number" name="minamount" id="editMin" class="form-control" step="0.01" required />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Max Amount ($)</label>
+              <input type="number" name="maxamount" id="editMax" class="form-control" step="0.01" required />
+            </div>
+          </div>
+          <div class="plans-form-row">
+            <div class="form-group">
+              <label class="form-label">Duration</label>
+              <input type="text" name="duration" id="editDuration" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ROI</label>
+              <input type="text" name="roi" id="editRoi" class="form-control" />
+            </div>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('editPlanModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-save"></i> Update Plan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════ DELETE PLAN MODAL ══════════════ -->
+  <div class="custom-modal-overlay" id="deletePlanModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title" style="color:var(--danger);">
+          <i class="fa-solid fa-trash" style="background:var(--danger-dim);color:var(--danger);"></i>
+          Delete Plan
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('deletePlanModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body">
+        <p style="color:var(--text-secondary);font-size:0.9rem;">
+          Are you sure you want to delete <strong id="deletePlanName" style="color:var(--text-primary);"></strong>? This action cannot be undone.
+        </p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('deletePlanModal')">Cancel</button>
+        <form id="deletePlanForm" method="POST" style="margin:0;">
+          <input type="hidden" name="_method" value="DELETE" />
+          <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i> Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    function openEditModal(id, name, min, max, duration, roi) {
+      document.getElementById('editPlanForm').action = '/admin/admin.investment-plans/' + id + '?_method=PUT';
+      document.getElementById('editName').value = name;
+      document.getElementById('editMin').value = min;
+      document.getElementById('editMax').value = max;
+      document.getElementById('editDuration').value = duration;
+      document.getElementById('editRoi').value = roi;
+      openModal('editPlanModal');
+    }
+
+    function openDeleteModal(id, name) {
+      document.getElementById('deletePlanForm').action = '/admin/admin.investment-plans/' + id + '?_method=DELETE';
+      document.getElementById('deletePlanName').textContent = '"' + name + '"';
+      openModal('deletePlanModal');
+    }
+
+    document.querySelectorAll('.custom-modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>

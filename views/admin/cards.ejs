@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>All Cards | <%= websiteName %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/card.css" />
+</head>
+<body>
+
+  <%
+    locals.currentPath = '/admin/admin.cards';
+  %>
+
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="admin-cards fade-in">
+
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">All Cards</h1>
+            <p class="page-subtitle"><%= cards.length %> card<%= cards.length !== 1 ? 's' : '' %> on record</p>
+          </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="cards-stats">
+          <div class="stat-pill">
+            <i class="fa-solid fa-credit-card"></i>
+            <span><strong><%= cards.length %></strong> Total Cards</span>
+          </div>
+          <% const visaCount = cards.filter(c => (c.cardBrand || '').toLowerCase() === 'visa').length; %>
+          <% const masterCount = cards.filter(c => (c.cardBrand || '').toLowerCase().includes('master')).length; %>
+          <div class="stat-pill">
+            <i class="fa-brands fa-cc-visa"></i>
+            <span><strong><%= visaCount %></strong> Visa</span>
+          </div>
+          <div class="stat-pill">
+            <i class="fa-brands fa-cc-mastercard"></i>
+            <span><strong><%= masterCount %></strong> Mastercard</span>
+          </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="table-card card">
+          <!-- Search bar -->
+          <div class="table-toolbar">
+            <div class="search-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="cardSearch" class="form-control search-input" placeholder="Search by card number, bank, owner…" />
+            </div>
+          </div>
+
+          <div class="table-scroll">
+            <table class="cards-table" id="cardsTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Card</th>
+                  <th>Card Number</th>
+                  <th>Bank</th>
+                  <th>Expiry</th>
+                  <th>Owner</th>
+                  <th>Date Added</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (cards.length === 0) { %>
+                  <tr>
+                    <td colspan="8" class="empty-state">
+                      <i class="fa-solid fa-credit-card"></i>
+                      <p>No cards found.</p>
+                    </td>
+                  </tr>
+                <% } %>
+                <% cards.forEach((card, index) => { %>
+                  <tr class="card-row">
+                    <td class="row-num"><%= index + 1 %></td>
+
+                    <!-- Card brand + type -->
+                    <td>
+                      <div class="card-brand-cell">
+                        <span class="brand-icon brand-<%= (card.cardBrand || 'default').toLowerCase().replace(/\s/g,'') %>">
+                          <% const brand = (card.cardBrand || '').toLowerCase(); %>
+                          <% if (brand === 'visa') { %>
+                            <i class="fa-brands fa-cc-visa"></i>
+                          <% } else if (brand.includes('master')) { %>
+                            <i class="fa-brands fa-cc-mastercard"></i>
+                          <% } else if (brand.includes('amex') || brand.includes('american')) { %>
+                            <i class="fa-brands fa-cc-amex"></i>
+                          <% } else if (brand.includes('discover')) { %>
+                            <i class="fa-brands fa-cc-discover"></i>
+                          <% } else { %>
+                            <i class="fa-solid fa-credit-card"></i>
+                          <% } %>
+                        </span>
+                        <div>
+                          <span class="brand-name"><%= card.cardBrand || '—' %></span>
+                          <span class="card-type-badge"><%= card.cardType || '—' %></span>
+                        </div>
+                      </div>
+                    </td>
+
+                    <!-- Masked card number -->
+                    <td>
+                      <span class="card-number font-mono">
+                        •••• •••• •••• <%= String(card.cardNumber || '').slice(-4).padStart(4, '•') %>
+                      </span>
+                    </td>
+
+                    <!-- Bank -->
+                    <td><span class="bank-name"><%= card.bankName || '—' %></span></td>
+
+                    <!-- Expiry -->
+                    <td>
+                      <span class="expiry-badge">
+                        <%= card.cardExpiryMonth || '--' %>/<%= (card.cardExpiryYear || '--') %>
+                      </span>
+                    </td>
+
+                    <!-- Owner -->
+                    <td>
+                      <% if (card.validateUser) { %>
+                        <a href="/admin/admin.user/<%= card.validateUser %>" class="owner-link">
+                          <div class="owner-avatar"><%= (card.userName || '?')[0].toUpperCase() %></div>
+                          <div>
+                            <span class="owner-name"><%= card.userName || 'Unknown' %></span>
+                            <span class="owner-email"><%= card.userEmail || '' %></span>
+                          </div>
+                        </a>
+                      <% } else { %>
+                        <span class="text-muted">—</span>
+                      <% } %>
+                    </td>
+
+                    <!-- Date Added -->
+                    <td><span class="date-text"><%= card.dateAdded || '—' %></span></td>
+
+                    <!-- Actions -->
+                    <td>
+                      <button class="btn btn-danger btn-sm delete-card-btn"
+                        data-id="<%= card._id %>"
+                        data-num="•••• <%= String(card.cardNumber || '').slice(-4) %>"
+                        data-owner="<%= card.userName || 'Unknown' %>"
+                        title="Delete Card">
+                        <i class="fa-solid fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty search result -->
+          <div class="no-results" id="noResults" style="display:none;">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <p>No cards match your search.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="custom-modal-overlay" id="deleteCardModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-trash"></i>
+          Delete Card
+        </div>
+        <button class="custom-modal-close" id="closeDeleteModal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body">
+        <p class="modal-message">
+          Are you sure you want to delete card <strong id="modalCardNum"></strong> belonging to <strong id="modalCardOwner"></strong>?
+          This action <span class="text-danger">cannot be undone</span>.
+        </p>
+      </div>
+      <div class="custom-modal-footer">
+        <button class="btn btn-ghost btn-sm" id="cancelDeleteModal">Cancel</button>
+        <form id="deleteCardForm" method="POST" action="">
+          <input type="hidden" name="_method" value="DELETE" />
+          <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa-solid fa-trash"></i> Delete Card
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    // Delete modal
+    const modal = document.getElementById('deleteCardModal');
+    const deleteForm = document.getElementById('deleteCardForm');
+    const modalCardNum = document.getElementById('modalCardNum');
+    const modalCardOwner = document.getElementById('modalCardOwner');
+
+    document.querySelectorAll('.delete-card-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        modalCardNum.textContent = btn.dataset.num;
+        modalCardOwner.textContent = btn.dataset.owner;
+        deleteForm.action = `/admin/admin.card/${id}?_method=DELETE`;
+        modal.classList.add('open');
+      });
+    });
+
+    document.getElementById('closeDeleteModal').addEventListener('click', () => modal.classList.remove('open'));
+    document.getElementById('cancelDeleteModal').addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
+
+    // Search
+    const searchInput = document.getElementById('cardSearch');
+    const rows = document.querySelectorAll('.card-row');
+    const noResults = document.getElementById('noResults');
+
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.toLowerCase();
+      let visible = 0;
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        if (text.includes(q)) { row.style.display = ''; visible++; }
+        else row.style.display = 'none';
+      });
+      noResults.style.display = visible === 0 && q ? 'flex' : 'none';
+    });
+  </script>
+</body>
+</html>

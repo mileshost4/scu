@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Services — Sterling Crest Union</title>
+  <meta name="description" content="Explore Sterling Crest Union's full suite of banking services — from personal accounts to wealth management, global transfers and business banking."/>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"/>
+
+  <link rel="stylesheet" href="/stylesheets/web/nav.css"/>
+  <link rel="stylesheet" href="/stylesheets/web/footer.css"/>
+  <link rel="stylesheet" href="/stylesheets/web/theme.css"/>
+  <link rel="stylesheet" href="/stylesheets/web/services.css"/>
+</head>
+<body>
+
+  <%- include('../partials/nav', { currentPath: '/services' }) %>
+
+  <!-- ══════════════════════════════════════
+       HERO BANNER
+  ══════════════════════════════════════════ -->
+  <section class="svc-hero">
+    <div class="svc-hero-bg"></div>
+    <div class="svc-hero-overlay"></div>
+    <div class="svc-hero-content">
+      <div class="svc-hero-inner">
+        <span class="svc-breadcrumb"><a href="/">Home</a> <i class="fa-solid fa-chevron-right"></i> Services</span>
+        <h1 class="svc-hero-title">Everything You Need,<br/><em>Under One Roof.</em></h1>
+        <p class="svc-hero-sub">From your first savings account to complex multi-currency portfolios — Sterling Crest Union is engineered to handle it all with precision, security, and human care.</p>
+        <div class="svc-hero-chips">
+          <a href="#personal" class="svc-chip"><i class="fa-solid fa-wallet"></i> Personal</a>
+          <a href="#wealth" class="svc-chip"><i class="fa-solid fa-chart-line"></i> Wealth</a>
+          <a href="#business" class="svc-chip"><i class="fa-solid fa-building"></i> Business</a>
+          <a href="#loans" class="svc-chip"><i class="fa-solid fa-hand-holding-dollar"></i> Loans</a>
+          <a href="#transfers" class="svc-chip"><i class="fa-solid fa-money-bill-transfer"></i> Transfers</a>
+          <a href="#insurance" class="svc-chip"><i class="fa-solid fa-shield-halved"></i> Insurance</a>
+          <a href="#cards" class="svc-chip"><i class="fa-solid fa-credit-card"></i> Cards</a>
+          <a href="#crypto" class="svc-chip"><i class="fa-brands fa-bitcoin"></i> Digital Assets</a>
+        </div>
+      </div>
+    </div>
+    <div class="svc-hero-scroll"><i class="fa-solid fa-chevron-down"></i></div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       OVERVIEW STATS
+  ══════════════════════════════════════════ -->
+  <section class="svc-overview-strip">
+    <div class="svc-overview-inner">
+      <div class="svc-ov-item reveal-up">
+        <i class="fa-solid fa-layer-group"></i>
+        <div>
+          <strong>8 Core Service Lines</strong>
+          <span>Fully integrated under one platform</span>
+        </div>
+      </div>
+      <div class="svc-ov-sep"></div>
+      <div class="svc-ov-item reveal-up d1">
+        <i class="fa-solid fa-globe"></i>
+        <div>
+          <strong>180+ Countries</strong>
+          <span>Access from anywhere in the world</span>
+        </div>
+      </div>
+      <div class="svc-ov-sep"></div>
+      <div class="svc-ov-item reveal-up d2">
+        <i class="fa-solid fa-clock"></i>
+        <div>
+          <strong>24/7 Live Support</strong>
+          <span>Real humans, not bots</span>
+        </div>
+      </div>
+      <div class="svc-ov-sep"></div>
+      <div class="svc-ov-item reveal-up d3">
+        <i class="fa-solid fa-shield-check"></i>
+        <div>
+          <strong>Bank-Grade Security</strong>
+          <span>ISO 27001 · FCA · SEC · FDIC</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       PERSONAL BANKING
+  ══════════════════════════════════════════ -->
+  <section class="svc-block svc-personal" id="personal">
+    <div class="svc-container">
+      <div class="svc-block-inner svc-ltr">
+        <div class="svc-block-text reveal-up">
+          <span class="section-tag"><i class="fa-solid fa-wallet"></i> Personal Banking</span>
+          <h2 class="section-title">Smart Accounts Built<br/><em>For Real Life</em></h2>
+          <p class="section-sub">Your everyday banking, supercharged. Zero hidden fees, instant transfers, AI-powered spending insights, and a Visa card that works everywhere — all in one sleek app.</p>
+          <div class="svc-feature-list">
+            <div class="svc-feat feat-teal">
+              <i class="fa-solid fa-bolt"></i>
+              <div><strong>Instant Account Opening</strong><span>Verified and live in under 5 minutes — no branch visit, no paperwork.</span></div>
+            </div>
+            <div class="svc-feat feat-teal">
+              <i class="fa-solid fa-ban"></i>
+              <div><strong>Zero Monthly Fees</strong><span>No maintenance charges, no minimum balance requirements, ever.</span></div>
+            </div>
+            <div class="svc-feat feat-teal">
+              <i class="fa-solid fa-robot"></i>
+              <div><strong>AI Budgeting Assistant</strong><span>Smart categorisation, spending limits, and savings nudges powered by AI.</span></div>
+            </div>
+            <div class="svc-feat feat-teal">
+              <i class="fa-solid fa-bell"></i>
+              <div><strong>Real-Time Push Alerts</strong><span>Every transaction, every login, every unusual activity — you're always in the know.</span></div>
+            </div>
+            <div class="svc-feat feat-teal">
+              <i class="fa-solid fa-piggy-bank"></i>
+              <div><strong>High-Yield Savings Pockets</strong><span>Earn up to 8% p.a. on dedicated savings pockets within your account.</span></div>
+            </div>
+          </div>
+          <div class="svc-block-ctas">
+            <a href="/register" class="btn-primary">Open Free Account <i class="fa-solid fa-arrow-right"></i></a>
+            <span class="svc-footnote"><i class="fa-solid fa-circle-info"></i> No card needed to start</span>
+          </div>
+        </div>
+        <div class="svc-block-visual reveal-up d2">
+          <div class="svc-img-frame svc-img-frame-teal">
+            <img src="https://images.unsplash.com/photo-1601597111158-2fceff292cdc?w=700&q=80" alt="Personal Banking App" loading="lazy"/>
+            <div class="svc-img-badge badge-teal">
+              <i class="fa-solid fa-check-circle"></i>
+              <div><strong>Account Activated</strong><span>Welcome to Sterling Crest!</span></div>
+            </div>
+          </div>
+          <div class="svc-floating-card fc-teal">
+            <i class="fa-solid fa-chart-pie"></i>
+            <div>
+              <strong>Monthly Savings</strong>
+              <span>+₦42,000 this month</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERSONAL ACCOUNT TYPES TICKER -->
+  <section class="svc-account-types">
+    <div class="svc-container">
+      <h3 class="svc-sub-heading reveal-up">Choose Your Account Type</h3>
+      <div class="svc-account-grid reveal-up d1">
+        <div class="svc-acct-card ac-starter">
+          <div class="ac-icon"><i class="fa-solid fa-seedling"></i></div>
+          <h4>Starter</h4>
+          <div class="ac-rate">Free</div>
+          <ul class="ac-perks">
+            <li><i class="fa-solid fa-check"></i> Basic debit card</li>
+            <li><i class="fa-solid fa-check"></i> 5 free transfers/month</li>
+            <li><i class="fa-solid fa-check"></i> Savings pocket</li>
+            <li><i class="fa-solid fa-check"></i> Mobile app access</li>
+          </ul>
+          <a href="/register" class="ac-btn">Get Started</a>
+        </div>
+        <div class="svc-acct-card ac-premium">
+          <div class="ac-badge-top">Most Popular</div>
+          <div class="ac-icon"><i class="fa-solid fa-star"></i></div>
+          <h4>Premium</h4>
+          <div class="ac-rate">$9<span>/mo</span></div>
+          <ul class="ac-perks">
+            <li><i class="fa-solid fa-check"></i> Premium Visa card</li>
+            <li><i class="fa-solid fa-check"></i> Unlimited transfers</li>
+            <li><i class="fa-solid fa-check"></i> 40+ currency pockets</li>
+            <li><i class="fa-solid fa-check"></i> Dedicated advisor</li>
+            <li><i class="fa-solid fa-check"></i> Travel insurance</li>
+          </ul>
+          <a href="/register" class="ac-btn ac-btn-featured">Upgrade Now</a>
+        </div>
+        <div class="svc-acct-card ac-elite">
+          <div class="ac-icon"><i class="fa-solid fa-gem"></i></div>
+          <h4>Elite</h4>
+          <div class="ac-rate">$29<span>/mo</span></div>
+          <ul class="ac-perks">
+            <li><i class="fa-solid fa-check"></i> Metal Visa Infinite</li>
+            <li><i class="fa-solid fa-check"></i> Concierge service</li>
+            <li><i class="fa-solid fa-check"></i> Priority support 24/7</li>
+            <li><i class="fa-solid fa-check"></i> Wealth dashboard</li>
+            <li><i class="fa-solid fa-check"></i> Airport lounge access</li>
+            <li><i class="fa-solid fa-check"></i> Zero FX fees globally</li>
+          </ul>
+          <a href="/register" class="ac-btn">Go Elite</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       WEALTH MANAGEMENT
+  ══════════════════════════════════════════ -->
+  <section class="svc-block svc-wealth svc-dark" id="wealth">
+    <div class="svc-container">
+      <div class="svc-block-inner svc-rtl">
+        <div class="svc-block-visual reveal-up">
+          <div class="svc-img-frame svc-img-frame-violet">
+            <img src="https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=700&q=80" alt="Wealth Management" loading="lazy"/>
+            <div class="svc-img-badge badge-violet">
+              <i class="fa-solid fa-arrow-trend-up"></i>
+              <div><strong>Portfolio +18.4%</strong><span>vs 6.2% market avg</span></div>
+            </div>
+          </div>
+          <div class="svc-floating-card fc-violet">
+            <i class="fa-solid fa-briefcase"></i>
+            <div>
+              <strong>Diversified Portfolio</strong>
+              <span>12 asset classes</span>
+            </div>
+          </div>
+        </div>
+        <div class="svc-block-text reveal-up d2">
+          <span class="section-tag white"><i class="fa-solid fa-chart-line"></i> Wealth Management</span>
+          <h2 class="section-title white">Your Money,<br/><em>Working Harder</em></h2>
+          <p class="section-sub white">We don't just store your money — we put it to work. From risk-managed portfolios to alternative investments, our advisors craft strategies around your goals.</p>
+          <div class="svc-feature-list">
+            <div class="svc-feat feat-violet">
+              <i class="fa-solid fa-user-tie"></i>
+              <div class="feat-violet-textdiv"><strong>Dedicated Wealth Advisor</strong><span>A real, certified financial expert assigned to your account from day one.</span></div>
+            </div>
+            <div class="svc-feat feat-violet">
+              <i class="fa-solid fa-chart-area"></i>
+              <div class="feat-violet-textdiv"><strong>Live Market Dashboard</strong><span>Equities, bonds, ETFs, commodities — track it all in real time.</span></div>
+            </div>
+            <div class="svc-feat feat-violet">
+              <i class="fa-solid fa-rotate"></i>
+              <div class="feat-violet-textdiv"><strong>Auto-Rebalancing</strong><span>Your portfolio stays aligned to your risk appetite automatically.</span></div>
+            </div>
+            <div class="svc-feat feat-violet">
+              <i class="fa-solid fa-lock"></i>
+              <div class="feat-violet-textdiv"><strong>Capital Protection Plans</strong><span>Structured products that guarantee principal while chasing upside.</span></div>
+            </div>
+          </div>
+          <div class="svc-wealth-products">
+            <div class="svc-wp">
+              <span class="wp-label">Fixed Deposits</span>
+              <span class="wp-rate wp-gold">Up to 15% p.a.</span>
+            </div>
+            <div class="svc-wp">
+              <span class="wp-label">Equity Portfolios</span>
+              <span class="wp-rate wp-teal">Avg +14.2% YTD</span>
+            </div>
+            <div class="svc-wp">
+              <span class="wp-label">Bond Funds</span>
+              <span class="wp-rate wp-violet">9–11% p.a.</span>
+            </div>
+          </div>
+          <a href="/register" class="btn-primary" style="margin-top:1.5rem;">Start Investing <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEALTH INTERACTIVE CALCULATOR -->
+  <section class="svc-calculator">
+    <div class="svc-container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag"><i class="fa-solid fa-calculator"></i> Savings Calculator</span>
+        <h2 class="section-title">See What Your Money<br/><em>Could Become</em></h2>
+        <p class="section-sub" style="margin:0 auto;">Move the sliders. Watch your wealth grow.</p>
+      </div>
+      <div class="calc-card reveal-up d1">
+        <div class="calc-inputs">
+          <div class="calc-field">
+            <label>Initial Deposit</label>
+            <div class="calc-amount-display" id="depositDisplay">$10,000</div>
+            <input type="range" id="depositRange" min="1000" max="500000" value="10000" step="1000"/>
+            <div class="calc-range-labels"><span>$1,000</span><span>$500,000</span></div>
+          </div>
+          <div class="calc-field">
+            <label>Monthly Contribution</label>
+            <div class="calc-amount-display" id="monthlyDisplay">$500</div>
+            <input type="range" id="monthlyRange" min="0" max="10000" value="500" step="100"/>
+            <div class="calc-range-labels"><span>$0</span><span>$10,000</span></div>
+          </div>
+          <div class="calc-field">
+            <label>Investment Period</label>
+            <div class="calc-amount-display" id="yearsDisplay">5 years</div>
+            <input type="range" id="yearsRange" min="1" max="30" value="5" step="1"/>
+            <div class="calc-range-labels"><span>1 yr</span><span>30 yrs</span></div>
+          </div>
+          <div class="calc-field">
+            <label>Interest Rate</label>
+            <div class="calc-tabs">
+              <button class="calc-tab active" data-rate="8">Savings<br/><span>8%</span></button>
+              <button class="calc-tab" data-rate="11">Bonds<br/><span>11%</span></button>
+              <button class="calc-tab" data-rate="15">Fixed Dep.<br/><span>15%</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="calc-result">
+          <div class="calc-res-label">Projected Total Value</div>
+          <div class="calc-res-amount" id="totalResult">$0</div>
+          <div class="calc-res-breakdown">
+            <div class="crb-item">
+              <span>Principal</span>
+              <strong id="principalAmt">$0</strong>
+            </div>
+            <div class="crb-sep"></div>
+            <div class="crb-item">
+              <span>Interest Earned</span>
+              <strong id="interestAmt" class="txt-gold">$0</strong>
+            </div>
+            <div class="crb-sep"></div>
+            <div class="crb-item">
+              <span>Return</span>
+              <strong id="returnPct" class="txt-teal">0%</strong>
+            </div>
+          </div>
+          <div class="calc-bar-wrap">
+            <div class="calc-bar-principal" id="barPrincipal" style="width:50%"></div>
+            <div class="calc-bar-interest" id="barInterest" style="width:50%"></div>
+          </div>
+          <a href="/register" class="btn-primary" style="margin-top:1.5rem;width:100%;justify-content:center;">Start Earning Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       BUSINESS BANKING
+  ══════════════════════════════════════════ -->
+  <section class="svc-block svc-business" id="business">
+    <div class="svc-container">
+      <div class="svc-block-inner svc-ltr">
+        <div class="svc-block-text reveal-up">
+          <span class="section-tag gold"><i class="fa-solid fa-building"></i> Business Banking</span>
+          <h2 class="section-title">Enterprise Power,<br/><em>Startup Agility</em></h2>
+          <p class="section-sub">Whether you're a solo freelancer or a multinational corporation — Sterling Crest's business accounts scale with you. Full treasury management tools, payroll, and compliance built in.</p>
+          <div class="svc-feature-list">
+            <div class="svc-feat feat-gold">
+              <i class="fa-solid fa-users-gear"></i>
+              <div><strong>Multi-User Access</strong><span>Role-based permissions for your whole team — from view-only to full control.</span></div>
+            </div>
+            <div class="svc-feat feat-gold">
+              <i class="fa-solid fa-file-invoice-dollar"></i>
+              <div><strong>Payroll Integration</strong><span>Connect to leading payroll platforms. Pay your team in 40+ currencies automatically.</span></div>
+            </div>
+            <div class="svc-feat feat-gold">
+              <i class="fa-solid fa-paper-plane"></i>
+              <div><strong>Bulk Payment Engine</strong><span>Send thousands of payments in a single upload. VAT tracking included.</span></div>
+            </div>
+            <div class="svc-feat feat-gold">
+              <i class="fa-solid fa-chart-gantt"></i>
+              <div><strong>Cash Flow Forecasting</strong><span>AI-driven projections to help you plan ahead and avoid shortfalls.</span></div>
+            </div>
+            <div class="svc-feat feat-gold">
+              <i class="fa-solid fa-receipt"></i>
+              <div><strong>Automated Invoicing</strong><span>Create, send and track invoices. Integrate with Xero, QuickBooks, SAP.</span></div>
+            </div>
+          </div>
+          <a href="/register" class="btn-primary navy">Open Business Account <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="svc-block-visual reveal-up d2">
+          <div class="svc-img-frame svc-img-frame-gold">
+            <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=700&q=80" alt="Business Banking" loading="lazy"/>
+            <div class="svc-img-badge badge-gold">
+              <i class="fa-solid fa-building"></i>
+              <div><strong>Business Verified</strong><span>Acme Corp · Premium</span></div>
+            </div>
+          </div>
+          <div class="svc-floating-card fc-gold">
+            <i class="fa-solid fa-sack-dollar"></i>
+            <div>
+              <strong>Payroll Sent</strong>
+              <span>342 employees · $0 fees</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BUSINESS TIERS TABLE -->
+  <section class="svc-business-tiers">
+    <div class="svc-container">
+      <h3 class="svc-sub-heading reveal-up">Business Account Tiers</h3>
+      <div class="biz-tier-table reveal-up d1">
+        <div class="biz-tier-header">
+          <div class="bth-feature">Feature</div>
+          <div class="bth-col">Startup</div>
+          <div class="bth-col bth-highlight">Growth <span>Most Popular</span></div>
+          <div class="bth-col">Enterprise</div>
+        </div>
+        <div class="biz-tier-row">
+          <div>Monthly Fee</div>
+          <div>Free</div>
+          <div class="bth-highlight">$29/mo</div>
+          <div>Custom</div>
+        </div>
+        <div class="biz-tier-row">
+          <div>Team Members</div>
+          <div>Up to 3</div>
+          <div class="bth-highlight">Up to 25</div>
+          <div>Unlimited</div>
+        </div>
+        <div class="biz-tier-row">
+          <div>Currencies</div>
+          <div>5</div>
+          <div class="bth-highlight">40+</div>
+          <div>40+</div>
+        </div>
+        <div class="biz-tier-row">
+          <div>Bulk Payments</div>
+          <div><i class="fa-solid fa-xmark bth-no"></i></div>
+          <div class="bth-highlight"><i class="fa-solid fa-check bth-yes"></i></div>
+          <div><i class="fa-solid fa-check bth-yes"></i></div>
+        </div>
+        <div class="biz-tier-row">
+          <div>Payroll Integration</div>
+          <div><i class="fa-solid fa-xmark bth-no"></i></div>
+          <div class="bth-highlight"><i class="fa-solid fa-check bth-yes"></i></div>
+          <div><i class="fa-solid fa-check bth-yes"></i></div>
+        </div>
+        <div class="biz-tier-row">
+          <div>Dedicated Manager</div>
+          <div><i class="fa-solid fa-xmark bth-no"></i></div>
+          <div class="bth-highlight"><i class="fa-solid fa-check bth-yes"></i></div>
+          <div><i class="fa-solid fa-check bth-yes"></i></div>
+        </div>
+        <div class="biz-tier-row biz-tier-cta">
+          <div></div>
+          <div><a href="/register" class="bth-btn">Start Free</a></div>
+          <div class="bth-highlight"><a href="/register" class="bth-btn bth-btn-featured">Get Growth</a></div>
+          <div><a href="/contact" class="bth-btn">Contact Sales</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       LOANS & CREDIT
+  ══════════════════════════════════════════ -->
+  <section class="svc-block svc-loans svc-alt" id="loans">
+    <div class="svc-container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag coral"><i class="fa-solid fa-hand-holding-dollar"></i> Loans & Credit</span>
+        <h2 class="section-title">Funds When You<br/><em>Need Them Most</em></h2>
+        <p class="section-sub" style="margin:0 auto;">Flexible credit products with transparent rates, fast approvals, and zero prepayment penalties. Your goals shouldn't wait.</p>
+      </div>
+      <div class="svc-loans-grid reveal-up d1">
+        <div class="loan-card lc-personal">
+          <div class="loan-icon"><i class="fa-solid fa-user"></i></div>
+          <h4>Personal Loan</h4>
+          <div class="loan-rate">From <strong>6.9%</strong> p.a.</div>
+          <p>Up to $100,000. Instant digital approval. Repay over 6–84 months. No collateral required for qualifying applicants.</p>
+          <ul class="loan-bullets">
+            <li><i class="fa-solid fa-check"></i> Decision in 24 hours</li>
+            <li><i class="fa-solid fa-check"></i> No prepayment fees</li>
+            <li><i class="fa-solid fa-check"></i> Flexible repayment</li>
+          </ul>
+          <a href="/register" class="loan-cta">Apply Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="loan-card lc-home">
+          <div class="loan-icon"><i class="fa-solid fa-house"></i></div>
+          <h4>Home Mortgage</h4>
+          <div class="loan-rate">From <strong>4.2%</strong> p.a.</div>
+          <p>Up to $2M. Fixed or variable rate. Repay over up to 30 years. First-time buyer schemes available.</p>
+          <ul class="loan-bullets">
+            <li><i class="fa-solid fa-check"></i> Pre-approval in 48hrs</li>
+            <li><i class="fa-solid fa-check"></i> Offset accounts</li>
+            <li><i class="fa-solid fa-check"></i> Rate-lock guarantee</li>
+          </ul>
+          <a href="/register" class="loan-cta">Apply Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="loan-card lc-business">
+          <div class="loan-icon"><i class="fa-solid fa-briefcase"></i></div>
+          <h4>Business Credit</h4>
+          <div class="loan-rate">From <strong>8.5%</strong> p.a.</div>
+          <p>Revolving credit lines up to $5M. Invoice financing, overdraft protection, and equipment leasing all included.</p>
+          <ul class="loan-bullets">
+            <li><i class="fa-solid fa-check"></i> Draw only what you need</li>
+            <li><i class="fa-solid fa-check"></i> Invoice factoring</li>
+            <li><i class="fa-solid fa-check"></i> Dedicated credit officer</li>
+          </ul>
+          <a href="/register" class="loan-cta">Apply Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="loan-card lc-auto">
+          <div class="loan-icon"><i class="fa-solid fa-car"></i></div>
+          <h4>Auto Finance</h4>
+          <div class="loan-rate">From <strong>5.5%</strong> p.a.</div>
+          <p>New or used vehicles. Up to 100% financing for qualifying applicants. Repay over 12–72 months.</p>
+          <ul class="loan-bullets">
+            <li><i class="fa-solid fa-check"></i> Same-day approval</li>
+            <li><i class="fa-solid fa-check"></i> Works with all dealerships</li>
+            <li><i class="fa-solid fa-check"></i> EV incentive rates</li>
+          </ul>
+          <a href="/register" class="loan-cta">Apply Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       GLOBAL TRANSFERS
+  ══════════════════════════════════════════ -->
+  <section class="svc-block svc-transfers svc-dark-teal" id="transfers">
+    <div class="svc-container">
+      <div class="svc-block-inner svc-ltr">
+        <div class="svc-block-text reveal-up">
+          <span class="section-tag white"><i class="fa-solid fa-money-bill-transfer"></i> Global Transfers</span>
+          <h2 class="section-title white">Send Money<br/><em>Anywhere. Instantly.</em></h2>
+          <p class="section-sub white">We've built one of the world's fastest international payment rails. Real exchange rates. No hidden markups. Regulatory compliance in every corridor.</p>
+          <div class="svc-transfer-corridors">
+            <div class="corridor-pill"><i class="fa-solid fa-arrow-right-arrow-left"></i> USD ↔ EUR · <strong>$1.50 flat</strong></div>
+            <div class="corridor-pill"><i class="fa-solid fa-arrow-right-arrow-left"></i> GBP ↔ JPY · <strong>$1.50 flat</strong></div>
+            <div class="corridor-pill"><i class="fa-solid fa-arrow-right-arrow-left"></i> AED ↔ INR · <strong>$1.50 flat</strong></div>
+            <div class="corridor-pill"><i class="fa-solid fa-arrow-right-arrow-left"></i> USD ↔ CNY · <strong>$1.50 flat</strong></div>
+            <div class="corridor-pill"><i class="fa-solid fa-plus"></i> 180+ more corridors</div>
+          </div>
+          <div class="svc-feature-list" style="margin-top:1.5rem;">
+            <div class="svc-feat feat-white">
+              <i class="fa-solid fa-bolt"></i>
+              <div><strong>SWIFT & SEPA Rails</strong><span>Most transfers arrive within minutes. Guaranteed delivery in 24 hours.</span></div>
+            </div>
+            <div class="svc-feat feat-white">
+              <i class="fa-solid fa-eye"></i>
+              <div><strong>Live Transfer Tracking</strong><span>Know exactly where your money is, at every step of the journey.</span></div>
+            </div>
+            <div class="svc-feat feat-white">
+              <i class="fa-solid fa-scale-balanced"></i>
+              <div><strong>Full AML Compliance</strong><span>Automated compliance checks so your transfers never get stuck.</span></div>
+            </div>
+          </div>
+          <a href="/register" class="btn-hero-primary" style="margin-top:1.5rem;">Send Money Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+        <div class="svc-block-visual reveal-up d2">
+          <div class="svc-transfer-demo">
+            <div class="transfer-demo-header">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Live Transfer Demo</span>
+            </div>
+            <div class="transfer-demo-body">
+              <div class="td-from">
+                <span class="td-label">From</span>
+                <div class="td-flag">🇺🇸</div>
+                <div class="td-amount-big">$5,000 <span>USD</span></div>
+              </div>
+              <div class="td-arrow-wrap">
+                <div class="td-arrow-line">
+                  <div class="td-arrow-pulse"></div>
+                </div>
+                <div class="td-fee-badge">$1.50 fee</div>
+              </div>
+              <div class="td-to">
+                <span class="td-label">To</span>
+                <div class="td-flag">🇬🇧</div>
+                <div class="td-amount-big">£3,912.48 <span>GBP</span></div>
+              </div>
+              <div class="td-rate-row">
+                <i class="fa-solid fa-chart-line"></i>
+                Live Rate: 1 USD = 0.7825 GBP
+              </div>
+              <div class="td-eta">
+                <i class="fa-solid fa-clock"></i>
+                Estimated arrival: <strong>~ 3 minutes</strong>
+              </div>
+            </div>
+          </div>
+          <div class="svc-floating-card fc-teal-light" style="bottom:-20px;right:-10px;">
+            <i class="fa-solid fa-circle-check" style="color:#1a8f82;"></i>
+            <div><strong>Transfer Complete</strong><span>Arrived in 2m 41s</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       CARDS
+  ══════════════════════════════════════════ -->
+  <section class="svc-block svc-cards-section" id="cards">
+    <div class="svc-container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag violet"><i class="fa-solid fa-credit-card"></i> Cards</span>
+        <h2 class="section-title">Cards That Open <em>Every Door</em></h2>
+        <p class="section-sub" style="margin:0 auto;">Every Sterling Crest card is built for life — from daily spending to global travel, with rewards that actually matter.</p>
+      </div>
+      <div class="svc-cards-showcase reveal-up d1">
+        <div class="svc-card-display scd-starter">
+          <div class="physical-card pc-starter">
+            <div class="pc-chip"><i class="fa-solid fa-microchip"></i></div>
+            <div class="pc-logo">SCU</div>
+            <div class="pc-number">•••• •••• •••• 4521</div>
+            <div class="pc-footer">
+              <span>STARTER</span>
+              <i class="fa-brands fa-cc-visa"></i>
+            </div>
+          </div>
+          <div class="card-info">
+            <h4>Starter Debit</h4>
+            <ul>
+              <li><i class="fa-solid fa-check"></i> Worldwide acceptance</li>
+              <li><i class="fa-solid fa-check"></i> Contactless NFC</li>
+              <li><i class="fa-solid fa-check"></i> Instant freeze/unfreeze</li>
+              <li><i class="fa-solid fa-check"></i> Virtual card for online</li>
+            </ul>
+          </div>
+        </div>
+        <div class="svc-card-display scd-premium">
+          <div class="physical-card pc-premium">
+            <div class="pc-chip"><i class="fa-solid fa-microchip"></i></div>
+            <div class="pc-logo">SCU</div>
+            <div class="pc-number">•••• •••• •••• 8837</div>
+            <div class="pc-footer">
+              <span>PREMIUM</span>
+              <i class="fa-brands fa-cc-visa"></i>
+            </div>
+          </div>
+          <div class="card-info">
+            <h4>Premium Visa</h4>
+            <ul>
+              <li><i class="fa-solid fa-check"></i> 1.5% cashback worldwide</li>
+              <li><i class="fa-solid fa-check"></i> Zero FX fees</li>
+              <li><i class="fa-solid fa-check"></i> Priority customer support</li>
+              <li><i class="fa-solid fa-check"></i> Travel & purchase protection</li>
+            </ul>
+          </div>
+        </div>
+        <div class="svc-card-display scd-elite">
+          <div class="physical-card pc-elite">
+            <div class="pc-chip"><i class="fa-solid fa-microchip"></i></div>
+            <div class="pc-logo">SCU</div>
+            <div class="pc-number">•••• •••• •••• 0019</div>
+            <div class="pc-footer">
+              <span>ELITE</span>
+              <i class="fa-brands fa-cc-visa"></i>
+            </div>
+          </div>
+          <div class="card-info">
+            <h4>Elite Metal Visa Infinite</h4>
+            <ul>
+              <li><i class="fa-solid fa-check"></i> 3% unlimited cashback</li>
+              <li><i class="fa-solid fa-check"></i> Airport lounge access (1300+)</li>
+              <li><i class="fa-solid fa-check"></i> Concierge service 24/7</li>
+              <li><i class="fa-solid fa-check"></i> Zero global ATM fees</li>
+              <li><i class="fa-solid fa-check"></i> Travel insurance included</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       INSURANCE
+  ══════════════════════════════════════════ -->
+  <section class="svc-block svc-insurance svc-alt" id="insurance">
+    <div class="svc-container">
+      <div class="section-header text-center reveal-up">
+        <span class="section-tag teal"><i class="fa-solid fa-shield-halved"></i> Insurance & Protection</span>
+        <h2 class="section-title">Protect What <em>Matters Most</em></h2>
+        <p class="section-sub" style="margin:0 auto;">Comprehensive coverage across life, health, property, and business — all underwritten by globally trusted insurers, managed from your app.</p>
+      </div>
+      <div class="svc-insurance-grid reveal-up d1">
+        <div class="ins-card ins-life">
+          <div class="ins-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+          <h4>Life Insurance</h4>
+          <p>Term life from $0.80/day. Critical illness cover, income protection, and family income benefit — tailored to your life stage.</p>
+          <div class="ins-from">From <strong>$0.80</strong>/day</div>
+          <a href="/register" class="ins-cta">Explore Plans</a>
+        </div>
+        <div class="ins-card ins-health">
+          <div class="ins-icon"><i class="fa-solid fa-stethoscope"></i></div>
+          <h4>Health Insurance</h4>
+          <p>Global health coverage including hospitalisation, outpatient, dental, and optical. Access 10,000+ hospitals worldwide.</p>
+          <div class="ins-from">From <strong>$15</strong>/mo</div>
+          <a href="/register" class="ins-cta">Explore Plans</a>
+        </div>
+        <div class="ins-card ins-property">
+          <div class="ins-icon"><i class="fa-solid fa-house-chimney"></i></div>
+          <h4>Property Insurance</h4>
+          <p>Home, contents, and landlord insurance bundled intelligently. Instant claims processing via our mobile app.</p>
+          <div class="ins-from">From <strong>$9</strong>/mo</div>
+          <a href="/register" class="ins-cta">Explore Plans</a>
+        </div>
+        <div class="ins-card ins-travel">
+          <div class="ins-icon"><i class="fa-solid fa-plane-departure"></i></div>
+          <h4>Travel Insurance</h4>
+          <p>Single trip or annual multi-trip. Medical emergencies, cancellation, baggage, and delay cover. Over 180 countries.</p>
+          <div class="ins-from">From <strong>$2.50</strong>/day</div>
+          <a href="/register" class="ins-cta">Explore Plans</a>
+        </div>
+        <div class="ins-card ins-biz">
+          <div class="ins-icon"><i class="fa-solid fa-building-shield"></i></div>
+          <h4>Business Insurance</h4>
+          <p>Public liability, professional indemnity, employer liability, and cyber risk — one policy, comprehensive cover.</p>
+          <div class="ins-from">From <strong>$19</strong>/mo</div>
+          <a href="/register" class="ins-cta">Explore Plans</a>
+        </div>
+        <div class="ins-card ins-cyber">
+          <div class="ins-icon"><i class="fa-solid fa-shield-virus"></i></div>
+          <h4>Cyber Protection</h4>
+          <p>Identity theft cover, online fraud reimbursement, dark web monitoring, and dedicated recovery support.</p>
+          <div class="ins-from">From <strong>$4</strong>/mo</div>
+          <a href="/register" class="ins-cta">Explore Plans</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       DIGITAL ASSETS
+  ══════════════════════════════════════════ -->
+  <section class="svc-block svc-crypto svc-dark" id="crypto">
+    <div class="svc-container">
+      <div class="svc-block-inner svc-rtl">
+        <div class="svc-block-visual reveal-up">
+          <div class="svc-img-frame svc-img-frame-coral">
+            <img src="https://images.unsplash.com/photo-1621761191319-c6fb62004040?w=700&q=80" alt="Digital Assets" loading="lazy"/>
+            <div class="svc-img-badge badge-coral">
+              <i class="fa-brands fa-bitcoin"></i>
+              <div><strong>BTC +4.2%</strong><span>24h · $68,200</span></div>
+            </div>
+          </div>
+          <div class="svc-floating-card fc-coral">
+            <i class="fa-solid fa-lock"></i>
+            <div><strong>Cold Storage</strong><span>99.8% assets offline</span></div>
+          </div>
+        </div>
+        <div class="svc-block-text reveal-up d2">
+          <span class="section-tag white"><i class="fa-brands fa-bitcoin"></i> Digital Assets</span>
+          <h2 class="section-title white">The Future of<br/><em>Money is Here</em></h2>
+          <p class="section-sub white">Buy, sell, hold and earn on 50+ cryptocurrencies — directly from your Sterling Crest account. Regulated, insured, and fully integrated with your banking.</p>
+          <div class="svc-crypto-tickers">
+            <div class="crypto-tick"><span class="ct-sym">BTC</span><span class="ct-name">Bitcoin</span><span class="ct-val">$68,241</span><span class="ct-chg up">+4.2%</span></div>
+            <div class="crypto-tick"><span class="ct-sym">ETH</span><span class="ct-name">Ethereum</span><span class="ct-val">$3,812</span><span class="ct-chg up">+2.8%</span></div>
+            <div class="crypto-tick"><span class="ct-sym">SOL</span><span class="ct-name">Solana</span><span class="ct-val">$182</span><span class="ct-chg down">-1.1%</span></div>
+            <div class="crypto-tick"><span class="ct-sym">USDT</span><span class="ct-name">Tether</span><span class="ct-val">$1.00</span><span class="ct-chg neutral">0.0%</span></div>
+          </div>
+          <div class="svc-feature-list" style="margin-top:1.25rem;">
+            <div class="svc-feat feat-coral">
+              <i class="fa-solid fa-vault"></i>
+              <div class="feat-coral-textdiv"><strong>Institutional-Grade Custody</strong><span>Cold storage, multi-sig wallets, and $200M insurance coverage.</span></div>
+            </div>
+            <div class="svc-feat feat-coral">
+              <i class="fa-solid fa-percent"></i>
+              <div class="feat-coral-textdiv"><strong>Crypto Earn</strong><span>Earn yield on idle crypto assets — up to 12% APY on stablecoins.</span></div>
+            </div>
+          </div>
+          <a href="/register" class="btn-primary" style="margin-top:1.5rem;">Start Trading <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       API & DEVELOPER
+  ══════════════════════════════════════════ -->
+  <section class="svc-dev-section">
+    <div class="svc-container">
+      <div class="svc-dev-inner reveal-up">
+        <div class="svc-dev-text">
+          <span class="section-tag navy"><i class="fa-solid fa-code"></i> Developer Platform</span>
+          <h2 class="section-title">Build on<br/><em>Sterling Crest</em></h2>
+          <p class="section-sub">Our open banking API lets developers embed payments, accounts, and financial data into any application. Regulated, documented, and production-ready.</p>
+          <div class="dev-features">
+            <div class="dev-f"><i class="fa-solid fa-bolt"></i> RESTful API with 99.99% uptime SLA</div>
+            <div class="dev-f"><i class="fa-solid fa-key"></i> OAuth 2.0 & API key authentication</div>
+            <div class="dev-f"><i class="fa-solid fa-book"></i> Full Swagger / OpenAPI docs</div>
+            <div class="dev-f"><i class="fa-solid fa-flask"></i> Sandbox environment free forever</div>
+            <div class="dev-f"><i class="fa-solid fa-webhook"></i> Webhook event subscriptions</div>
+            <div class="dev-f"><i class="fa-solid fa-headset"></i> Dedicated developer support</div>
+          </div>
+          <a href="#" class="btn-primary navy" style="margin-top:1.5rem;">View API Docs <i class="fa-solid fa-external-link"></i></a>
+        </div>
+        <div class="svc-dev-code">
+          <div class="code-header">
+            <span class="code-dot cd-red"></span>
+            <span class="code-dot cd-yellow"></span>
+            <span class="code-dot cd-green"></span>
+            <span class="code-filename">initiate_payment.js</span>
+          </div>
+          <pre class="svc-code-block"><code><span class="cc-keyword">const</span> <span class="cc-var">scu</span> = <span class="cc-func">require</span>(<span class="cc-str">'@sterlingcrest/sdk'</span>);
+
+<span class="cc-keyword">const</span> <span class="cc-var">client</span> = <span class="cc-keyword">new</span> <span class="cc-func">scu</span>.<span class="cc-prop">Client</span>({
+  <span class="cc-prop">apiKey</span>: <span class="cc-str">'sk_live_•••••••••'</span>,
+  <span class="cc-prop">environment</span>: <span class="cc-str">'production'</span>
+});
+
+<span class="cc-keyword">const</span> <span class="cc-var">transfer</span> = <span class="cc-keyword">await</span> <span class="cc-var">client</span>.<span class="cc-prop">transfers</span>.<span class="cc-func">create</span>({
+  <span class="cc-prop">amount</span>: <span class="cc-num">5000</span>,
+  <span class="cc-prop">currency</span>: <span class="cc-str">'USD'</span>,
+  <span class="cc-prop">destination</span>: {
+    <span class="cc-prop">iban</span>: <span class="cc-str">'GB29 NWBK 6016 1331 9268 19'</span>,
+    <span class="cc-prop">name</span>: <span class="cc-str">'James Wilson'</span>
+  },
+  <span class="cc-prop">reference</span>: <span class="cc-str">'Invoice #INV-2024-081'</span>
+});
+
+<span class="cc-var">console</span>.<span class="cc-func">log</span>(<span class="cc-var">transfer</span>.<span class="cc-prop">status</span>); <span class="cc-comment">// 'PROCESSING'</span>
+</code></pre>
+          <div class="code-response">
+            <i class="fa-solid fa-circle-check" style="color:#1a8f82;"></i>
+            <span>Transfer initiated · TX-88F2-KPLT-9902 · $5,000 USD</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       TRUST & COMPLIANCE BAND
+  ══════════════════════════════════════════ -->
+  <section class="svc-trust-band">
+    <div class="svc-container">
+      <h3 class="svc-sub-heading text-center reveal-up">Globally Regulated. Universally Trusted.</h3>
+      <div class="svc-trust-grid reveal-up d1">
+        <div class="stg-item">
+          <i class="fa-solid fa-certificate"></i>
+          <div><strong>FCA Licensed</strong><span>UK Financial Conduct Authority</span></div>
+        </div>
+        <div class="stg-item">
+          <i class="fa-solid fa-flag-usa"></i>
+          <div><strong>SEC Registered</strong><span>US Securities & Exchange Commission</span></div>
+        </div>
+        <div class="stg-item">
+          <i class="fa-solid fa-shield-check"></i>
+          <div><strong>FDIC Insured</strong><span>Deposits up to $250,000</span></div>
+        </div>
+        <div class="stg-item">
+          <i class="fa-solid fa-building-columns"></i>
+          <div><strong>MAS Approved</strong><span>Monetary Authority of Singapore</span></div>
+        </div>
+        <div class="stg-item">
+          <i class="fa-solid fa-lock"></i>
+          <div><strong>ISO 27001</strong><span>International Information Security</span></div>
+        </div>
+        <div class="stg-item">
+          <i class="fa-solid fa-check-double"></i>
+          <div><strong>PCI DSS Level 1</strong><span>Payment Card Industry Compliance</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       CTA
+  ══════════════════════════════════════════ -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-inner reveal-up">
+        <h2 class="cta-headline">One Platform. <em>Infinite Possibilities.</em></h2>
+        <p class="cta-sub">Join 3 million customers who chose smarter banking. Open your account in 5 minutes — no paperwork, no branch visit, no minimum balance.</p>
+        <div class="cta-actions">
+          <a href="/register" class="btn-cta-primary">Open Free Account <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/contact" class="btn-cta-outline"><i class="fa-solid fa-headset"></i> Talk to an Advisor</a>
+        </div>
+        <p class="cta-note"><i class="fa-solid fa-circle-info"></i> FDIC Insured · FCA Regulated · ISO 27001 Certified</p>
+      </div>
+    </div>
+  </section>
+
+  <%- include('../partials/footer') %>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ── Scroll Reveal ──
+    const revEls = document.querySelectorAll('.reveal-up');
+    const revObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); revObs.unobserve(e.target); }});
+    }, { threshold: 0.07 });
+    revEls.forEach(el => revObs.observe(el));
+
+    // ── Savings Calculator ──
+    let calcRate = 8;
+    const depositRange = document.getElementById('depositRange');
+    const monthlyRange = document.getElementById('monthlyRange');
+    const yearsRange = document.getElementById('yearsRange');
+
+    function formatNum(n) {
+      if (n >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M';
+      if (n >= 1000) return '$' + Math.round(n).toLocaleString();
+      return '$' + n.toFixed(0);
+    }
+
+    function calcUpdate() {
+      const P = parseFloat(depositRange.value);
+      const M = parseFloat(monthlyRange.value);
+      const Y = parseFloat(yearsRange.value);
+      const r = calcRate / 100 / 12;
+      const n = Y * 12;
+
+      document.getElementById('depositDisplay').textContent = '$' + P.toLocaleString();
+      document.getElementById('monthlyDisplay').textContent = '$' + M.toLocaleString();
+      document.getElementById('yearsDisplay').textContent = Y + (Y === 1 ? ' year' : ' years');
+
+      const fv = P * Math.pow(1 + r, n) + (r > 0 ? M * (Math.pow(1 + r, n) - 1) / r : M * n);
+      const principal = P + M * n;
+      const interest = fv - principal;
+      const returnPct = ((fv - principal) / principal * 100);
+
+      document.getElementById('totalResult').textContent = formatNum(fv);
+      document.getElementById('principalAmt').textContent = formatNum(principal);
+      document.getElementById('interestAmt').textContent = formatNum(interest);
+      document.getElementById('returnPct').textContent = returnPct.toFixed(0) + '%';
+
+      const pPct = Math.max(5, (principal / fv * 100));
+      const iPct = 100 - pPct;
+      document.getElementById('barPrincipal').style.width = pPct + '%';
+      document.getElementById('barInterest').style.width = iPct + '%';
+    }
+
+    [depositRange, monthlyRange, yearsRange].forEach(el => el.addEventListener('input', calcUpdate));
+
+    document.querySelectorAll('.calc-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.calc-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        calcRate = parseFloat(tab.dataset.rate);
+        calcUpdate();
+      });
+    });
+
+    calcUpdate();
+
+    // ── Hero scroll indicator ──
+    document.querySelector('.svc-hero-scroll')?.addEventListener('click', () => {
+      document.querySelector('#personal')?.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ── Smooth scroll for chips ──
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+      });
+    });
+  </script>
+</body>
+</html>

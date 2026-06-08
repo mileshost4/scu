@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transaction Receipt | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/transactions.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/receipt.css" />
+</head>
+<body>
+
+  <% locals.currentPath = ''; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <%
+    const isCredit   = ['Credit','Deposit'].includes(transaction.transactionType);
+    const isCrypto   = false; // standard transaction
+    const statusKey  = (transaction.status || 'pending').toLowerCase();
+    const amtClass   = isCredit ? 'credit' : 'debit';
+    const amtPrefix  = isCredit ? '+' : '-';
+    const statusIcon = statusKey === 'successful' ? 'fa-circle-check' : statusKey === 'pending' ? 'fa-clock' : 'fa-circle-xmark';
+    const txDate     = transaction.date ? new Date(transaction.date).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}) : '—';
+    const txTime     = transaction.date ? new Date(transaction.date).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '';
+    const typeClass  = transaction.transactionType === 'Credit' ? 'credit' : transaction.transactionType === 'Deposit' ? 'deposit' : transaction.transactionType === 'Transfer' ? 'transfer' : 'debit';
+    const fullName   = user ? user.firstname + ' ' + user.lastname : '—';
+    const initials   = fullName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+  %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <%- include('../partials/flash') %>
+
+        <!-- Back + header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+              <a href="javascript:history.back()" class="btn btn-ghost btn-sm">
+                <i class="fa-solid fa-arrow-left"></i> Back
+              </a>
+              <span class="ref-code" style="font-size:0.8rem;">REF: <%= transaction.refCode || 'N/A' %></span>
+              <span class="status-pill <%= statusKey %>">
+                <i class="fa-solid <%= statusIcon %>"></i> <%= transaction.status %>
+              </span>
+            </div>
+            <h1 class="page-title">Transaction Receipt</h1>
+            <p class="page-subtitle"><%= txDate %> at <%= txTime %></p>
+          </div>
+          <div class="page-header-right">
+            <!-- Admin quick actions for pending -->
+            <% if (transaction.status === 'Pending') { %>
+              <form action="/admin/admin.transaction/<%= transaction._id %>/approve?_method=PUT" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Approve this transaction?')">
+                  <i class="fa-solid fa-check"></i> Approve
+                </button>
+              </form>
+              <form action="/admin/admin.transaction/<%= transaction._id %>/decline?_method=PUT" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Decline this transaction?')">
+                  <i class="fa-solid fa-xmark"></i> Decline
+                </button>
+              </form>
+            <% } else if (transaction.status === 'Unsuccessful') { %>
+              <form action="/admin/admin.transaction/<%= transaction._id %>/approve?_method=PUT" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-ghost btn-sm" onclick="return confirm('Re-approve this transaction?')">
+                  <i class="fa-solid fa-rotate-left"></i> Re-approve
+                </button>
+              </form>
+            <% } %>
+            <button class="btn btn-outline btn-sm" id="downloadPdfBtn">
+              <i class="fa-solid fa-file-pdf"></i> Download PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Main layout -->
+        <div class="receipt-layout" id="receiptLayout">
+
+          <!-- ── Left: Receipt card ── -->
+          <div class="receipt-main" id="receiptPrintArea">
+            <div class="receipt-card">
+
+              <!-- Hero -->
+              <div class="receipt-hero">
+                <div class="receipt-status-icon <%= statusKey %>">
+                  <i class="fa-solid <%= statusIcon %>"></i>
+                </div>
+                <div class="receipt-amount <%= amtClass %>">
+                  <%= amtPrefix %>$<%= parseFloat(transaction.amount||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+                </div>
+                <div class="receipt-type-label">
+                  <%= transaction.transactionType %><% if (transaction.transferType) { %> · <%= transaction.transferType %><% } %>
+                </div>
+                <div class="receipt-ref">REF # <%= transaction.refCode || 'N/A' %></div>
+              </div>
+
+              <!-- Notch decoration -->
+              <div class="receipt-notch"></div>
+
+              <!-- Details -->
+              <div class="receipt-details">
+
+                <!-- ── Transaction info ── -->
+                <div class="receipt-section-label">Transaction Details</div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Date & Time</span>
+                  <span class="detail-value"><%= txDate %>, <%= txTime %></span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Transaction Type</span>
+                  <span class="detail-value">
+                    <span class="tx-type <%= typeClass %>" style="font-size:0.78rem;">
+                      <%= transaction.transactionType %><% if (transaction.transferType) { %> · <%= transaction.transferType %><% } %>
+                    </span>
+                  </span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Status</span>
+                  <span class="detail-value">
+                    <span class="status-pill <%= statusKey %>" style="font-size:0.72rem;">
+                      <i class="fa-solid <%= statusIcon %>"></i> <%= transaction.status %>
+                    </span>
+                  </span>
+                </div>
+
+                <% if (transaction.description) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Description</span>
+                  <span class="detail-value" style="max-width:260px;text-align:right;"><%= transaction.description %></span>
+                </div>
+                <% } %>
+
+                <div class="detail-row">
+                  <span class="detail-label">Reference</span>
+                  <span class="detail-value mono"><%= transaction.refCode || '—' %></span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">New Balance</span>
+                  <span class="detail-value mono">
+                    $<%= transaction.newBalance != null ? parseFloat(transaction.newBalance).toLocaleString('en-US',{minimumFractionDigits:2}) : '—' %>
+                  </span>
+                </div>
+
+                <% if (transaction.isCancelled) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Cancelled</span>
+                  <span class="detail-value" style="color:var(--danger)">Yes</span>
+                </div>
+                <% } %>
+
+                <% if (transaction.wasGenerated) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Source</span>
+                  <span class="detail-value muted">Auto-generated</span>
+                </div>
+                <% } %>
+
+                <!-- ── Separator ── -->
+                <hr class="receipt-section-divider" style="margin:16px 0;" />
+
+                <!-- ── Sender info ── -->
+                <div class="receipt-section-label">Sender</div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Name</span>
+                  <span class="detail-value"><%= transaction.senderAccountName || (user ? fullName : '—') %></span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Account No.</span>
+                  <span class="detail-value mono"><%= transaction.senderAccountNumber || (user ? user.accountNumber : '—') %></span>
+                </div>
+
+                <% if (transaction.bankFrom) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Bank</span>
+                  <span class="detail-value"><%= transaction.bankFrom %></span>
+                </div>
+                <% } %>
+
+                <!-- ── Separator ── -->
+                <% if (transaction.receiverAccountName || transaction.receiverAccountNumber || transaction.bankTo) { %>
+                <hr class="receipt-section-divider" style="margin:16px 0;" />
+                <div class="receipt-section-label">Receiver</div>
+
+                <% if (transaction.receiverAccountName) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Name</span>
+                  <span class="detail-value"><%= transaction.receiverAccountName %></span>
+                </div>
+                <% } %>
+
+                <% if (transaction.receiverAccountNumber) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Account No.</span>
+                  <span class="detail-value mono"><%= transaction.receiverAccountNumber %></span>
+                </div>
+                <% } %>
+
+                <% if (transaction.bankTo) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Bank</span>
+                  <span class="detail-value"><%= transaction.bankTo %></span>
+                </div>
+                <% } %>
+
+                <% if (transaction.receiverCountry) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Country</span>
+                  <span class="detail-value"><%= transaction.receiverCountry %></span>
+                </div>
+                <% } %>
+
+                <% if (transaction.swiftcode) { %>
+                <div class="detail-row">
+                  <span class="detail-label">SWIFT / BIC</span>
+                  <span class="detail-value mono"><%= transaction.swiftcode %></span>
+                </div>
+                <% } %>
+                <% } %>
+
+                <!-- ── Crypto / Cheque deposit-specific ── -->
+                <% if (transaction.chargeCode || transaction.onlinePaymentStatus || transaction.companywallet) { %>
+                <hr class="receipt-section-divider" style="margin:16px 0;" />
+                <div class="receipt-section-label">Deposit Information</div>
+
+                <% if (transaction.chargeCode) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Charge Code</span>
+                  <span class="detail-value mono"><%= transaction.chargeCode %></span>
+                </div>
+                <% } %>
+
+                <% if (transaction.onlinePaymentStatus) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Online Status</span>
+                  <span class="detail-value"><%= transaction.onlinePaymentStatus %></span>
+                </div>
+                <% } %>
+
+                <% if (transaction.companywallet) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Company Wallet</span>
+                  <span class="detail-value mono" style="word-break:break-all;font-size:0.78rem;"><%= transaction.companywallet %></span>
+                </div>
+                <% } %>
+
+                <% if (transaction.narration) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Narration</span>
+                  <span class="detail-value" style="max-width:240px;text-align:right;"><%= transaction.narration %></span>
+                </div>
+                <% } %>
+                <% } %>
+
+                <!-- ── Wire / routing ── -->
+                <% if (transaction.accountnumber || transaction.bankname || transaction.routingnumber) { %>
+                <hr class="receipt-section-divider" style="margin:16px 0;" />
+                <div class="receipt-section-label">Bank / Routing Details</div>
+
+                <% if (transaction.accountnumber) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Account No.</span>
+                  <span class="detail-value mono"><%= transaction.accountnumber %></span>
+                </div>
+                <% } %>
+
+                <% if (transaction.bankname) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Bank Name</span>
+                  <span class="detail-value"><%= transaction.bankname %></span>
+                </div>
+                <% } %>
+
+                <% if (transaction.routingcode) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Routing Type</span>
+                  <span class="detail-value"><%= transaction.routingcode %></span>
+                </div>
+                <% } %>
+
+                <% if (transaction.routingnumber) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Routing No.</span>
+                  <span class="detail-value mono"><%= transaction.routingnumber %></span>
+                </div>
+                <% } %>
+                <% } %>
+
+                <!-- ── Payment proof images (for CryptoTransaction style docs) ── -->
+                <% if (transaction.transactionproof && transaction.transactionproof.length > 0) { %>
+                <hr class="receipt-section-divider" style="margin:16px 0;" />
+                <div class="receipt-section-label">Payment Proof</div>
+                <div class="proof-grid">
+                  <% transaction.transactionproof.forEach(img => { %>
+                    <a href="<%= img.url %>" target="_blank">
+                      <img src="<%= img.url %>" class="proof-thumb" alt="Payment proof" />
+                    </a>
+                  <% }) %>
+                </div>
+                <% } %>
+
+                <!-- Footer note -->
+                <div style="margin-top:24px;padding-top:16px;border-top:1px dashed var(--border-strong);text-align:center;">
+                  <div style="font-size:0.72rem;color:var(--text-muted);">
+                    This receipt was generated by the admin portal. Contact support for disputes.
+                  </div>
+                  <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;font-family:var(--font-mono);">
+                    TX ID: <%= transaction._id %>
+                  </div>
+                </div>
+
+              </div><!-- /.receipt-details -->
+            </div><!-- /.receipt-card -->
+          </div><!-- /.receipt-main -->
+
+          <!-- ── Right sidebar ── -->
+          <div class="receipt-sidebar">
+
+            <!-- Account holder -->
+            <div class="info-card">
+              <div class="info-card-header">
+                <i class="accent fa-solid fa-user"></i>
+                <div class="info-card-title">Account Holder</div>
+              </div>
+              <div class="info-card-body">
+                <% if (user) { %>
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                    <div class="user-avatar-sm" style="width:40px;height:40px;font-size:0.9rem;">
+                      <% if (user.profilepicture && user.profilepicture.length > 0) { %>
+                        <img src="<%= user.profilepicture[user.profilepicture.length-1].url %>" alt="avatar" />
+                      <% } else { %>
+                        <%= initials %>
+                      <% } %>
+                    </div>
+                    <div>
+                      <div style="font-weight:700;font-size:0.9rem;color:var(--text-primary);"><%= fullName %></div>
+                      <div style="font-size:0.75rem;color:var(--text-muted);"><%= user.email %></div>
+                    </div>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-row-label">Account #</span>
+                    <span class="info-row-value mono"><%= user.accountNumber || '—' %></span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-row-label">Routing #</span>
+                    <span class="info-row-value mono"><%= user.routingNumber || '—' %></span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-row-label">Country</span>
+                    <span class="info-row-value"><%= user.country || '—' %></span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-row-label">Status</span>
+                    <span class="info-row-value">
+                      <span class="status-pill <%= (user.accountStatus||'').toLowerCase().replace(' ','-') %>" style="font-size:0.68rem;">
+                        <%= user.accountStatus %>
+                      </span>
+                    </span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-row-label">Verified</span>
+                    <span class="info-row-value">
+                      <span class="badge <%= user.verificationstatus === 'Verified' ? 'badge-success' : user.verificationstatus === 'Pending' ? 'badge-warning' : 'badge-danger' %>" style="font-size:0.65rem;">
+                        <%= user.verificationstatus %>
+                      </span>
+                    </span>
+                  </div>
+                  <div style="margin-top:8px;">
+                    <a href="/admin/admin.user/<%= user._id %>" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">
+                      <i class="fa-solid fa-user"></i> View Profile
+                    </a>
+                  </div>
+                <% } else { %>
+                  <div style="color:var(--text-muted);font-size:0.85rem;">User data unavailable.</div>
+                <% } %>
+              </div>
+            </div>
+
+            <!-- Transaction meta -->
+            <div class="info-card">
+              <div class="info-card-header">
+                <i class="info fa-solid fa-circle-info"></i>
+                <div class="info-card-title">Transaction Meta</div>
+              </div>
+              <div class="info-card-body">
+                <div class="info-row">
+                  <span class="info-row-label">Amount</span>
+                  <span class="info-row-value mono" style="color:<%= isCredit ? 'var(--credit)' : 'var(--debit)' %>">
+                    <%= amtPrefix %>$<%= parseFloat(transaction.amount||0).toLocaleString('en-US',{minimumFractionDigits:2}) %>
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="info-row-label">New Balance</span>
+                  <span class="info-row-value mono">
+                    $<%= transaction.newBalance != null ? parseFloat(transaction.newBalance).toLocaleString('en-US',{minimumFractionDigits:2}) : '—' %>
+                  </span>
+                </div>
+                <div class="info-row">
+                  <span class="info-row-label">Type</span>
+                  <span class="info-row-value"><%= transaction.transactionType %></span>
+                </div>
+                <% if (transaction.transferType) { %>
+                <div class="info-row">
+                  <span class="info-row-label">Transfer</span>
+                  <span class="info-row-value"><%= transaction.transferType %></span>
+                </div>
+                <% } %>
+                <div class="info-row">
+                  <span class="info-row-label">Generated</span>
+                  <span class="info-row-value"><%= transaction.wasGenerated ? 'Yes (Auto)' : 'No (Real)' %></span>
+                </div>
+                <div class="info-row">
+                  <span class="info-row-label">Cancelled</span>
+                  <span class="info-row-value"><%= transaction.isCancelled ? 'Yes' : 'No' %></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Admin actions -->
+            <div class="receipt-actions">
+              <button class="btn btn-outline btn-sm" id="downloadPdfBtn2">
+                <i class="fa-solid fa-file-pdf"></i> Download as PDF
+              </button>
+              <button class="btn btn-ghost btn-sm" id="printBtn">
+                <i class="fa-solid fa-print"></i> Print Receipt
+              </button>
+              <% if (user) { %>
+                <a href="/admin/admin.user/<%= user._id %>/transaction-history" class="btn btn-ghost btn-sm">
+                  <i class="fa-solid fa-list"></i> User Transaction History
+                </a>
+                <a href="/admin/admin.user/<%= user._id %>/statement" class="btn btn-ghost btn-sm" target="_blank">
+                  <i class="fa-solid fa-file-lines"></i> Download Statement
+                </a>
+              <% } %>
+              <% if (transaction.status === 'Pending') { %>
+                <hr class="divider" />
+                <form action="/admin/admin.transaction/<%= transaction._id %>/approve?_method=PUT" method="POST">
+                  <button type="submit" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;"
+                    onclick="return confirm('Approve this transaction?')">
+                    <i class="fa-solid fa-check"></i> Approve Transaction
+                  </button>
+                </form>
+                <form action="/admin/admin.transaction/<%= transaction._id %>/decline?_method=PUT" method="POST">
+                  <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;"
+                    onclick="return confirm('Decline this transaction?')">
+                    <i class="fa-solid fa-xmark"></i> Decline Transaction
+                  </button>
+                </form>
+              <% } %>
+            </div>
+
+          </div><!-- /.receipt-sidebar -->
+        </div><!-- /.receipt-layout -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox for proof images -->
+  <div id="lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;align-items:center;justify-content:center;cursor:pointer;" onclick="this.style.display='none'">
+    <img id="lightboxImg" src="" style="max-width:90vw;max-height:90vh;border-radius:8px;object-fit:contain;" />
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <script>
+    // ── Proof image lightbox ──
+    document.querySelectorAll('.proof-thumb').forEach(img => {
+      img.addEventListener('click', e => {
+        e.preventDefault();
+        const lb = document.getElementById('lightbox');
+        document.getElementById('lightboxImg').src = img.src;
+        lb.style.display = 'flex';
+      });
+    });
+
+    // ── Print ──
+    document.getElementById('printBtn').addEventListener('click', () => window.print());
+
+    // ── PDF generation using jsPDF ──
+    async function generatePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const pageW = doc.internal.pageSize.getWidth();
+      const margin = 20;
+      let y = 20;
+
+      const addLine = (label, value, indent = 0) => {
+        doc.setFont('helvetica','bold'); doc.setFontSize(9);
+        doc.setTextColor(100,100,100);
+        doc.text(label, margin + indent, y);
+        doc.setFont('helvetica','normal');
+        doc.setTextColor(30,30,30);
+        doc.text(String(value || '—'), margin + indent + 55, y, { maxWidth: pageW - margin * 2 - 55 - indent });
+        y += 7;
+        if (y > 270) { doc.addPage(); y = 20; }
+      };
+
+      const addSection = (title) => {
+        y += 4;
+        doc.setDrawColor(200,200,200);
+        doc.line(margin, y, pageW - margin, y);
+        y += 6;
+        doc.setFont('helvetica','bold'); doc.setFontSize(8);
+        doc.setTextColor(120,120,120);
+        doc.text(title.toUpperCase(), margin, y);
+        y += 7;
+      };
+
+      // Header
+      doc.setFont('helvetica','bold'); doc.setFontSize(18);
+      doc.setTextColor(20,20,20);
+      doc.text('Transaction Receipt', margin, y); y += 8;
+      doc.setFont('helvetica','normal'); doc.setFontSize(9);
+      doc.setTextColor(120,120,120);
+      doc.text('Generated on ' + new Date().toDateString(), margin, y); y += 12;
+
+      // Amount hero
+      doc.setFillColor(240,248,245);
+      doc.roundedRect(margin, y, pageW - margin * 2, 22, 4, 4, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(22);
+      doc.setTextColor('<%= isCredit ? "0,168,130" : "230,48,80" %>'.split(',').map(Number));
+
+      const amtText = '<%= amtPrefix %>$<%= parseFloat(transaction.amount||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) %>';
+      doc.text(amtText, pageW / 2, y + 14, { align: 'center' });
+      y += 28;
+
+      addSection('Transaction Details');
+      addLine('Date & Time', '<%= txDate %>, <%= txTime %>');
+      addLine('Type', '<%= transaction.transactionType %><%= transaction.transferType ? " · " + transaction.transferType : "" %>');
+      addLine('Status', '<%= transaction.status %>');
+      addLine('Reference', '<%= transaction.refCode || "—" %>');
+      addLine('Description', '<%= (transaction.description||"").replace(/\'/g,"") %>');
+      addLine('New Balance', '$<%= transaction.newBalance != null ? parseFloat(transaction.newBalance).toLocaleString("en-US",{minimumFractionDigits:2}) : "—" %>');
+
+      addSection('Sender');
+      addLine('Name', '<%= (transaction.senderAccountName || fullName).replace(/\'/g,"") %>');
+      addLine('Account No.', '<%= transaction.senderAccountNumber || (user ? user.accountNumber : "") %>');
+      <% if (transaction.bankFrom) { %>addLine('Bank', '<%= transaction.bankFrom %>'); <% } %>
+
+      <% if (transaction.receiverAccountName || transaction.receiverAccountNumber) { %>
+      addSection('Receiver');
+      addLine('Name', '<%= (transaction.receiverAccountName||"").replace(/\'/g,"") %>');
+      addLine('Account No.', '<%= transaction.receiverAccountNumber || "" %>');
+      <% if (transaction.bankTo) { %>addLine('Bank', '<%= transaction.bankTo %>'); <% } %>
+      <% if (transaction.receiverCountry) { %>addLine('Country', '<%= transaction.receiverCountry %>'); <% } %>
+      <% if (transaction.swiftcode) { %>addLine('SWIFT/BIC', '<%= transaction.swiftcode %>'); <% } %>
+      <% } %>
+
+      <% if (transaction.chargeCode || transaction.companywallet) { %>
+      addSection('Deposit Information');
+      <% if (transaction.chargeCode) { %>addLine('Charge Code', '<%= transaction.chargeCode %>'); <% } %>
+      <% if (transaction.companywallet) { %>addLine('Company Wallet', '<%= transaction.companywallet %>'); <% } %>
+      <% if (transaction.narration) { %>addLine('Narration', '<%= (transaction.narration||"").replace(/\'/g,"") %>'); <% } %>
+      <% } %>
+
+      addSection('Account Holder');
+      addLine('Full Name', '<%= fullName.replace(/\'/g,"") %>');
+      <% if (user) { %>
+      addLine('Email', '<%= user.email %>');
+      addLine('Account No.', '<%= user.accountNumber || "—" %>');
+      addLine('Routing No.', '<%= user.routingNumber || "—" %>');
+      addLine('Country', '<%= user.country || "—" %>');
+      <% } %>
+
+      // Footer
+      y += 6;
+      doc.setDrawColor(200,200,200);
+      doc.line(margin, y, pageW - margin, y);
+      y += 6;
+      doc.setFont('helvetica','italic'); doc.setFontSize(8);
+      doc.setTextColor(160,160,160);
+      doc.text('Auto-generated receipt. TX ID: <%= transaction._id %>', pageW / 2, y, { align: 'center' });
+
+      doc.save('receipt-<%= transaction.refCode || transaction._id %>.pdf');
+    }
+
+    document.getElementById('downloadPdfBtn').addEventListener('click', generatePDF);
+    document.getElementById('downloadPdfBtn2').addEventListener('click', generatePDF);
+  </script>
+
+  <style>
+    @media print {
+      .navbar, .sidebar, .receipt-sidebar, .page-header .page-header-right,
+      #downloadPdfBtn, #downloadPdfBtn2, #printBtn, .receipt-actions { display: none !important; }
+      .main-content { margin-left: 0 !important; padding-top: 0 !important; }
+      .receipt-layout { flex-direction: column; }
+      .receipt-card { border: none; box-shadow: none; }
+    }
+  </style>
+</body>
+</html>

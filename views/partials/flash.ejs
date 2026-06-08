@@ -1,0 +1,75 @@
+<!-- ═══════════════════════════════════════════════════════════
+     FLASH MESSAGES PARTIAL
+     Include right after navbar partials on every page.
+     Requires connect-flash (or equivalent) so that
+     res.locals.messages is populated by your middleware.
+════════════════════════════════════════════════════════════ -->
+<div class="flash-container" id="flashContainer">
+  <% if (typeof messages !== 'undefined' && messages) { %>
+
+    <% if (messages.success && messages.success.length) { %>
+      <% messages.success.forEach(function(msg) { %>
+        <div class="flash flash-success" role="alert">
+          <div class="flash-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="flash-body">
+            <div class="flash-title">Success</div>
+            <div class="flash-msg"><%= msg %></div>
+          </div>
+          <button class="flash-close" onclick="dismissFlash(this)" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <div class="flash-progress"></div>
+        </div>
+      <% }); %>
+    <% } %>
+
+    <% if (messages.error && messages.error.length) { %>
+      <% messages.error.forEach(function(msg) { %>
+        <div class="flash flash-error" role="alert">
+          <div class="flash-icon"><i class="fa-solid fa-circle-exclamation"></i></div>
+          <div class="flash-body">
+            <div class="flash-title">Error</div>
+            <div class="flash-msg"><%= msg %></div>
+          </div>
+          <button class="flash-close" onclick="dismissFlash(this)" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <div class="flash-progress"></div>
+        </div>
+      <% }); %>
+    <% } %>
+
+    <% if (messages.warning && messages.warning.length) { %>
+      <% messages.warning.forEach(function(msg) { %>
+        <div class="flash flash-warning" role="alert">
+          <div class="flash-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          <div class="flash-body">
+            <div class="flash-title">Warning</div>
+            <div class="flash-msg"><%= msg %></div>
+          </div>
+          <button class="flash-close" onclick="dismissFlash(this)" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <div class="flash-progress"></div>
+        </div>
+      <% }); %>
+    <% } %>
+
+    <% if (messages.info && messages.info.length) { %>
+      <% messages.info.forEach(function(msg) { %>
+        <div class="flash flash-info" role="alert">
+          <div class="flash-icon"><i class="fa-solid fa-circle-info"></i></div>
+          <div class="flash-body">
+            <div class="flash-title">Info</div>
+            <div class="flash-msg"><%= msg %></div>
+          </div>
+          <button class="flash-close" onclick="dismissFlash(this)" aria-label="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <div class="flash-progress"></div>
+        </div>
+      <% }); %>
+    <% } %>
+
+  <% } %>
+</div>

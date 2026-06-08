@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Active Investments | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/investments.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/admin/admin.active-investments'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Active Investments</h1>
+            <p class="page-subtitle"><%= activeinvestments.length %> active investment<%= activeinvestments.length !== 1 ? 's' : '' %> running</p>
+          </div>
+          <div class="page-header-right">
+            <a href="/admin/admin.inactive-investments" class="btn btn-ghost btn-sm">
+              <i class="fa-solid fa-archive"></i> Closed Investments
+            </a>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="inv-summary-row">
+          <div class="inv-summary-card">
+            <div class="isc-icon accent"><i class="fa-solid fa-chart-line"></i></div>
+            <div class="isc-info">
+              <span class="isc-label">Active</span>
+              <span class="isc-value"><%= activeinvestments.length %></span>
+            </div>
+          </div>
+          <div class="inv-summary-card">
+            <div class="isc-icon gold"><i class="fa-solid fa-coins"></i></div>
+            <div class="isc-info">
+              <span class="isc-label">Total Invested</span>
+              <span class="isc-value amount">
+                $<%= activeinvestments.reduce((s,i) => s + (parseFloat(i.investedamount)||0), 0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+              </span>
+            </div>
+          </div>
+          <div class="inv-summary-card">
+            <div class="isc-icon success"><i class="fa-solid fa-arrow-trend-up"></i></div>
+            <div class="isc-info">
+              <span class="isc-label">Total Profit</span>
+              <span class="isc-value amount text-accent">
+                $<%= activeinvestments.reduce((s,i) => s + (parseFloat(i.investmentprofit)||0), 0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+              </span>
+            </div>
+          </div>
+          <div class="inv-summary-card">
+            <div class="isc-icon info"><i class="fa-solid fa-check-circle"></i></div>
+            <div class="isc-info">
+              <span class="isc-label">Closed</span>
+              <span class="isc-value"><%= inactiveinvestments.length %></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Investments Table -->
+        <div class="card inv-table-card">
+          <div class="inv-table-header">
+            <h3 class="inv-table-title"><i class="fa-solid fa-chart-line"></i> Active Investments</h3>
+            <div class="inv-table-search">
+              <i class="fa-solid fa-search"></i>
+              <input type="text" id="investSearch" placeholder="Search investments..." class="form-control" />
+            </div>
+          </div>
+
+          <% if (activeinvestments.length === 0) { %>
+            <div class="inv-empty">
+              <i class="fa-solid fa-chart-line"></i>
+              <p>No active investments found.</p>
+            </div>
+          <% } else { %>
+            <div class="inv-table-wrap">
+              <table class="inv-table" id="investTable">
+                <thead>
+                  <tr>
+                    <th>Investor</th>
+                    <th>Package</th>
+                    <th>Invested</th>
+                    <th>Profit</th>
+                    <th>ROI</th>
+                    <th>Duration</th>
+                    <th>Start Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for (let inv of activeinvestments) { %>
+                    <%
+                      let client = null;
+                      for (let u of clients) {
+                        if (u.investment && u.investment.some(i => i.toString() === inv._id.toString())) {
+                          client = u; break;
+                        }
+                      }
+                    %>
+                    <tr>
+                      <td>
+                        <div class="inv-user-cell">
+                          <div class="inv-avatar">
+                            <% if (client && client.profilepicture && client.profilepicture.length > 0) { %>
+                              <img src="<%= client.profilepicture[0].url %>" alt="" />
+                            <% } else { %>
+                              <%= client ? (client.firstname||'?')[0].toUpperCase() : '?' %>
+                            <% } %>
+                          </div>
+                          <div>
+                            <span class="inv-user-name"><%= client ? client.firstname + ' ' + client.lastname : 'Unknown' %></span>
+                            <span class="inv-user-email"><%= client ? client.email : '—' %></span>
+                          </div>
+                        </div>
+                      </td>
+                      <td><span class="inv-package-badge"><%= inv.packagetype || '—' %></span></td>
+                      <td class="amount">$<%= (parseFloat(inv.investedamount)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %></td>
+                      <td class="amount text-accent">$<%= (parseFloat(inv.investmentprofit)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %></td>
+                      <td><span class="inv-roi"><%= inv.roi || '—' %></span></td>
+                      <td><%= inv.duration || '—' %></td>
+                      <td><%= inv.startDate ? new Date(inv.startDate).toLocaleDateString() : '—' %></td>
+                      <td><span class="badge badge-success">Active</span></td>
+                      <td>
+                        <% if (client) { %>
+                          <a href="/admin/admin.investment/<%= client._id %>/<%= inv._id %>" class="btn btn-sm btn-outline">
+                            <i class="fa-solid fa-eye"></i> View
+                          </a>
+                        <% } %>
+                      </td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    const searchInput = document.getElementById('investSearch');
+    if (searchInput) {
+      searchInput.addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        document.querySelectorAll('#investTable tbody tr').forEach(row => {
+          row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+        });
+      });
+    }
+  </script>
+</body>
+</html>

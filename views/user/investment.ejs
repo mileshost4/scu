@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Investments | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/investment.css" />
+</head>
+<body>
+  <% locals.currentPath = '/user/investments'; %>
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="inv-page fade-in">
+
+        <!-- Page Header -->
+        <div class="inv-header">
+          <div>
+            <h1 class="inv-title">Investments</h1>
+            <p class="inv-subtitle">Grow your wealth with curated plans</p>
+          </div>
+          <div class="inv-balance-pill">
+            <span class="inv-bal-label">Available Balance</span>
+            <span class="inv-bal-amount font-mono"><%= user.basecurrencysymbol || '$' %><%= totalBalance %></span>
+          </div>
+        </div>
+
+        <!-- Active Investments -->
+        <% const activeInvestments = investments.filter(i => i.status === 'Active'); %>
+        <% if (activeInvestments.length > 0) { %>
+        <div class="inv-section">
+          <div class="inv-section-label">
+            <span class="pulse-dot"></span>
+            Active Investments
+          </div>
+          <div class="inv-active-list">
+            <% activeInvestments.forEach(function(inv) { %>
+            <a href="/user/investments/<%= inv._id %>" class="inv-active-card">
+              <div class="inv-active-top">
+                <div class="inv-active-icon">
+                  <i class="fa-solid fa-seedling"></i>
+                </div>
+                <div class="inv-active-info">
+                  <span class="inv-active-name"><%= inv.packagetype %></span>
+                  <span class="inv-active-date">Started <%= new Date(inv.startDate).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) %></span>
+                </div>
+                <span class="badge badge-success">Active</span>
+              </div>
+              <div class="inv-active-stats">
+                <div class="inv-stat">
+                  <span class="inv-stat-label">Invested</span>
+                  <span class="inv-stat-val font-mono"><%= user.basecurrencysymbol || '$' %><%= parseFloat(inv.investedamount).toLocaleString('en-US', {minimumFractionDigits:2}) %></span>
+                </div>
+                <div class="inv-stat">
+                  <span class="inv-stat-label">ROI</span>
+                  <span class="inv-stat-val text-accent"><%= inv.roi %></span>
+                </div>
+                <div class="inv-stat">
+                  <span class="inv-stat-label">Duration</span>
+                  <span class="inv-stat-val"><%= inv.duration %></span>
+                </div>
+                <div class="inv-stat">
+                  <span class="inv-stat-label">Profit</span>
+                  <span class="inv-stat-val text-accent font-mono">+<%= user.basecurrencysymbol || '$' %><%= parseFloat(inv.investmentprofit || 0).toLocaleString('en-US', {minimumFractionDigits:2}) %></span>
+                </div>
+              </div>
+              <div class="inv-active-progress">
+                <div class="inv-progress-bar">
+                  <div class="inv-progress-fill" style="width: <%= Math.min(100, Math.round((new Date() - new Date(inv.startDate)) / (1000*60*60*24) / (parseInt(inv.duration) || 30) * 100)) %>%"></div>
+                </div>
+                <span class="inv-progress-label">Progress</span>
+              </div>
+              <div class="inv-card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- Investment Plans -->
+        <div class="inv-section">
+          <div class="inv-section-label">Available Plans</div>
+          <div class="inv-plans-list">
+            <% if (investmentplans && investmentplans.length > 0) { %>
+              <% investmentplans.forEach(function(plan) { %>
+              <div class="inv-plan-card">
+                <div class="inv-plan-header">
+                  <% if (plan.image && plan.image.length > 0) { %>
+                    <div class="inv-plan-img" style="background-image: url('<%= plan.image[0].url %>')"></div>
+                  <% } else { %>
+                    <div class="inv-plan-icon"><i class="fa-solid fa-chart-line"></i></div>
+                  <% } %>
+                  <div class="inv-plan-name"><%= plan.name %></div>
+                </div>
+                <div class="inv-plan-roi">
+                  <span class="inv-roi-value"><%= plan.roi %></span>
+                  <span class="inv-roi-label">ROI</span>
+                </div>
+                <div class="inv-plan-meta">
+                  <div class="inv-plan-row">
+                    <i class="fa-regular fa-clock"></i>
+                    <span>Duration: <strong><%= plan.duration %></strong></span>
+                  </div>
+                  <div class="inv-plan-row">
+                    <i class="fa-solid fa-arrow-down-up-across-line"></i>
+                    <span>Min: <strong><%= user.basecurrencysymbol || '$' %><%= parseFloat(plan.minamount).toLocaleString() %></strong></span>
+                  </div>
+                  <div class="inv-plan-row">
+                    <i class="fa-solid fa-arrow-up"></i>
+                    <span>Max: <strong><%= user.basecurrencysymbol || '$' %><%= parseFloat(plan.maxamount).toLocaleString() %></strong></span>
+                  </div>
+                </div>
+                <% if (plan.description) { %>
+                <p class="inv-plan-desc"><%= plan.description %></p>
+                <% } %>
+                <button class="btn btn-primary w-full" onclick="openInvestModal('<%= plan._id %>', '<%= plan.name %>', '<%= plan.minamount %>', '<%= plan.maxamount %>', '<%= plan.roi %>', '<%= plan.duration %>')">
+                  <i class="fa-solid fa-bolt"></i> Invest Now
+                </button>
+              </div>
+              <% }) %>
+            <% } else { %>
+              <div class="inv-empty">
+                <i class="fa-solid fa-chart-pie"></i>
+                <p>No investment plans available yet.</p>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Investment History -->
+        <% const historyInvestments = investments.filter(i => i.status !== 'Active'); %>
+        <% if (historyInvestments.length > 0) { %>
+        <div class="inv-section">
+          <div class="inv-section-label">History</div>
+          <div class="inv-history-list">
+            <% historyInvestments.forEach(function(inv) { %>
+            <a href="/user/investments/<%= inv._id %>" class="inv-history-row">
+              <div class="inv-hist-icon <%= inv.status === 'Completed' ? 'completed' : 'pending' %>">
+                <i class="fa-solid <%= inv.status === 'Completed' ? 'fa-circle-check' : 'fa-hourglass-half' %>"></i>
+              </div>
+              <div class="inv-hist-info">
+                <span class="inv-hist-name"><%= inv.packagetype %></span>
+                <span class="inv-hist-date"><%= new Date(inv.startDate).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) %></span>
+              </div>
+              <div class="inv-hist-amount">
+                <span class="inv-hist-invested font-mono"><%= user.basecurrencysymbol || '$' %><%= parseFloat(inv.investedamount).toLocaleString('en-US', {minimumFractionDigits:2}) %></span>
+                <span class="inv-hist-roi"><%= inv.roi %> ROI</span>
+              </div>
+              <span class="badge badge-<%= inv.status === 'Completed' ? 'success' : 'warning' %>"><%= inv.status %></span>
+              <i class="fa-solid fa-chevron-right inv-hist-caret"></i>
+            </a>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+
+        <!-- No investments at all -->
+        <% if (investments.length === 0) { %>
+        <div class="inv-zero-state">
+          <div class="inv-zero-icon"><i class="fa-solid fa-seedling"></i></div>
+          <h3>No investments yet</h3>
+          <p>Choose a plan above and start growing your wealth today.</p>
+        </div>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Invest Modal -->
+  <div class="custom-modal-overlay" id="investModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-bolt"></i>
+          Open Investment
+        </div>
+        <button class="custom-modal-close" onclick="closeInvestModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="custom-modal-body">
+        <div class="invest-modal-plan-info" id="modalPlanInfo"></div>
+        <form id="investForm" method="POST">
+          <div class="form-group">
+            <label class="form-label">Amount (<span id="modalCurrency"><%= user.basecurrencysymbol || '$' %></span>)</label>
+            <input type="number" name="investedamount" id="investAmount" class="form-control" placeholder="Enter amount" min="0" step="0.01" required />
+            <p class="inv-modal-hint" id="modalAmountHint"></p>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Debit From Account</label>
+            <select name="account" class="form-control" required>
+              <% allaccounts.forEach(function(acct) { %>
+              <option value="<%= acct._id %>"><%= acct.displayName %> — <%= user.basecurrencysymbol || '$' %><%= parseFloat(acct.accountWallet).toLocaleString('en-US', {minimumFractionDigits:2}) %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="custom-modal-footer" style="padding: 0; border: none; margin-top: 8px;">
+            <button type="button" class="btn btn-ghost" onclick="closeInvestModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-bolt"></i> Confirm</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    function openInvestModal(planId, planName, minAmt, maxAmt, roi, duration) {
+      const form = document.getElementById('investForm');
+      form.action = `/user/investments/${planId}`;
+      document.getElementById('investAmount').min = minAmt;
+      document.getElementById('investAmount').max = maxAmt;
+      document.getElementById('modalAmountHint').textContent =
+        `Min: ${document.getElementById('modalCurrency').textContent}${parseFloat(minAmt).toLocaleString()} — Max: ${document.getElementById('modalCurrency').textContent}${parseFloat(maxAmt).toLocaleString()}`;
+      document.getElementById('modalPlanInfo').innerHTML = `
+        <div class="modal-plan-badge">
+          <strong>${planName}</strong> &nbsp;·&nbsp; ${roi} ROI &nbsp;·&nbsp; ${duration}
+        </div>`;
+      document.getElementById('investModal').classList.add('open');
+    }
+    function closeInvestModal() {
+      document.getElementById('investModal').classList.remove('open');
+    }
+    document.getElementById('investModal').addEventListener('click', function(e) {
+      if (e.target === this) closeInvestModal();
+    });
+  </script>
+</body>
+</html>

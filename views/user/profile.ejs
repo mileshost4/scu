@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile | <%= websiteName %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/profile.css" />
+</head>
+<body>
+
+  <%
+    locals.currentPath = '/user/profile';
+  %>
+
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="profile-page fade-in">
+
+        <!-- ── PAGE HEADER ── -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1><i class="fa-solid fa-user"></i> My Profile</h1>
+            <p>Manage your personal information and account preferences.</p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a href="/user/security" class="btn btn-ghost btn-sm">
+              <i class="fa-solid fa-shield-halved"></i> Security Settings
+            </a>
+            <button class="btn btn-primary btn-sm" onclick="openModal('editProfileModal')">
+              <i class="fa-solid fa-pen-to-square"></i> Edit Profile
+            </button>
+          </div>
+        </div>
+
+        <!-- ── PROFILE GRID ── -->
+        <div class="profile-grid">
+
+          <!-- LEFT: Avatar & identity card -->
+          <div style="display:flex;flex-direction:column;gap:20px">
+
+            <div class="avatar-card">
+              <div class="avatar-card-banner"></div>
+              <div class="avatar-card-body">
+                <div class="avatar-wrap">
+                  <% if (user.profilepicture && user.profilepicture.length > 0) { %>
+                    <img class="avatar-img" src="<%= user.profilepicture[user.profilepicture.length - 1].url %>" alt="Profile picture" />
+                  <% } else { %>
+                    <div class="avatar-initials">
+                      <%= (user.firstname ? user.firstname[0] : '') %><%= (user.lastname ? user.lastname[0] : '') %>
+                    </div>
+                  <% } %>
+                  <div class="avatar-online-dot"></div>
+                </div>
+
+                <div class="avatar-name"><%= user.firstname %> <%= user.middlename ? user.middlename + ' ' : '' %><%= user.lastname %></div>
+                <div class="avatar-email"><%= user.email %></div>
+
+                <div class="avatar-badges">
+                  <span class="badge badge-<%= user.accountStatus === 'Active' ? 'success' : 'danger' %>">
+                    <i class="fa-solid fa-circle" style="font-size:0.5em"></i> <%= user.accountStatus %>
+                  </span>
+                  <span class="badge badge-<%= user.verificationstatus === 'Verified' ? 'success' : user.verificationstatus === 'Pending' ? 'warning' : 'danger' %>">
+                    <i class="fa-solid fa-id-card"></i> <%= user.verificationstatus %>
+                  </span>
+                  <% if (user.role === 'admin') { %>
+                    <span class="badge badge-gold"><i class="fa-solid fa-crown"></i> Admin</span>
+                  <% } %>
+                </div>
+
+                <div class="avatar-stat-row">
+                  <div class="avatar-stat">
+                    <span class="asl">UID</span>
+                    <span class="asv">#<%= user.uid %></span>
+                  </div>
+                  <div class="avatar-stat">
+                    <span class="asl">Account No.</span>
+                    <span class="asv"><%= user.accountNumber %></span>
+                  </div>
+                  <div class="avatar-stat">
+                    <span class="asl">Routing No.</span>
+                    <span class="asv"><%= user.routingNumber %></span>
+                  </div>
+                  <div class="avatar-stat">
+                    <span class="asl">Currency</span>
+                    <span class="asv"><%= user.basecurrency %> (<%= user.basecurrencysymbol %>)</span>
+                  </div>
+                  <div class="avatar-stat">
+                    <span class="asl">Member since</span>
+                    <span class="asv" style="font-size:0.75rem">
+                      <%= new Date(user.accountcreatedat).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) %>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="avatar-actions">
+                  <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center" onclick="openModal('uploadPhotoModal')">
+                    <i class="fa-solid fa-camera"></i> Change Photo
+                  </button>
+                  <% if (user.profilepicture && user.profilepicture.length > 0) { %>
+                    <form action="/user/delete-profile-picture?_method=PUT" method="POST">
+                      <button type="submit" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;color:var(--danger)"
+                        onclick="return confirm('Remove your profile picture?')">
+                        <i class="fa-solid fa-trash"></i> Remove Photo
+                      </button>
+                    </form>
+                  <% } %>
+                </div>
+              </div>
+            </div>
+
+            <!-- KYC Status card -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-title"><i class="fa-solid fa-id-card"></i> KYC Verification</div>
+                <% if (user.verificationstatus !== 'Verified') { %>
+                  <a href="/user/kyc" class="btn btn-sm" style="background:var(--warning);color:#000;font-size:0.75rem">
+                    <i class="fa-solid fa-upload"></i> Submit Docs
+                  </a>
+                <% } %>
+              </div>
+              <div class="section-body">
+                <% if (user.verificationstatus === 'Verified') { %>
+                  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--success-dim);border:1px solid var(--success);border-radius:var(--radius-md)">
+                    <i class="fa-solid fa-circle-check" style="color:var(--success);font-size:1.3rem;flex-shrink:0"></i>
+                    <div>
+                      <div style="font-weight:700;color:var(--success);font-size:0.88rem">Identity Verified</div>
+                      <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px">Your account has full access to all features.</div>
+                    </div>
+                  </div>
+                <% } else if (user.verificationstatus === 'Pending') { %>
+                  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--warning-dim);border:1px solid var(--warning);border-radius:var(--radius-md)">
+                    <i class="fa-solid fa-clock" style="color:var(--warning);font-size:1.3rem;flex-shrink:0"></i>
+                    <div>
+                      <div style="font-weight:700;color:var(--warning);font-size:0.88rem">Under Review</div>
+                      <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px">Your documents are being reviewed. We'll notify you once approved.</div>
+                    </div>
+                  </div>
+                <% } else { %>
+                  <div style="display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--danger-dim);border:1px solid var(--danger);border-radius:var(--radius-md)">
+                    <i class="fa-solid fa-triangle-exclamation" style="color:var(--danger);font-size:1.3rem;flex-shrink:0"></i>
+                    <div>
+                      <div style="font-weight:700;color:var(--danger);font-size:0.88rem">Verification Required</div>
+                      <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:2px">Submit your identity document to unlock full banking features.</div>
+                    </div>
+                  </div>
+                <% } %>
+
+                <% if (user.documenttype) { %>
+                  <div style="margin-top:12px;padding:10px 14px;background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-md);font-size:0.82rem;color:var(--text-secondary)">
+                    <i class="fa-solid fa-file-lines" style="color:var(--accent);margin-right:6px"></i>
+                    Document: <strong style="color:var(--text-primary)"><%= user.documenttype %></strong>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+
+          </div><!-- /LEFT col -->
+
+          <!-- RIGHT: Details panels -->
+          <div style="display:flex;flex-direction:column;gap:20px">
+
+            <!-- Personal Info -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-title"><i class="fa-solid fa-user-pen"></i> Personal Information</div>
+                <button class="btn btn-ghost btn-sm" onclick="openModal('editProfileModal')">
+                  <i class="fa-solid fa-pen"></i> Edit
+                </button>
+              </div>
+              <div class="section-body">
+                <div class="info-grid">
+                  <div class="info-field">
+                    <div class="info-field-label">First Name</div>
+                    <div class="info-field-value <%= !user.firstname ? 'empty' : '' %>"><%= user.firstname || 'Not set' %></div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">Last Name</div>
+                    <div class="info-field-value <%= !user.lastname ? 'empty' : '' %>"><%= user.lastname || 'Not set' %></div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">Middle Name</div>
+                    <div class="info-field-value <%= !user.middlename ? 'empty' : '' %>"><%= user.middlename || 'Not set' %></div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">Date of Birth</div>
+                    <div class="info-field-value <%= !user.dob ? 'empty' : '' %>"><%= user.dob || 'Not set' %></div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">Gender</div>
+                    <div class="info-field-value <%= !user.gender ? 'empty' : '' %>"><%= user.gender || 'Not set' %></div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">Employment</div>
+                    <div class="info-field-value <%= !user.employmentstatus ? 'empty' : '' %>"><%= user.employmentstatus || 'Not set' %></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-title"><i class="fa-solid fa-address-book"></i> Contact & Location</div>
+                <button class="btn btn-ghost btn-sm" onclick="openModal('editProfileModal')">
+                  <i class="fa-solid fa-pen"></i> Edit
+                </button>
+              </div>
+              <div class="section-body">
+                <div class="info-grid">
+                  <div class="info-field">
+                    <div class="info-field-label">Email Address</div>
+                    <div class="info-field-value" style="font-size:0.82rem"><%= user.email %></div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">Phone Number</div>
+                    <div class="info-field-value <%= !user.phonenumber ? 'empty' : '' %>">
+                      <% if (user.phonenumber) { %>(+<%= user.countryCode || '' %>) <%= user.phonenumber %><% } else { %>Not set<% } %>
+                    </div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">Country</div>
+                    <div class="info-field-value <%= !user.country ? 'empty' : '' %>"><%= user.country || 'Not set' %></div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">State / Region</div>
+                    <div class="info-field-value <%= !user.state ? 'empty' : '' %>"><%= user.state || 'Not set' %></div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">City</div>
+                    <div class="info-field-value <%= !user.city ? 'empty' : '' %>"><%= user.city || 'Not set' %></div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">ZIP Code</div>
+                    <div class="info-field-value <%= !user.zipcode ? 'empty' : '' %>"><%= user.zipcode || 'Not set' %></div>
+                  </div>
+                  <div class="info-field" style="grid-column: 1 / -1">
+                    <div class="info-field-label">Street Address</div>
+                    <div class="info-field-value <%= !user.address ? 'empty' : '' %>"><%= user.address || 'Not set' %></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Account Preferences -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-title"><i class="fa-solid fa-sliders"></i> Account Preferences</div>
+              </div>
+              <div class="section-body">
+                <div class="info-grid">
+                  <div class="info-field">
+                    <div class="info-field-label">Base Currency</div>
+                    <div class="info-field-value"><%= user.basecurrency %> (<%= user.basecurrencysymbol %>)</div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">Credit Score</div>
+                    <div class="info-field-value" style="color:var(--gold)"><%= user.creditscore || 850 %> / 850</div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">Transactions</div>
+                    <div class="info-field-value" style="color:var(<%= user.allowTransactions === 'Yes' ? '--success' : '--danger' %>)">
+                      <%= user.allowTransactions === 'Yes' ? '✓ Enabled' : '✗ Disabled' %>
+                    </div>
+                  </div>
+                  <div class="info-field">
+                    <div class="info-field-label">Investments</div>
+                    <div class="info-field-value" style="color:var(<%= user.allowInvestments === 'Yes' ? '--success' : '--danger' %>)">
+                      <%= user.allowInvestments === 'Yes' ? '✓ Enabled' : '✗ Disabled' %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /RIGHT col -->
+        </div><!-- /.profile-grid -->
+
+      </div><!-- /.profile-page -->
+    </div>
+  </div>
+
+
+  <!-- ═══════════════ EDIT PROFILE MODAL ═══════════════════ -->
+  <div class="custom-modal-overlay" id="editProfileModal" onclick="handleOverlayClick(event,'editProfileModal')">
+    <div class="custom-modal" style="max-width:620px">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-user-pen"></i>
+          Edit Profile
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('editProfileModal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form action="/user/edit-profile?_method=PUT" method="POST">
+        <div class="custom-modal-body" style="max-height:70vh;overflow-y:auto">
+          <div class="edit-form-grid">
+            <div class="form-group">
+              <label class="form-label">First Name</label>
+              <input type="text" class="form-control" name="firstname" value="<%= user.firstname || '' %>" placeholder="First name" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name</label>
+              <input type="text" class="form-control" name="lastname" value="<%= user.lastname || '' %>" placeholder="Last name" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Middle Name</label>
+              <input type="text" class="form-control" name="middlename" value="<%= user.middlename || '' %>" placeholder="Middle name (optional)" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Gender</label>
+              <select class="form-control" name="gender">
+                <option value="">Select gender</option>
+                <option value="Male"   <%= user.gender === 'Male'   ? 'selected' : '' %>>Male</option>
+                <option value="Female" <%= user.gender === 'Female' ? 'selected' : '' %>>Female</option>
+                <option value="Other"  <%= user.gender === 'Other'  ? 'selected' : '' %>>Other</option>
+                <option value="Prefer not to say" <%= user.gender === 'Prefer not to say' ? 'selected' : '' %>>Prefer not to say</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Country Code</label>
+              <input type="number" class="form-control" name="countryCode" value="<%= user.countryCode || '' %>" placeholder="e.g. 234" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number</label>
+              <input type="number" class="form-control" name="phonenumber" value="<%= user.phonenumber || '' %>" placeholder="Phone number" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Country</label>
+              <select class="field-select form-control" name="country" id="country" required>
+                  <option value="">Select country</option>
+                  <% countries.forEach(function(c) { %>
+                      <option 
+                          value="<%= c.name %>"
+                          <%= user.country === c.name ? 'selected' : '' %>>
+                          <%= c.name %>
+                      </option>
+                  <% }) %>
+              </select>
+              <!-- <input type="text" class="form-control" name="country" value="<%= user.country || '' %>" placeholder="Country" /> -->
+            </div>
+            <div class="form-group">
+              <label class="form-label">State / Region</label>
+              <input type="text" class="form-control" name="state" value="<%= user.state || '' %>" placeholder="State" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">City</label>
+              <input type="text" class="form-control" name="city" value="<%= user.city || '' %>" placeholder="City" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">ZIP Code</label>
+              <input type="number" class="form-control" name="zipcode" value="<%= user.zipcode || '' %>" placeholder="ZIP / Postal code" />
+            </div>
+            <div class="form-group full">
+              <label class="form-label">Street Address</label>
+              <input type="text" class="form-control" name="address" value="<%= user.address || '' %>" placeholder="Street address" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Base Currency</label>
+              <input type="text" class="form-control" id="basecurrency" name="basecurrency" value="<%= user.basecurrency || 'USD' %>" placeholder="e.g. USD, EUR" readonly />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Currency Symbol</label>
+              <input type="text" class="form-control" id="currencySymbol" name="basecurrencysymbol" value="<%= user.basecurrencysymbol || '$' %>" placeholder="e.g. $ €" readonly />
+            </div>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('editProfileModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══════════════ UPLOAD PHOTO MODAL ═══════════════════ -->
+  <div class="custom-modal-overlay" id="uploadPhotoModal" onclick="handleOverlayClick(event,'uploadPhotoModal')">
+    <div class="custom-modal" style="max-width:440px">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-camera"></i>
+          Profile Picture
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('uploadPhotoModal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form action="/user/upload-profile-picture?_method=PUT" method="POST" enctype="multipart/form-data">
+        <div class="custom-modal-body">
+          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('photoInput').click()">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <p>Click to upload or drag &amp; drop</p>
+            <small>JPG, PNG, WEBP — max 10 MB</small>
+            <input type="file" id="photoInput" name="profilepicture" accept="image/*" onchange="previewPhoto(this)" />
+          </div>
+          <div id="photoPreviewWrap" style="display:none;margin-top:14px;text-align:center">
+            <img id="photoPreview" src="" alt="Preview" style="width:100px;height:100px;border-radius:50%;object-fit:cover;border:3px solid var(--accent)" />
+            <p style="font-size:0.78rem;color:var(--text-muted);margin-top:8px" id="photoFileName"></p>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('uploadPhotoModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-upload"></i> Upload Photo
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/script/partials/navbar.js"></script>
+
+  <script>
+  const CURRENCY_MAP = <%- currencyMapJSON %>;
+
+  document.getElementById('country').addEventListener('change', function () {
+    const val = this.value;
+    const data = CURRENCY_MAP[val] || {};
+    document.getElementById('basecurrency').value  = data.currency || '';
+    document.getElementById('currencySymbol').value = data.symbol  || '';
+  });
+</script>
+
+  <script>
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    }
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) { el.classList.remove('open'); document.body.style.overflow = ''; }
+    }
+    function handleOverlayClick(e, id) {
+      if (e.target === e.currentTarget) closeModal(id);
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.custom-modal-overlay.open').forEach(m => m.classList.remove('open'));
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Photo preview
+    function previewPhoto(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        document.getElementById('photoPreview').src = e.target.result;
+        document.getElementById('photoFileName').textContent = file.name;
+        document.getElementById('photoPreviewWrap').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Drag & drop
+    const uploadZone = document.getElementById('uploadZone');
+    ['dragenter','dragover'].forEach(evt => {
+      uploadZone.addEventListener(evt, e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+    });
+    ['dragleave','drop'].forEach(evt => {
+      uploadZone.addEventListener(evt, e => { e.preventDefault(); uploadZone.classList.remove('dragover'); });
+    });
+    uploadZone.addEventListener('drop', e => {
+      const files = e.dataTransfer.files;
+      if (files.length) {
+        document.getElementById('photoInput').files = files;
+        previewPhoto(document.getElementById('photoInput'));
+      }
+    });
+  </script>
+</body>
+</html>

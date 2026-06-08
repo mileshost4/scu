@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transfers | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/transfer.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/user/transactions'; %>
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="transfer-page fade-in">
+
+        <!-- ── PAGE HEADER ── -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1>
+              <span class="ph-icon"><i class="fa-solid fa-paper-plane"></i></span>
+              Send Money
+            </h1>
+            <p>Choose a transfer type and complete your transaction securely.</p>
+          </div>
+          <a href="/user/transaction-history" class="btn btn-ghost btn-sm">
+            <i class="fa-solid fa-clock-rotate-left"></i> History
+          </a>
+        </div>
+
+        <!-- ── TRANSFER TYPE CARDS ── -->
+        <div class="transfer-type-cards">
+          <div class="transfer-type-card" style="--ttc-color:var(--accent);--ttc-bg:var(--accent-dim)" onclick="switchTab('intra')">
+            <div class="ttc-icon"><i class="fa-solid fa-building-columns"></i></div>
+            <div>
+              <div class="ttc-name">Intra-Bank Transfer</div>
+              <div class="ttc-desc">Transfer between accounts within the same bank. Instant settlement.</div>
+            </div>
+            <div class="ttc-arrow">Transfer <i class="fa-solid fa-arrow-right"></i></div>
+          </div>
+          <div class="transfer-type-card" style="--ttc-color:var(--info);--ttc-bg:var(--info-dim)" onclick="switchTab('inter')">
+            <div class="ttc-icon" style="background:var(--info-dim);color:var(--info)"><i class="fa-solid fa-right-left"></i></div>
+            <div>
+              <div class="ttc-name">Inter-Bank Transfer</div>
+              <div class="ttc-desc">Send funds to another local bank. Processed within 1–2 business days.</div>
+            </div>
+            <div class="ttc-arrow" style="color:var(--info)">Transfer <i class="fa-solid fa-arrow-right"></i></div>
+          </div>
+          <div class="transfer-type-card" style="--ttc-color:var(--gold);--ttc-bg:var(--gold-dim)" onclick="switchTab('wire')">
+            <div class="ttc-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="fa-solid fa-earth-americas"></i></div>
+            <div>
+              <div class="ttc-name">Wire / International</div>
+              <div class="ttc-desc">Send money globally via SWIFT/IBAN. Allow 3–5 business days.</div>
+            </div>
+            <div class="ttc-arrow" style="color:var(--gold)">Transfer <i class="fa-solid fa-arrow-right"></i></div>
+          </div>
+        </div>
+
+        <!-- ── TABS ── -->
+        <div class="transfer-tabs" id="transferTabs">
+          <button class="transfer-tab active" id="tab-intra" onclick="switchTab('intra')">
+            <i class="fa-solid fa-building-columns"></i> Intra-Bank
+          </button>
+          <button class="transfer-tab" id="tab-inter" onclick="switchTab('inter')">
+            <i class="fa-solid fa-right-left"></i> Inter-Bank
+          </button>
+          <button class="transfer-tab" id="tab-wire" onclick="switchTab('wire')">
+            <i class="fa-solid fa-earth-americas"></i> Wire Transfer
+          </button>
+        </div>
+
+        <div class="transfer-body">
+          <div class="transfer-main">
+
+            <!-- ══════════════════════════════════════════
+                 TAB 1 — INTRA-BANK
+            ══════════════════════════════════════════ -->
+            <div class="tab-panel active" id="panel-intra">
+
+              <!-- Hero -->
+              <div class="transfer-hero">
+                <div class="transfer-hero-label">You are sending</div>
+                <div class="transfer-hero-amount">
+                  <span class="currency-sym"><%= user.basecurrencysymbol || '$' %></span>
+                  <span id="intra-hero-amount">0.00</span>
+                </div>
+                <div class="transfer-hero-meta">
+                  <div class="transfer-hero-pill"><i class="fa-solid fa-bolt"></i> Instant settlement</div>
+                  <div class="transfer-hero-pill"><i class="fa-solid fa-building-columns"></i> Same bank</div>
+                  <div class="transfer-hero-pill"><i class="fa-solid fa-shield-halved"></i> PIN secured</div>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-head">
+                  <div class="section-title">
+                    <i class="fa-solid fa-building-columns"></i> Transfer Details
+                  </div>
+                  <span class="badge badge-accent">Intra-Bank</span>
+                </div>
+                <div class="section-body">
+
+                  <!-- Source account selector -->
+                  <div style="margin-bottom:22px">
+                    <div class="form-label" style="margin-bottom:12px">
+                      <span class="step-num">1</span> Select source account
+                    </div>
+                    <div class="account-selector" id="intra-acct-selector">
+                      <% allaccounts.forEach(function(acct, idx) { %>
+                        <label class="account-option <%= idx === 0 ? 'selected' : '' %>" for="intra-radio-<%= acct._id %>">
+                          <input type="radio" name="intra_acct_radio" id="intra-radio-<%= acct._id %>"
+                            value="<%= acct._id %>"
+                            data-balance="<%= parseFloat(acct.accountWallet) %>"
+                            data-number="<%= acct.accountNumber %>"
+                            <%= idx === 0 ? 'checked' : '' %>
+                            onchange="onIntraAccountChange(this)" />
+                          <div class="account-option-radio"></div>
+                          <div class="account-option-icon"><i class="fa-solid fa-building-columns"></i></div>
+                          <div class="account-option-info">
+                            <div class="account-option-name"><%= acct.displayName || acct.accountType %></div>
+                            <div class="account-option-meta">
+                              <span>•••• <%= String(acct.accountNumber).slice(-4) %></span>
+                              <span>·</span>
+                              <span><%= acct.accountType %></span>
+                            </div>
+                          </div>
+                          <div class="account-option-balance">
+                            <%= user.basecurrencysymbol || '$' %><%= parseFloat(acct.accountWallet).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+                          </div>
+                        </label>
+                      <% }); %>
+                    </div>
+                  </div>
+
+                  <div class="form-label" style="margin-bottom:16px">
+                    <span class="step-num">2</span> Recipient & amount
+                  </div>
+
+                  <form id="intraForm" action="/user/intrabank-transfer" method="POST" class="transfer-form">
+                    <input type="hidden" name="account"     id="intra-acct-val" value="<%= allaccounts.length ? allaccounts[0]._id : '' %>" />
+                    <input type="hidden" name="transferPin" id="intra-pin-val" />
+
+                    <div class="form-row" style="margin-bottom:18px">
+                      <div class="form-group">
+                        <label class="form-label" for="intra-recv-name">Recipient full name</label>
+                        <input type="text" class="form-control" id="intra-recv-name" name="receiverAccountName"
+                          placeholder="e.g. John Doe" required autocomplete="off"
+                          oninput="updateIntraSummary()" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="intra-recv-acct">Recipient account number</label>
+                        <input type="number" class="form-control" id="intra-recv-acct" name="receiverAccountNumber"
+                          placeholder="10-digit account number" required autocomplete="off"
+                          oninput="updateIntraSummary()" />
+                      </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:18px">
+                      <label class="form-label" for="intra-amount">Amount</label>
+                      <div class="amount-input-wrap">
+                        <span class="amount-currency-prefix"><%= user.basecurrencysymbol || '$' %></span>
+                        <input type="number" class="form-control" id="intra-amount" name="amount"
+                          placeholder="0.00" min="1" step="0.01" required
+                          oninput="updateIntraHero(this.value); updateIntraSummary()" />
+                      </div>
+                      <div class="balance-hint">
+                        <span class="avail">
+                          <i class="fa-solid fa-circle-check"></i>
+                          Available: <strong id="intra-avail"><%= user.basecurrencysymbol || '$' %><%= allaccounts.length ? parseFloat(allaccounts[0].accountWallet).toLocaleString(undefined,{minimumFractionDigits:2}) : '0.00' %></strong>
+                        </span>
+                        <button type="button" class="use-all-btn" onclick="intraUseMax()">Use max</button>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label" for="intra-desc">Narration <span style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+                      <input type="text" class="form-control" id="intra-desc" name="description"
+                        placeholder="e.g. Rent payment" maxlength="120"
+                        oninput="updateIntraSummary()" />
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="transfer-summary">
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-user"></i> Recipient</span>
+                        <span class="summary-value" id="intra-s-name">—</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-hashtag"></i> Account</span>
+                        <span class="summary-value" id="intra-s-acct">—</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-bolt"></i> Settlement</span>
+                        <span class="summary-value" style="color:var(--success)">Instant</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-dollar-sign"></i> Amount</span>
+                        <span class="summary-value amount" id="intra-s-amt">—</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-regular fa-comment"></i> Narration</span>
+                        <span class="summary-value" id="intra-s-desc" style="font-family:var(--font-ui);color:var(--text-muted)">—</span>
+                      </div>
+                    </div>
+
+                    <div class="transfer-submit-row">
+                      <button type="button" class="btn btn-primary" onclick="openIntraPin()">
+                        <i class="fa-solid fa-shield-halved"></i> Authorise & Send
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div><!-- /panel-intra -->
+
+
+            <!-- ══════════════════════════════════════════
+                 TAB 2 — INTER-BANK
+            ══════════════════════════════════════════ -->
+            <div class="tab-panel" id="panel-inter">
+
+              <!-- Hero -->
+              <div class="transfer-hero" style="background:linear-gradient(135deg,#091828 0%,#0a1f4e 55%,#091828 100%);border-color:rgba(77,159,255,0.15)">
+                <div class="transfer-hero-label">You are sending</div>
+                <div class="transfer-hero-amount">
+                  <span class="currency-sym"><%= user.basecurrencysymbol || '$' %></span>
+                  <span id="inter-hero-amount">0.00</span>
+                </div>
+                <div class="transfer-hero-meta">
+                  <div class="transfer-hero-pill" style="border-color:rgba(77,159,255,0.2)">
+                    <i class="fa-solid fa-clock" style="color:var(--info)"></i> 1–2 business days
+                  </div>
+                  <div class="transfer-hero-pill" style="border-color:rgba(77,159,255,0.2)">
+                    <i class="fa-solid fa-right-left" style="color:var(--info)"></i> Local bank
+                  </div>
+                  <div class="transfer-hero-pill" style="border-color:rgba(77,159,255,0.2)">
+                    <i class="fa-solid fa-shield-halved" style="color:var(--info)"></i> PIN secured
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-head">
+                  <div class="section-title">
+                    <i class="fa-solid fa-right-left" style="background:var(--info-dim);color:var(--info)"></i> Transfer Details
+                  </div>
+                  <span class="badge badge-info">Inter-Bank</span>
+                </div>
+                <div class="section-body">
+
+                  <!-- Source account -->
+                  <div style="margin-bottom:22px">
+                    <div class="form-label" style="margin-bottom:12px">
+                      <span class="step-num" style="background:var(--info)">1</span> Select source account
+                    </div>
+                    <div class="account-selector" id="inter-acct-selector">
+                      <% allaccounts.forEach(function(acct, idx) { %>
+                        <label class="account-option inter-opt <%= idx === 0 ? 'selected-inter' : '' %>" for="inter-radio-<%= acct._id %>">
+                          <input type="radio" name="inter_acct_radio" id="inter-radio-<%= acct._id %>"
+                            value="<%= acct._id %>"
+                            data-balance="<%= parseFloat(acct.accountWallet) %>"
+                            <%= idx === 0 ? 'checked' : '' %>
+                            onchange="onInterAccountChange(this)" />
+                          <div class="account-option-radio inter-radio"></div>
+                          <div class="account-option-icon" style="background:var(--info-dim);color:var(--info)"><i class="fa-solid fa-building-columns"></i></div>
+                          <div class="account-option-info">
+                            <div class="account-option-name"><%= acct.displayName || acct.accountType %></div>
+                            <div class="account-option-meta">
+                              <span>•••• <%= String(acct.accountNumber).slice(-4) %></span>
+                              <span>·</span>
+                              <span><%= acct.accountType %></span>
+                            </div>
+                          </div>
+                          <div class="account-option-balance" style="color:var(--info)">
+                            <%= user.basecurrencysymbol || '$' %><%= parseFloat(acct.accountWallet).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+                          </div>
+                        </label>
+                      <% }); %>
+                    </div>
+                  </div>
+
+                  <div class="form-label" style="margin-bottom:16px">
+                    <span class="step-num" style="background:var(--info)">2</span> Recipient & destination bank
+                  </div>
+
+                  <form id="interForm" action="/user/interbank-transfer" method="POST" class="transfer-form">
+                    <input type="hidden" name="account"     id="inter-acct-val" value="<%= allaccounts.length ? allaccounts[0]._id : '' %>" />
+                    <input type="hidden" name="transferPin" id="inter-pin-val" />
+
+                    <div class="form-row" style="margin-bottom:18px">
+                      <div class="form-group">
+                        <label class="form-label" for="inter-recv-name">Recipient full name</label>
+                        <input type="text" class="form-control" id="inter-recv-name" name="receiverAccountName"
+                          placeholder="e.g. Jane Smith" required autocomplete="off"
+                          oninput="updateInterSummary()" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="inter-recv-acct">Recipient account number</label>
+                        <input type="number" class="form-control" id="inter-recv-acct" name="receiverAccountNumber"
+                          placeholder="10-digit account number" required autocomplete="off"
+                          oninput="updateInterSummary()" />
+                      </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:18px">
+                      <label class="form-label" for="inter-bank-sel">Destination bank</label>
+                      <div class="bank-select-wrap">
+                        <i class="bank-icon fa-solid fa-building-columns"></i>
+                        <select class="form-control" id="inter-bank-sel" name="bankTo"
+                          required onchange="handleInterBankSel(this)">
+                          <option value="">— Select bank —</option>
+                          <option value="Access Bank">Access Bank</option>
+                          <option value="First Bank">First Bank</option>
+                          <option value="GTBank">GTBank</option>
+                          <option value="UBA">UBA</option>
+                          <option value="Zenith Bank">Zenith Bank</option>
+                          <option value="Fidelity Bank">Fidelity Bank</option>
+                          <option value="Union Bank">Union Bank</option>
+                          <option value="Sterling Bank">Sterling Bank</option>
+                          <option value="Keystone Bank">Keystone Bank</option>
+                          <option value="Polaris Bank">Polaris Bank</option>
+                          <option value="Wema Bank">Wema Bank</option>
+                          <option value="FCMB">FCMB</option>
+                          <option value="Stanbic IBTC">Stanbic IBTC</option>
+                          <option value="Citibank">Citibank</option>
+                          <option value="others">Other bank…</option>
+                        </select>
+                        <i class="select-arrow fa-solid fa-chevron-down"></i>
+                      </div>
+                      <div class="other-bank-wrap" id="inter-other-wrap">
+                        <input type="text" class="form-control" id="inter-other-input" name="otherBank"
+                          placeholder="Enter bank name" />
+                      </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:18px">
+                      <label class="form-label" for="inter-amount">Amount</label>
+                      <div class="amount-input-wrap">
+                        <span class="amount-currency-prefix" style="color:var(--info);background:var(--info-dim)"><%= user.basecurrencysymbol || '$' %></span>
+                        <input type="number" class="form-control" id="inter-amount" name="amount"
+                          placeholder="0.00" min="1" step="0.01" required
+                          oninput="updateInterHero(this.value); updateInterSummary()" />
+                      </div>
+                      <div class="balance-hint">
+                        <span class="avail">
+                          <i class="fa-solid fa-circle-check"></i>
+                          Available: <strong id="inter-avail"><%= user.basecurrencysymbol || '$' %><%= allaccounts.length ? parseFloat(allaccounts[0].accountWallet).toLocaleString(undefined,{minimumFractionDigits:2}) : '0.00' %></strong>
+                        </span>
+                        <button type="button" class="use-all-btn" onclick="interUseMax()">Use max</button>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label" for="inter-desc">Narration <span style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+                      <input type="text" class="form-control" id="inter-desc" name="description"
+                        placeholder="e.g. Loan repayment" maxlength="120"
+                        oninput="updateInterSummary()" />
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="transfer-summary">
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-user"></i> Recipient</span>
+                        <span class="summary-value" id="inter-s-name">—</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-hashtag"></i> Account</span>
+                        <span class="summary-value" id="inter-s-acct">—</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-building-columns"></i> Destination bank</span>
+                        <span class="summary-value" id="inter-s-bank">—</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-clock"></i> Settlement</span>
+                        <span class="summary-value" style="color:var(--info)">1–2 business days</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-dollar-sign"></i> Amount</span>
+                        <span class="summary-value amount" id="inter-s-amt" style="color:var(--info)">—</span>
+                      </div>
+                    </div>
+
+                    <div class="transfer-submit-row">
+                      <button type="button" class="btn btn-primary" style="background:var(--info)" onclick="openInterPin()">
+                        <i class="fa-solid fa-shield-halved"></i> Authorise & Send
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div><!-- /panel-inter -->
+
+
+            <!-- ══════════════════════════════════════════
+                 TAB 3 — WIRE / INTERNATIONAL
+            ══════════════════════════════════════════ -->
+            <div class="tab-panel" id="panel-wire">
+
+              <!-- Hero -->
+              <div class="transfer-hero" style="background:linear-gradient(135deg,#1a1200 0%,#2d1e00 55%,#1a1200 100%);border-color:rgba(240,165,0,0.18)">
+                <div class="transfer-hero-label">You are sending</div>
+                <div class="transfer-hero-amount">
+                  <span class="currency-sym"><%= user.basecurrencysymbol || '$' %></span>
+                  <span id="wire-hero-amount">0.00</span>
+                </div>
+                <div class="transfer-hero-meta">
+                  <div class="transfer-hero-pill" style="border-color:rgba(240,165,0,0.25)">
+                    <i class="fa-solid fa-clock" style="color:var(--gold)"></i> 3–5 business days
+                  </div>
+                  <div class="transfer-hero-pill" style="border-color:rgba(240,165,0,0.25)">
+                    <i class="fa-solid fa-earth-americas" style="color:var(--gold)"></i> International
+                  </div>
+                  <div class="transfer-hero-pill" style="border-color:rgba(240,165,0,0.25)">
+                    <i class="fa-solid fa-shield-halved" style="color:var(--gold)"></i> PIN secured
+                  </div>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="section-head">
+                  <div class="section-title">
+                    <i class="fa-solid fa-earth-americas" style="background:var(--gold-dim);color:var(--gold)"></i> Wire Transfer Details
+                  </div>
+                  <span class="badge badge-gold">International</span>
+                </div>
+                <div class="section-body">
+
+                  <!-- Source account -->
+                  <div style="margin-bottom:22px">
+                    <div class="form-label" style="margin-bottom:12px">
+                      <span class="step-num" style="background:var(--gold);color:#000">1</span> Select debit account
+                    </div>
+                    <div class="account-selector" id="wire-acct-selector">
+                      <% allaccounts.forEach(function(acct, idx) { %>
+                        <label class="account-option wire-opt <%= idx === 0 ? 'selected-wire' : '' %>" for="wire-radio-<%= acct._id %>">
+                          <input type="radio" name="wire_acct_radio" id="wire-radio-<%= acct._id %>"
+                            value="<%= acct._id %>"
+                            data-balance="<%= parseFloat(acct.accountWallet) %>"
+                            <%= idx === 0 ? 'checked' : '' %>
+                            onchange="onWireAccountChange(this)" />
+                          <div class="account-option-radio wire-radio"></div>
+                          <div class="account-option-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="fa-solid fa-building-columns"></i></div>
+                          <div class="account-option-info">
+                            <div class="account-option-name"><%= acct.displayName || acct.accountType %></div>
+                            <div class="account-option-meta">
+                              <span>•••• <%= String(acct.accountNumber).slice(-4) %></span>
+                              <span>·</span>
+                              <span><%= acct.accountType %></span>
+                            </div>
+                          </div>
+                          <div class="account-option-balance" style="color:var(--gold)">
+                            <%= user.basecurrencysymbol || '$' %><%= parseFloat(acct.accountWallet).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+                          </div>
+                        </label>
+                      <% }); %>
+                    </div>
+                  </div>
+
+                  <div style="height:1px;background:var(--border);margin:0 0 22px"></div>
+
+                  <div class="form-label" style="margin-bottom:16px">
+                    <span class="step-num" style="background:var(--gold);color:#000">2</span> Recipient information
+                  </div>
+
+                  <form id="wireForm" action="/user/wire-transfer" method="POST" class="transfer-form">
+                    <input type="hidden" name="account"     id="wire-acct-val" value="<%= allaccounts.length ? allaccounts[0]._id : '' %>" />
+                    <input type="hidden" name="transferPin" id="wire-pin-val" />
+
+                    <div class="form-row" style="margin-bottom:16px">
+                      <div class="form-group">
+                        <label class="form-label" for="wire-recv-name">Beneficiary full name</label>
+                        <input type="text" class="form-control" id="wire-recv-name" name="receiverAccountName"
+                          placeholder="Full legal name" required autocomplete="off"
+                          oninput="updateWireSummary()" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="wire-recv-country">Recipient country</label>
+                        <input type="text" class="form-control" id="wire-recv-country" name="receiverCountry"
+                          placeholder="e.g. United Kingdom" required autocomplete="off"
+                          oninput="updateWireSummary()" />
+                      </div>
+                    </div>
+
+                    <div class="form-row" style="margin-bottom:16px">
+                      <div class="form-group">
+                        <label class="form-label" for="wire-bank-name">Recipient bank name</label>
+                        <input type="text" class="form-control" id="wire-bank-name" name="bankTo"
+                          placeholder="e.g. Barclays Bank PLC" required autocomplete="off"
+                          oninput="updateWireSummary()" />
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="wire-recv-acct">Account / IBAN number</label>
+                        <input type="text" class="form-control" id="wire-recv-acct" name="receiverAccountNumber"
+                          placeholder="Account or IBAN" required autocomplete="off"
+                          oninput="updateWireSummary()" />
+                      </div>
+                    </div>
+
+                    <!-- Routing code -->
+                    <div class="form-group" style="margin-bottom:18px">
+                      <label class="form-label">Routing code type</label>
+                      <div class="routing-type-row">
+                        <button type="button" class="routing-type-btn active" id="wire-btn-swift" onclick="setWireRoutingType('SWIFT/BIC Code')">
+                          <i class="fa-solid fa-globe"></i> SWIFT / BIC
+                        </button>
+                        <button type="button" class="routing-type-btn" id="wire-btn-iban" onclick="setWireRoutingType('IBAN')">
+                          <i class="fa-solid fa-hashtag"></i> IBAN
+                        </button>
+                      </div>
+                      <input type="hidden" name="routingcode" id="wire-routing-code-val" value="SWIFT/BIC Code" />
+                      <div style="margin-top:10px">
+                        <input type="text" class="form-control" id="wire-routing-num" name="swiftcode"
+                          placeholder="e.g. BARCGB22XXX"
+                          oninput="updateWireSummary()" />
+                        <div id="wire-routing-hint" style="font-size:0.73rem;color:var(--text-muted);margin-top:5px">
+                          <i class="fa-solid fa-circle-info" style="color:var(--gold)"></i>
+                          SWIFT/BIC codes are 8–11 characters.
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style="height:1px;background:var(--border);margin:0 0 22px"></div>
+
+                    <div class="form-label" style="margin-bottom:16px">
+                      <span class="step-num" style="background:var(--gold);color:#000">3</span> Amount & narration
+                    </div>
+
+                    <div class="form-row" style="margin-bottom:18px">
+                      <div class="form-group">
+                        <label class="form-label" for="wire-amount">Transfer amount</label>
+                        <div class="amount-input-wrap">
+                          <span class="amount-currency-prefix" style="color:var(--gold);background:var(--gold-dim);border-color:rgba(240,165,0,0.3)"><%= user.basecurrencysymbol || '$' %></span>
+                          <input type="number" class="form-control" id="wire-amount" name="amount"
+                            placeholder="0.00" min="1" step="0.01" required
+                            oninput="updateWireHero(this.value); updateWireSummary()" />
+                        </div>
+                        <div class="balance-hint">
+                          <span class="avail">
+                            <i class="fa-solid fa-circle-check"></i>
+                            Available: <strong id="wire-avail"><%= user.basecurrencysymbol || '$' %><%= allaccounts.length ? parseFloat(allaccounts[0].accountWallet).toLocaleString(undefined,{minimumFractionDigits:2}) : '0.00' %></strong>
+                          </span>
+                          <button type="button" class="use-all-btn" style="color:var(--gold)" onclick="wireUseMax()">Use max</button>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label class="form-label" for="wire-desc">Narration <span style="color:var(--text-muted);font-weight:400">(optional)</span></label>
+                        <input type="text" class="form-control" id="wire-desc" name="description"
+                          placeholder="Purpose of transfer" maxlength="120"
+                          oninput="updateWireSummary()" />
+                      </div>
+                    </div>
+
+                    <!-- Summary -->
+                    <div class="transfer-summary" style="border-color:rgba(240,165,0,0.2)">
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-user" style="color:var(--gold)"></i> Beneficiary</span>
+                        <span class="summary-value" id="wire-s-name">—</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-flag" style="color:var(--gold)"></i> Country</span>
+                        <span class="summary-value" id="wire-s-country">—</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-building-columns" style="color:var(--gold)"></i> Bank</span>
+                        <span class="summary-value" id="wire-s-bank">—</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-hashtag" style="color:var(--gold)"></i> Account / IBAN</span>
+                        <span class="summary-value" id="wire-s-acct">—</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-globe" style="color:var(--gold)"></i> Routing code</span>
+                        <span class="summary-value" id="wire-s-routing">—</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-clock" style="color:var(--gold)"></i> Settlement</span>
+                        <span class="summary-value" style="color:var(--gold)">3–5 business days</span>
+                      </div>
+                      <div class="summary-row">
+                        <span class="summary-label"><i class="fa-solid fa-dollar-sign" style="color:var(--gold)"></i> Amount</span>
+                        <span class="summary-value amount" id="wire-s-amt" style="color:var(--gold)">—</span>
+                      </div>
+                    </div>
+
+                    <!-- Warning -->
+                    <div style="display:flex;gap:12px;padding:13px 16px;background:var(--warning-dim);border:1px solid rgba(240,165,0,0.3);border-radius:var(--radius-md);margin-top:18px">
+                      <i class="fa-solid fa-triangle-exclamation" style="color:var(--gold);margin-top:2px;flex-shrink:0"></i>
+                      <p style="font-size:0.8rem;color:var(--text-secondary);line-height:1.55;margin:0">
+                        International wire transfers are reviewed before processing. Ensure all recipient details are accurate — incorrect SWIFT/BIC or IBAN codes may result in delays or failed transfers.
+                      </p>
+                    </div>
+
+                    <div class="transfer-submit-row">
+                      <button type="button" class="btn btn-primary" style="background:var(--gold);color:#000" onclick="openWirePin()">
+                        <i class="fa-solid fa-shield-halved"></i> Authorise & Send
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div><!-- /panel-wire -->
+
+          </div><!-- /.transfer-main -->
+
+          <!-- ── ASIDE ── -->
+          <div class="transfer-aside">
+
+            <div class="widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-wallet"></i> Available Balances</span>
+              </div>
+              <div class="widget-body">
+                <div class="balance-widget-total">
+                  <span class="sym"><%= user.basecurrencysymbol || '$' %></span><%= totalBalance %>
+                </div>
+                <div class="balance-account-list">
+                  <% allaccounts.forEach(function(acct) { %>
+                    <div class="balance-account-item">
+                      <span class="bal-acct-name">
+                        <span class="bal-acct-dot"></span>
+                        <%= acct.displayName || acct.accountType %>
+                      </span>
+                      <span class="bal-acct-value">
+                        <%= user.basecurrencysymbol || '$' %><%= parseFloat(acct.accountWallet).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+                      </span>
+                    </div>
+                  <% }); %>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Transfers</span>
+                <a href="/user/transaction-history" style="font-size:0.75rem;color:var(--accent);text-decoration:none;font-weight:600">All →</a>
+              </div>
+              <div class="tx-list">
+                <% const transfers = transactions.filter(t => t.transactionType === 'Transfer').slice(0,5); %>
+                <% if (transfers.length > 0) { %>
+                  <% transfers.forEach(function(tx) { %>
+                    <a href="/user/transaction/<%= tx._id %>/receipt" class="tx-item">
+                      <div class="tx-icon <%= tx.status === 'Pending' ? 'pending' : 'transfer' %>">
+                        <i class="fa-solid fa-paper-plane"></i>
+                      </div>
+                      <div class="tx-info">
+                        <div class="tx-name"><%= (tx.receiverAccountName || tx.description || '—').substring(0,24) %></div>
+                        <div class="tx-meta">
+                          <span class="badge badge-<%= tx.status === 'Successful' ? 'success' : tx.status === 'Pending' ? 'warning' : 'danger' %>" style="padding:1px 6px;font-size:0.62rem"><%= tx.status %></span>
+                          <% if (tx.transferType) { %><span>· <%= tx.transferType %></span><% } %>
+                        </div>
+                      </div>
+                      <div class="tx-right">
+                        <div class="tx-amount">-<%= user.basecurrencysymbol || '$' %><%= parseFloat(tx.amount).toLocaleString(undefined,{minimumFractionDigits:2}) %></div>
+                        <div class="tx-date"><%= new Date(tx.date).toLocaleDateString('en-US',{month:'short',day:'numeric'}) %></div>
+                      </div>
+                    </a>
+                  <% }); %>
+                <% } else { %>
+                  <div class="tx-empty"><i class="fa-solid fa-paper-plane"></i>No transfers yet</div>
+                <% } %>
+              </div>
+            </div>
+
+            <div class="widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-circle-info"></i> Transfer Info</span>
+              </div>
+              <div class="widget-body">
+                <div class="tip-list">
+                  <div class="tip-item"><i class="fa-solid fa-bolt"></i>Intra-bank transfers settle instantly within the platform.</div>
+                  <div class="tip-item"><i class="fa-solid fa-clock"></i>Inter-bank transfers may take 1–2 business days.</div>
+                  <div class="tip-item"><i class="fa-solid fa-earth-americas"></i>Wire transfers require a valid SWIFT/BIC or IBAN code.</div>
+                  <div class="tip-item"><i class="fa-solid fa-shield-halved"></i>All transfers require your 4-digit PIN for authorisation.</div>
+                  <div class="tip-item"><i class="fa-solid fa-hourglass-half"></i>Pending transfers lock the amount until approved or cancelled.</div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /.transfer-aside -->
+        </div><!-- /.transfer-body -->
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════════════════
+       PIN MODAL — INTRA-BANK
+  ═══════════════════════════════════════════════════════ -->
+  <div class="custom-modal-overlay" id="intraPinModal" onclick="if(event.target===this)closeIntraPin()">
+    <div class="pin-modal">
+      <div class="pin-modal-header">
+        <div class="pin-modal-title">
+          <span class="pin-modal-icon"><i class="fa-solid fa-lock"></i></span>
+          Confirm Transfer
+        </div>
+        <button class="pin-modal-close" onclick="closeIntraPin()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="pin-modal-body">
+        <div class="pin-confirm-summary">
+          <div class="pin-confirm-row">
+            <span class="pcr-label">To</span>
+            <span class="pcr-value" id="ipm-name">—</span>
+          </div>
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Account</span>
+            <span class="pcr-value" id="ipm-acct">—</span>
+          </div>
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Amount</span>
+            <span class="pcr-value highlight" id="ipm-amt">—</span>
+          </div>
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Type</span>
+            <span class="pcr-value">Intra-Bank</span>
+          </div>
+        </div>
+        <div class="pin-dots-wrap" id="intra-pin-dots">
+          <div class="pin-dot" id="ipd0"></div>
+          <div class="pin-dot" id="ipd1"></div>
+          <div class="pin-dot" id="ipd2"></div>
+          <div class="pin-dot" id="ipd3"></div>
+        </div>
+        <div class="pin-input-wrap">
+          <input type="password" class="form-control" id="intra-pin-input"
+            placeholder="4-digit PIN" maxlength="4" inputmode="numeric" autocomplete="off"
+            oninput="onPinType(this.value,'ipd')" />
+          <button type="button" class="pin-input-toggle" onclick="togglePw('intra-pin-input','intra-eye')">
+            <i class="fa-solid fa-eye" id="intra-eye"></i>
+          </button>
+        </div>
+        <div class="pin-error-msg" id="intra-pin-err"></div>
+      </div>
+      <div class="pin-modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeIntraPin()">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="submitIntra()">
+          <i class="fa-solid fa-paper-plane"></i> Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PIN MODAL — INTER-BANK
+  ═══════════════════════════════════════════════════════ -->
+  <div class="custom-modal-overlay" id="interPinModal" onclick="if(event.target===this)closeInterPin()">
+    <div class="pin-modal" style="border-color:rgba(77,159,255,0.25)">
+      <div class="pin-modal-header">
+        <div class="pin-modal-title">
+          <span class="pin-modal-icon" style="background:var(--info-dim);color:var(--info)"><i class="fa-solid fa-lock"></i></span>
+          Confirm Transfer
+        </div>
+        <button class="pin-modal-close" onclick="closeInterPin()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="pin-modal-body">
+        <div class="pin-confirm-summary">
+          <div class="pin-confirm-row">
+            <span class="pcr-label">To</span>
+            <span class="pcr-value" id="itpm-name">—</span>
+          </div>
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Bank</span>
+            <span class="pcr-value" id="itpm-bank">—</span>
+          </div>
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Amount</span>
+            <span class="pcr-value highlight" id="itpm-amt" style="color:var(--info)">—</span>
+          </div>
+        </div>
+        <div class="pin-dots-wrap" id="inter-pin-dots">
+          <div class="pin-dot inter-dot" id="itpd0"></div>
+          <div class="pin-dot inter-dot" id="itpd1"></div>
+          <div class="pin-dot inter-dot" id="itpd2"></div>
+          <div class="pin-dot inter-dot" id="itpd3"></div>
+        </div>
+        <div class="pin-input-wrap">
+          <input type="password" class="form-control" id="inter-pin-input"
+            placeholder="4-digit PIN" maxlength="4" inputmode="numeric" autocomplete="off"
+            oninput="onPinType(this.value,'itpd',true)" />
+          <button type="button" class="pin-input-toggle" onclick="togglePw('inter-pin-input','inter-eye')">
+            <i class="fa-solid fa-eye" id="inter-eye"></i>
+          </button>
+        </div>
+        <div class="pin-error-msg" id="inter-pin-err"></div>
+      </div>
+      <div class="pin-modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeInterPin()">Cancel</button>
+        <button type="button" class="btn btn-primary" style="background:var(--info)" onclick="submitInter()">
+          <i class="fa-solid fa-paper-plane"></i> Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       PIN MODAL — WIRE
+  ═══════════════════════════════════════════════════════ -->
+  <div class="custom-modal-overlay" id="wirePinModal" onclick="if(event.target===this)closeWirePin()">
+    <div class="pin-modal" style="border-color:rgba(240,165,0,0.25)">
+      <div class="pin-modal-header">
+        <div class="pin-modal-title">
+          <span class="pin-modal-icon" style="background:var(--gold-dim);color:var(--gold)"><i class="fa-solid fa-lock"></i></span>
+          Authorise Wire Transfer
+        </div>
+        <button class="pin-modal-close" onclick="closeWirePin()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="pin-modal-body">
+        <div class="pin-confirm-summary" style="border-color:rgba(240,165,0,0.2)">
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Beneficiary</span>
+            <span class="pcr-value" id="wpm-name">—</span>
+          </div>
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Country</span>
+            <span class="pcr-value" id="wpm-country">—</span>
+          </div>
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Bank</span>
+            <span class="pcr-value" id="wpm-bank">—</span>
+          </div>
+          <div class="pin-confirm-row">
+            <span class="pcr-label">Amount</span>
+            <span class="pcr-value highlight" id="wpm-amt" style="color:var(--gold)">—</span>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;padding:10px 12px;background:var(--warning-dim);border:1px solid rgba(240,165,0,0.3);border-radius:var(--radius-md);margin-bottom:16px">
+          <i class="fa-solid fa-triangle-exclamation" style="color:var(--gold);font-size:0.85rem;margin-top:1px;flex-shrink:0"></i>
+          <p style="font-size:0.76rem;color:var(--text-secondary);margin:0;line-height:1.45">
+            International transfers cannot be reversed once processed. Verify all details before confirming.
+          </p>
+        </div>
+        <div class="pin-dots-wrap" id="wire-pin-dots">
+          <div class="pin-dot wire-dot" id="wpd0"></div>
+          <div class="pin-dot wire-dot" id="wpd1"></div>
+          <div class="pin-dot wire-dot" id="wpd2"></div>
+          <div class="pin-dot wire-dot" id="wpd3"></div>
+        </div>
+        <div class="pin-input-wrap">
+          <input type="password" class="form-control" id="wire-pin-input"
+            placeholder="4-digit PIN" maxlength="4" inputmode="numeric" autocomplete="off"
+            oninput="onPinType(this.value,'wpd',false,true)" />
+          <button type="button" class="pin-input-toggle" onclick="togglePw('wire-pin-input','wire-eye')">
+            <i class="fa-solid fa-eye" id="wire-eye"></i>
+          </button>
+        </div>
+        <div class="pin-error-msg" id="wire-pin-err"></div>
+      </div>
+      <div class="pin-modal-footer">
+        <button type="button" class="btn btn-ghost" onclick="closeWirePin()">Cancel</button>
+        <button type="button" class="btn btn-primary" style="background:var(--gold);color:#000" onclick="submitWire()">
+          <i class="fa-solid fa-paper-plane"></i> Confirm Wire
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    const SYM = '<%= user.basecurrencysymbol || "$" %>';
+
+    /* ════════════════════════════════════
+       TAB SWITCHER
+    ════════════════════════════════════ */
+    function switchTab(key) {
+      ['intra','inter','wire'].forEach(function(k) {
+        document.getElementById('panel-' + k).classList.toggle('active', k === key);
+        document.getElementById('tab-'   + k).classList.toggle('active', k === key);
+      });
+      document.getElementById('tab-' + key)
+        .scrollIntoView({behavior:'smooth', inline:'center', block:'nearest'});
+    }
+
+    /* ════════════════════════════════════
+       SHARED HELPERS
+    ════════════════════════════════════ */
+    function fmt(n) {
+      return (parseFloat(n) || 0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    function togglePw(inputId, iconId) {
+      var inp  = document.getElementById(inputId);
+      var icon = document.getElementById(iconId);
+      inp.type = inp.type === 'password' ? 'text' : 'password';
+      icon.className = inp.type === 'password' ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+    }
+
+    /* PIN dot fill — prefix for dot IDs, optional colour flags */
+    function onPinType(val, prefix, isInter, isWire) {
+      for (var i = 0; i < 4; i++) {
+        var dot = document.getElementById(prefix + i);
+        if (!dot) continue;
+        var filled = i < val.length;
+        dot.classList.toggle('filled', filled);
+        if (filled) {
+          dot.style.background  = isWire ? 'var(--gold)' : isInter ? 'var(--info)' : 'var(--accent)';
+          dot.style.borderColor = isWire ? 'var(--gold)' : isInter ? 'var(--info)' : 'var(--accent)';
+          dot.style.boxShadow   = isWire ? '0 0 8px rgba(240,165,0,0.5)' : isInter ? '0 0 8px rgba(77,159,255,0.5)' : '0 0 8px rgba(0,212,170,0.5)';
+        } else {
+          dot.style.background  = '';
+          dot.style.borderColor = '';
+          dot.style.boxShadow   = '';
+        }
+      }
+    }
+
+    function resetDots(prefix) {
+      for (var i = 0; i < 4; i++) {
+        var dot = document.getElementById(prefix + i);
+        if (!dot) continue;
+        dot.classList.remove('filled');
+        dot.style.background = dot.style.borderColor = dot.style.boxShadow = '';
+      }
+    }
+
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id, inputId, dotPrefix) {
+      document.getElementById(id).classList.remove('open');
+      document.body.style.overflow = '';
+      var inp = document.getElementById(inputId);
+      if (inp) inp.value = '';
+      resetDots(dotPrefix);
+    }
+
+    /* ════════════════════════════════════
+       ACCOUNT SELECTORS
+    ════════════════════════════════════ */
+    var intraBalance = <%= allaccounts.length ? parseFloat(allaccounts[0].accountWallet) : 0 %>;
+    var interBalance = <%= allaccounts.length ? parseFloat(allaccounts[0].accountWallet) : 0 %>;
+    var wireBalance  = <%= allaccounts.length ? parseFloat(allaccounts[0].accountWallet) : 0 %>;
+
+    /* Intra */
+    document.querySelectorAll('#intra-acct-selector .account-option').forEach(function(el) {
+      el.addEventListener('click', function() {
+        document.querySelectorAll('#intra-acct-selector .account-option').forEach(function(o) {
+          o.classList.remove('selected');
+        });
+        this.classList.add('selected');
+      });
+    });
+    function onIntraAccountChange(radio) {
+      intraBalance = parseFloat(radio.dataset.balance) || 0;
+      document.getElementById('intra-acct-val').value = radio.value;
+      document.getElementById('intra-avail').textContent = SYM + fmt(intraBalance);
+    }
+    function intraUseMax() {
+      document.getElementById('intra-amount').value = intraBalance.toFixed(2);
+      updateIntraHero(intraBalance); updateIntraSummary();
+    }
+
+    /* Inter */
+    document.querySelectorAll('#inter-acct-selector .account-option').forEach(function(el) {
+      el.addEventListener('click', function() {
+        document.querySelectorAll('#inter-acct-selector .account-option').forEach(function(o) {
+          o.classList.remove('selected','selected-inter');
+          o.style.borderColor = o.style.background = '';
+        });
+        this.classList.add('selected','selected-inter');
+        this.style.borderColor = 'var(--info)';
+        this.style.background  = 'var(--info-dim)';
+      });
+    });
+    function onInterAccountChange(radio) {
+      interBalance = parseFloat(radio.dataset.balance) || 0;
+      document.getElementById('inter-acct-val').value = radio.value;
+      document.getElementById('inter-avail').textContent = SYM + fmt(interBalance);
+    }
+    function interUseMax() {
+      document.getElementById('inter-amount').value = interBalance.toFixed(2);
+      updateInterHero(interBalance); updateInterSummary();
+    }
+
+    /* Wire */
+    document.querySelectorAll('#wire-acct-selector .account-option').forEach(function(el) {
+      el.addEventListener('click', function() {
+        document.querySelectorAll('#wire-acct-selector .account-option').forEach(function(o) {
+          o.classList.remove('selected','selected-wire');
+          o.style.borderColor = o.style.background = '';
+        });
+        this.classList.add('selected','selected-wire');
+        this.style.borderColor = 'var(--gold)';
+        this.style.background  = 'var(--gold-dim)';
+      });
+    });
+    function onWireAccountChange(radio) {
+      wireBalance = parseFloat(radio.dataset.balance) || 0;
+      document.getElementById('wire-acct-val').value = radio.value;
+      document.getElementById('wire-avail').textContent = SYM + fmt(wireBalance);
+    }
+    function wireUseMax() {
+      document.getElementById('wire-amount').value = wireBalance.toFixed(2);
+      updateWireHero(wireBalance); updateWireSummary();
+    }
+
+    /* ════════════════════════════════════
+       HERO LIVE UPDATES
+    ════════════════════════════════════ */
+    function updateIntraHero(v) { document.getElementById('intra-hero-amount').textContent = fmt(v); }
+    function updateInterHero(v) { document.getElementById('inter-hero-amount').textContent = fmt(v); }
+    function updateWireHero(v)  { document.getElementById('wire-hero-amount').textContent  = fmt(v); }
+
+    /* ════════════════════════════════════
+       LIVE SUMMARIES
+    ════════════════════════════════════ */
+    function updateIntraSummary() {
+      var name = document.getElementById('intra-recv-name').value || '—';
+      var acct = document.getElementById('intra-recv-acct').value || '—';
+      var amt  = parseFloat(document.getElementById('intra-amount').value) || 0;
+      var desc = document.getElementById('intra-desc').value || '—';
+      document.getElementById('intra-s-name').textContent = name;
+      document.getElementById('intra-s-acct').textContent = acct;
+      document.getElementById('intra-s-amt').textContent  = amt > 0 ? SYM + fmt(amt) : '—';
+      document.getElementById('intra-s-desc').textContent = desc;
+    }
+
+    function updateInterSummary() {
+      var name = document.getElementById('inter-recv-name').value || '—';
+      var acct = document.getElementById('inter-recv-acct').value || '—';
+      var sel  = document.getElementById('inter-bank-sel');
+      var bank = sel.value === 'others'
+        ? (document.getElementById('inter-other-input').value || '—')
+        : (sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '—');
+      var amt  = parseFloat(document.getElementById('inter-amount').value) || 0;
+      document.getElementById('inter-s-name').textContent = name;
+      document.getElementById('inter-s-acct').textContent = acct;
+      document.getElementById('inter-s-bank').textContent = bank;
+      document.getElementById('inter-s-amt').textContent  = amt > 0 ? SYM + fmt(amt) : '—';
+    }
+
+    function updateWireSummary() {
+      var name    = document.getElementById('wire-recv-name').value    || '—';
+      var country = document.getElementById('wire-recv-country').value || '—';
+      var bank    = document.getElementById('wire-bank-name').value    || '—';
+      var acct    = document.getElementById('wire-recv-acct').value    || '—';
+      var routing = document.getElementById('wire-routing-num').value  || '—';
+      var rtype   = document.getElementById('wire-routing-code-val').value;
+      var amt     = parseFloat(document.getElementById('wire-amount').value) || 0;
+      document.getElementById('wire-s-name').textContent    = name;
+      document.getElementById('wire-s-country').textContent = country;
+      document.getElementById('wire-s-bank').textContent    = bank;
+      document.getElementById('wire-s-acct').textContent    = acct;
+      document.getElementById('wire-s-routing').textContent = routing + ' (' + rtype + ')';
+      document.getElementById('wire-s-amt').textContent     = amt > 0 ? SYM + fmt(amt) : '—';
+    }
+
+    /* ════════════════════════════════════
+       INTER BANK DROPDOWN
+    ════════════════════════════════════ */
+    function handleInterBankSel(sel) {
+      var wrap  = document.getElementById('inter-other-wrap');
+      var other = document.getElementById('inter-other-input');
+      if (sel.value === 'others') {
+        wrap.classList.add('visible');
+        other.required = true;
+      } else {
+        wrap.classList.remove('visible');
+        other.required = false;
+        other.value = '';
+      }
+      updateInterSummary();
+    }
+
+    /* ════════════════════════════════════
+       WIRE ROUTING TYPE
+    ════════════════════════════════════ */
+    function setWireRoutingType(type) {
+      document.getElementById('wire-routing-code-val').value = type;
+      var isSwift = type === 'SWIFT/BIC Code';
+      document.getElementById('wire-btn-swift').classList.toggle('active', isSwift);
+      document.getElementById('wire-btn-iban').classList.toggle('active', !isSwift);
+      var inp = document.getElementById('wire-routing-num');
+      inp.placeholder = isSwift ? 'e.g. BARCGB22XXX' : 'e.g. GB29NWBK60161331926819';
+      inp.name = isSwift ? 'swiftcode' : 'routingNumber';
+      var hint = document.getElementById('wire-routing-hint');
+      hint.innerHTML = isSwift
+        ? '<i class="fa-solid fa-circle-info" style="color:var(--gold)"></i> SWIFT/BIC codes are 8–11 characters.'
+        : '<i class="fa-solid fa-circle-info" style="color:var(--info)"></i> IBAN numbers are up to 34 alphanumeric characters.';
+      updateWireSummary();
+    }
+
+    /* ════════════════════════════════════
+       PIN MODALS — INTRA
+    ════════════════════════════════════ */
+    function openIntraPin() {
+      var form = document.getElementById('intraForm');
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      document.getElementById('ipm-name').textContent = document.getElementById('intra-recv-name').value || '—';
+      document.getElementById('ipm-acct').textContent = document.getElementById('intra-recv-acct').value || '—';
+      var amt = parseFloat(document.getElementById('intra-amount').value) || 0;
+      document.getElementById('ipm-amt').textContent = SYM + fmt(amt);
+      document.getElementById('intra-pin-err').textContent = '';
+      openModal('intraPinModal');
+      setTimeout(function() { document.getElementById('intra-pin-input').focus(); }, 200);
+    }
+    function closeIntraPin() { closeModal('intraPinModal','intra-pin-input','ipd'); }
+    function submitIntra() {
+      var pin = document.getElementById('intra-pin-input').value.trim();
+      if (pin.length < 4) {
+        document.getElementById('intra-pin-err').textContent = 'Please enter your 4-digit PIN.';
+        document.getElementById('intra-pin-err').classList.add('visible');
+        document.getElementById('intra-pin-dots').classList.add('pin-shake');
+        setTimeout(function(){ document.getElementById('intra-pin-dots').classList.remove('pin-shake'); }, 500);
+        return;
+      }
+      document.getElementById('intra-pin-val').value = pin;
+      document.getElementById('intraForm').submit();
+    }
+
+    /* PIN MODALS — INTER */
+    function openInterPin() {
+      var form = document.getElementById('interForm');
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      document.getElementById('itpm-name').textContent = document.getElementById('inter-recv-name').value || '—';
+      var sel  = document.getElementById('inter-bank-sel');
+      var bank = sel.value === 'others'
+        ? (document.getElementById('inter-other-input').value || '—')
+        : (sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].text : '—');
+      document.getElementById('itpm-bank').textContent = bank;
+      var amt = parseFloat(document.getElementById('inter-amount').value) || 0;
+      document.getElementById('itpm-amt').textContent = SYM + fmt(amt);
+      document.getElementById('inter-pin-err').textContent = '';
+      openModal('interPinModal');
+      setTimeout(function() { document.getElementById('inter-pin-input').focus(); }, 200);
+    }
+    function closeInterPin() { closeModal('interPinModal','inter-pin-input','itpd'); }
+    function submitInter() {
+      var pin = document.getElementById('inter-pin-input').value.trim();
+      if (pin.length < 4) {
+        document.getElementById('inter-pin-err').textContent = 'Please enter your 4-digit PIN.';
+        document.getElementById('inter-pin-err').classList.add('visible');
+        document.getElementById('inter-pin-dots').classList.add('pin-shake');
+        setTimeout(function(){ document.getElementById('inter-pin-dots').classList.remove('pin-shake'); }, 500);
+        return;
+      }
+      document.getElementById('inter-pin-val').value = pin;
+      document.getElementById('interForm').submit();
+    }
+
+    /* PIN MODALS — WIRE */
+    function openWirePin() {
+      var form = document.getElementById('wireForm');
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      document.getElementById('wpm-name').textContent    = document.getElementById('wire-recv-name').value    || '—';
+      document.getElementById('wpm-country').textContent = document.getElementById('wire-recv-country').value || '—';
+      document.getElementById('wpm-bank').textContent    = document.getElementById('wire-bank-name').value    || '—';
+      var amt = parseFloat(document.getElementById('wire-amount').value) || 0;
+      document.getElementById('wpm-amt').textContent = SYM + fmt(amt);
+      document.getElementById('wire-pin-err').textContent = '';
+      openModal('wirePinModal');
+      setTimeout(function() { document.getElementById('wire-pin-input').focus(); }, 200);
+    }
+    function closeWirePin() { closeModal('wirePinModal','wire-pin-input','wpd'); }
+    function submitWire() {
+      var pin = document.getElementById('wire-pin-input').value.trim();
+      if (pin.length < 4) {
+        document.getElementById('wire-pin-err').textContent = 'Please enter your 4-digit PIN.';
+        document.getElementById('wire-pin-err').classList.add('visible');
+        document.getElementById('wire-pin-dots').classList.add('pin-shake');
+        setTimeout(function(){ document.getElementById('wire-pin-dots').classList.remove('pin-shake'); }, 500);
+        return;
+      }
+      document.getElementById('wire-pin-val').value = pin;
+      document.getElementById('wireForm').submit();
+    }
+
+    /* Global Escape / Enter */
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeIntraPin(); closeInterPin(); closeWirePin();
+      }
+      if (e.key === 'Enter') {
+        if (document.getElementById('intraPinModal').classList.contains('open')) { submitIntra(); return; }
+        if (document.getElementById('interPinModal').classList.contains('open')) { submitInter(); return; }
+        if (document.getElementById('wirePinModal').classList.contains('open'))  { submitWire();  return; }
+      }
+    });
+  </script>
+</body>
+</html>

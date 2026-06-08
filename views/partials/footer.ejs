@@ -1,0 +1,100 @@
+<footer class="scu-footer">
+
+  <div class="footer-body">
+    <div class="footer-grid">
+
+      <!-- Brand Column -->
+      <div class="footer-brand">
+        <a href="/" class="footer-logo">
+          <img src="/images/logo.png" alt="<%= websiteName %>" class="footer-logo-img" style="filter:brightness(0) invert(1);" />
+          <div class="logo-text">
+            <span class="logo-primary" style="color: white;"><%= websiteName %></span>
+            <span class="logo-tagline">Private Banking</span>
+          </div>
+        </a>
+        <p class="footer-desc">
+          Redefining private banking with institutional-grade security, intelligent wealth tools, and concierge-level service for individuals and businesses across Nigeria and beyond.
+        </p>
+        <div class="footer-socials">
+          <a href="#" aria-label="Twitter/X"><i class="fa-brands fa-x-twitter"></i></a>
+          <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+          <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Company</h4>
+        <ul>
+          <li><a href="/about"><i class="fa-solid fa-chevron-right"></i> About Us</a></li>
+          <li><a href="/services"><i class="fa-solid fa-chevron-right"></i> Our Services</a></li>
+          <li><a href="/contact"><i class="fa-solid fa-chevron-right"></i> Contact</a></li>
+          <li><a href="#"><i class="fa-solid fa-chevron-right"></i> Careers</a></li>
+          <li><a href="#"><i class="fa-solid fa-chevron-right"></i> News & Press</a></li>
+        </ul>
+      </div>
+
+      <!-- Services -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Services</h4>
+        <ul>
+          <li><a href="/services#personal"><i class="fa-solid fa-chevron-right"></i> Personal Banking</a></li>
+          <li><a href="/services#business"><i class="fa-solid fa-chevron-right"></i> Business Accounts</a></li>
+          <li><a href="/services#wealth"><i class="fa-solid fa-chevron-right"></i> Investments</a></li>
+          <li><a href="/services#loans"><i class="fa-solid fa-chevron-right"></i> Loans & Credit</a></li>
+          <li><a href="/wealth"><i class="fa-solid fa-chevron-right"></i> Wealth Management</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="footer-col">
+        <h4 class="footer-heading">Get In Touch</h4>
+        <ul class="footer-contact">
+          <li>
+            <i class="fa-solid fa-envelope"></i>
+            <a href="mailto:<%= websiteMail %>"><%= websiteMail %></a>
+          </li>
+          <li>
+            <i class="fa-solid fa-phone"></i>
+            <a href="tel:<%= websiteNumber %>"><%= websiteNumber %></a>
+          </li>
+          <li>
+            <i class="fa-solid fa-globe"></i>
+            <span><%= websiteUrl %></span>
+          </li>
+          <li>
+            <i class="fa-solid fa-clock"></i>
+            <span>Mon–Fri: 8am – 6pm</span>
+          </li>
+        </ul>
+
+        <!-- Newsletter -->
+        <div class="footer-newsletter">
+          <p>Financial insights, straight to you.</p>
+          <div class="newsletter-row">
+            <input type="email" placeholder="Your email address" />
+            <button type="button"><i class="fa-solid fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="footer-bottom">
+      <div class="footer-bottom-left">
+        <span>© <%= new Date().getFullYear() %> <%= websiteName %>. All rights reserved.</span>
+      </div>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+        <a href="#">NDIC Insured</a>
+      </div>
+      <div class="footer-trust-badges">
+        <span class="badge"><i class="fa-solid fa-shield-halved"></i> SSL Secured</span>
+        <span class="badge"><i class="fa-solid fa-certificate"></i> CBN Licensed</span>
+      </div>
+    </div>
+  </div>
+</footer>

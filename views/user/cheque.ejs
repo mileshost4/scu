@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cheque Deposit | <%= websiteName %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/cheque.css" />
+</head>
+<body>
+
+  <%
+    locals.currentPath = '/user/deposit';
+  %>
+
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="deposit-page fade-in">
+
+        <!-- Page Header -->
+        <div class="dep-header">
+          <div class="dep-header-left">
+            <div class="dep-icon-wrap">
+              <i class="fa-solid fa-money-check"></i>
+            </div>
+            <div>
+              <h1 class="dep-title">Cheque / Bank Deposit</h1>
+              <p class="dep-subtitle">Submit your cheque or bank transfer details for processing</p>
+            </div>
+          </div>
+          <a href="/user/deposit-crypto" class="btn btn-ghost btn-sm">
+            <i class="fa-solid fa-bitcoin-sign"></i> Crypto Deposit
+          </a>
+        </div>
+
+        <div class="dep-layout">
+
+          <!-- Left: Form -->
+          <div class="dep-form-col">
+            <div class="card dep-card">
+              <div class="dep-card-head">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span>Deposit Details</span>
+              </div>
+
+              <form action="/dashboard/cheque-deposit" method="POST" enctype="multipart/form-data" class="dep-form">
+
+                <!-- Deposit Into -->
+                <div class="form-group">
+                  <label class="form-label" for="account">Deposit Into Account</label>
+                  <div class="select-wrap">
+                    <select name="account" id="account" class="form-control" required>
+                      <option value="" disabled selected>— Select account —</option>
+                      <% if (allaccounts && allaccounts.length > 0) { %>
+                        <% for (let acc of allaccounts) { %>
+                          <option value="<%= acc._id %>">
+                            <%= acc.displayName || acc.accountType %> — ****<%= String(acc.accountNumber).slice(-4) %>
+                            (<%= user.basecurrencysymbol %><%= (parseFloat(acc.accountWallet) || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) %>)
+                          </option>
+                        <% } %>
+                      <% } %>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-caret"></i>
+                  </div>
+                </div>
+
+                <!-- Amount -->
+                <div class="form-group">
+                  <label class="form-label" for="amount">Deposit Amount</label>
+                  <div class="amount-input-wrap">
+                    <span class="amount-prefix"><%= user.basecurrencysymbol || '$' %></span>
+                    <input type="number" name="amount" id="amount" class="form-control amount-input"
+                      placeholder="0.00" min="1" step="0.01" required />
+                  </div>
+                </div>
+
+                <!-- Deposit Method -->
+                <div class="form-group">
+                  <label class="form-label" for="depositmethodname">Deposit Method</label>
+                  <div class="select-wrap">
+                    <select name="depositmethodname" id="depositmethodname" class="form-control" required>
+                      <option value="" disabled selected>— Select method —</option>
+                      <option value="Personal Cheque">Personal Cheque</option>
+                      <option value="Cashier's Cheque">Cashier's Cheque</option>
+                      <option value="Bank Transfer">Bank Transfer</option>
+                      <option value="Wire Transfer">Wire Transfer</option>
+                      <option value="Money Order">Money Order</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-caret"></i>
+                  </div>
+                </div>
+
+                <!-- Sender Bank Name -->
+                <div class="form-group">
+                  <label class="form-label" for="bankname">Sender's Bank Name</label>
+                  <input type="text" name="bankname" id="bankname" class="form-control"
+                    placeholder="e.g. Chase Bank, Wells Fargo" required />
+                </div>
+
+                <!-- Sender Account Number -->
+                <div class="form-group">
+                  <label class="form-label" for="accountnumber">Sender's Account / Cheque Number</label>
+                  <input type="text" name="accountnumber" id="accountnumber" class="form-control"
+                    placeholder="Account or cheque number" required />
+                </div>
+
+                <!-- Routing Code Type -->
+                <div class="form-group">
+                  <label class="form-label" for="routingcode">Routing Code Type</label>
+                  <div class="select-wrap">
+                    <select name="routingcode" id="routingcode" class="form-control">
+                      <option value="">— Not applicable —</option>
+                      <option value="IBAN">IBAN</option>
+                      <option value="SWIFT/BIC Code">SWIFT / BIC Code</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-caret"></i>
+                  </div>
+                </div>
+
+                <!-- Routing Number -->
+                <div class="form-group">
+                  <label class="form-label" for="routingnumber">Routing / IBAN / SWIFT Number</label>
+                  <input type="text" name="routingnumber" id="routingnumber" class="form-control"
+                    placeholder="Enter routing or IBAN/SWIFT number (if applicable)" />
+                </div>
+
+                <!-- Proof Upload -->
+                <div class="form-group">
+                  <label class="form-label">Upload Proof of Payment</label>
+                  <div class="upload-zone" id="uploadZone">
+                    <input type="file" name="transactionproof" id="transactionproof"
+                      multiple accept="image/*,.pdf" class="upload-input" />
+                    <div class="upload-placeholder" id="uploadPlaceholder">
+                      <i class="fa-solid fa-cloud-arrow-up"></i>
+                      <span>Click or drag files here</span>
+                      <small>PNG, JPG, PDF — max 10MB each</small>
+                    </div>
+                    <div class="upload-preview" id="uploadPreview" style="display:none;"></div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary dep-submit-btn" id="submitBtn">
+                  <i class="fa-solid fa-paper-plane" id="submitIcon"></i>
+                  <span id="submitText">Submit Deposit</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Right: Info + History -->
+          <div class="dep-info-col">
+
+            <!-- Info card -->
+            <div class="card dep-info-card">
+              <div class="dep-card-head">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>How It Works</span>
+              </div>
+              <ul class="dep-steps">
+                <li class="dep-step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <strong>Select Account</strong>
+                    <span>Choose which account you want the funds credited to.</span>
+                  </div>
+                </li>
+                <li class="dep-step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <strong>Fill Details</strong>
+                    <span>Enter the cheque or bank transfer information accurately.</span>
+                  </div>
+                </li>
+                <li class="dep-step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <strong>Upload Proof</strong>
+                    <span>Attach a photo or scan of the cheque / payment receipt.</span>
+                  </div>
+                </li>
+                <li class="dep-step">
+                  <div class="step-num">4</div>
+                  <div class="step-body">
+                    <strong>Await Confirmation</strong>
+                    <span>Our team verifies and credits your account within 1–3 business days.</span>
+                  </div>
+                </li>
+              </ul>
+              <div class="dep-notice">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p>Deposits are subject to review. Do not submit the same cheque more than once.</p>
+              </div>
+            </div>
+
+            <!-- Recent deposits -->
+            <div class="card dep-history-card">
+              <div class="dep-card-head">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>Recent Deposits</span>
+              </div>
+              <% if (deposits && deposits.length > 0) { %>
+                <ul class="dep-history-list">
+                  <% deposits.slice(0,5).forEach(dep => { %>
+                    <li class="dep-history-item">
+                      <div class="dhi-left">
+                        <div class="dhi-icon">
+                          <i class="fa-solid fa-money-check-dollar"></i>
+                        </div>
+                        <div class="dhi-info">
+                          <span class="dhi-method"><%= dep.transactionmethod || 'Bank Deposit' %></span>
+                          <span class="dhi-date">
+                            <%= new Date(dep.transactiondate).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) %>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="dhi-right">
+                        <span class="dhi-amount"><%= user.basecurrencysymbol %><%= dep.amount.toLocaleString(undefined,{minimumFractionDigits:2}) %></span>
+                        <span class="badge badge-<%= dep.status === 'Successful' ? 'success' : dep.status === 'Unsuccessful' ? 'danger' : 'warning' %>">
+                          <%= dep.status %>
+                        </span>
+                      </div>
+                    </li>
+                  <% }) %>
+                </ul>
+              <% } else { %>
+                <div class="dep-empty">
+                  <i class="fa-regular fa-folder-open"></i>
+                  <span>No deposit history yet</span>
+                </div>
+              <% } %>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    // ── File upload preview ───────────────────────────────────
+    const input = document.getElementById('transactionproof');
+    const placeholder = document.getElementById('uploadPlaceholder');
+    const preview = document.getElementById('uploadPreview');
+    const zone = document.getElementById('uploadZone');
+
+    input.addEventListener('change', function () {
+      if (this.files.length > 0) {
+        placeholder.style.display = 'none';
+        preview.style.display = 'flex';
+        preview.innerHTML = '';
+        Array.from(this.files).forEach(file => {
+          const tag = document.createElement('div');
+          tag.className = 'upload-file-tag';
+          tag.innerHTML = `<i class="fa-solid fa-file"></i><span>${file.name}</span>`;
+          preview.appendChild(tag);
+        });
+      } else {
+        placeholder.style.display = 'flex';
+        preview.style.display = 'none';
+      }
+    });
+
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      input.files = e.dataTransfer.files;
+      input.dispatchEvent(new Event('change'));
+    });
+
+    // ── Loading state on submit ───────────────────────────────
+    const form = document.querySelector('.dep-form');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitIcon = document.getElementById('submitIcon');
+    const submitText = document.getElementById('submitText');
+
+    form.addEventListener('submit', function () {
+      submitBtn.disabled = true;
+      submitIcon.className = 'fa-solid fa-spinner fa-spin';
+      submitText.textContent = 'Submitting…';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deposit View | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/transactions.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/receipt.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/admin/admin.deposit-requests'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <%
+    const statusKey   = (deposit.status || 'pending').toLowerCase();
+    const payKey      = (deposit.paymentstatus || '').toLowerCase().replace(' ','-');
+    const statusIcon  = statusKey === 'successful' ? 'fa-circle-check' : statusKey === 'pending' ? 'fa-clock' : 'fa-circle-xmark';
+    const txDate      = deposit.transactiondate ? new Date(deposit.transactiondate).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'}) : '—';
+    const txTime      = deposit.transactiondate ? new Date(deposit.transactiondate).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '';
+    const fullName    = depositor ? depositor.firstname + ' ' + depositor.lastname : (deposit.userName || '—');
+    const initials    = fullName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+    const isUpgrade   = deposit.transactionType === 'Upgrade Fee';
+    const typeLabel   = deposit.transactionType || 'Deposit';
+  %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <%- include('../partials/flash') %>
+
+        <!-- Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+              <a href="/admin/admin.deposit-requests" class="btn btn-ghost btn-sm">
+                <i class="fa-solid fa-arrow-left"></i> Back to Deposits
+              </a>
+              <span class="status-pill <%= statusKey %>">
+                <i class="fa-solid <%= statusIcon %>"></i> <%= deposit.status %>
+              </span>
+              <span class="badge <%= deposit.paymentstatus === 'Completed' ? 'badge-success' : 'badge-warning' %>">
+                Payment: <%= deposit.paymentstatus %>
+              </span>
+            </div>
+            <h1 class="page-title"><%= typeLabel %> Receipt</h1>
+            <p class="page-subtitle"><%= txDate %> at <%= txTime %></p>
+          </div>
+          <div class="page-header-right">
+            <% if (deposit.status === 'Pending') { %>
+              <% if (isUpgrade) { %>
+                <form action="/admin/upgrade-account/<%= depositor ? depositor._id : '' %>/verify/<%= deposit._id %>?_method=PUT" method="POST" style="display:inline;">
+                  <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Confirm upgrade?')">
+                    <i class="fa-solid fa-arrow-up"></i> Approve Upgrade
+                  </button>
+                </form>
+              <% } else { %>
+                <form action="/admin/admin.deposit-req/<%= depositor ? depositor._id : '' %>/verify/<%= deposit._id %>?_method=PUT" method="POST" style="display:inline;">
+                  <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('Confirm deposit?')">
+                    <i class="fa-solid fa-check"></i> Verify Deposit
+                  </button>
+                </form>
+              <% } %>
+              <form action="/admin/admin.deposit-req/<%= depositor ? depositor._id : '' %>/decline/<%= deposit._id %>?_method=PUT" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Decline deposit?')">
+                  <i class="fa-solid fa-xmark"></i> Decline
+                </button>
+              </form>
+            <% } %>
+            <button class="btn btn-outline btn-sm" id="downloadPdfBtn">
+              <i class="fa-solid fa-file-pdf"></i> Download PDF
+            </button>
+          </div>
+        </div>
+
+        <div class="receipt-layout" id="receiptLayout">
+
+          <!-- Receipt card -->
+          <div class="receipt-main" id="receiptPrintArea">
+            <div class="receipt-card">
+
+              <div class="receipt-hero">
+                <div class="receipt-status-icon <%= statusKey %>">
+                  <i class="fa-solid <%= statusIcon %>"></i>
+                </div>
+                <div class="receipt-amount">
+                  +$<%= parseFloat(deposit.amount||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+                </div>
+                <div class="receipt-type-label"><%= typeLabel %></div>
+                <% if (deposit.transactionmethod) { %>
+                  <span class="badge badge-accent" style="margin-top:4px;"><%= deposit.transactionmethod %></span>
+                <% } %>
+              </div>
+
+              <div class="receipt-notch"></div>
+
+              <div class="receipt-details">
+
+                <div class="receipt-section-label">Deposit Details</div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Date & Time</span>
+                  <span class="detail-value"><%= txDate %>, <%= txTime %></span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Type</span>
+                  <span class="detail-value">
+                    <span class="tx-type deposit"><%= typeLabel %></span>
+                  </span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Status</span>
+                  <span class="detail-value">
+                    <span class="status-pill <%= statusKey %>">
+                      <i class="fa-solid <%= statusIcon %>"></i> <%= deposit.status %>
+                    </span>
+                  </span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Payment Status</span>
+                  <span class="detail-value">
+                    <span class="badge <%= deposit.paymentstatus === 'Completed' ? 'badge-success' : 'badge-warning' %>">
+                      <%= deposit.paymentstatus %>
+                    </span>
+                  </span>
+                </div>
+
+                <% if (deposit.transactionmethod) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Method</span>
+                  <span class="detail-value"><%= deposit.transactionmethod %></span>
+                </div>
+                <% } %>
+
+                <% if (deposit.cryptoWalletId) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Wallet ID</span>
+                  <span class="detail-value mono" style="font-size:0.78rem;word-break:break-all;"><%= deposit.cryptoWalletId %></span>
+                </div>
+                <% } %>
+
+                <% if (deposit.cryptoWalletTrackerId) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Tracker ID</span>
+                  <span class="detail-value mono" style="font-size:0.78rem;word-break:break-all;"><%= deposit.cryptoWalletTrackerId %></span>
+                </div>
+                <% } %>
+
+                <% if (deposit.withdrawaddress) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Withdraw Address</span>
+                  <span class="detail-value mono" style="font-size:0.78rem;word-break:break-all;"><%= deposit.withdrawaddress %></span>
+                </div>
+                <% } %>
+
+                <% if (deposit.narration) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Narration</span>
+                  <span class="detail-value"><%= deposit.narration %></span>
+                </div>
+                <% } %>
+
+                <% if (deposit.companywallet) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Company Wallet</span>
+                  <span class="detail-value mono" style="font-size:0.78rem;word-break:break-all;"><%= deposit.companywallet %></span>
+                </div>
+                <% } %>
+
+                <% if (deposit.accountnumber) { %>
+                <hr class="receipt-section-divider" style="margin:16px 0;" />
+                <div class="receipt-section-label">Bank Details</div>
+                <div class="detail-row">
+                  <span class="detail-label">Account No.</span>
+                  <span class="detail-value mono"><%= deposit.accountnumber %></span>
+                </div>
+                <% if (deposit.bankname) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Bank</span>
+                  <span class="detail-value"><%= deposit.bankname %></span>
+                </div>
+                <% } %>
+                <% if (deposit.routingcode) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Routing Type</span>
+                  <span class="detail-value"><%= deposit.routingcode %></span>
+                </div>
+                <% } %>
+                <% if (deposit.routingnumber) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Routing No.</span>
+                  <span class="detail-value mono"><%= deposit.routingnumber %></span>
+                </div>
+                <% } %>
+                <% if (deposit.chargeCode) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Charge Code</span>
+                  <span class="detail-value mono"><%= deposit.chargeCode %></span>
+                </div>
+                <% } %>
+                <% if (deposit.onlinePaymentStatus) { %>
+                <div class="detail-row">
+                  <span class="detail-label">Online Status</span>
+                  <span class="detail-value"><%= deposit.onlinePaymentStatus %></span>
+                </div>
+                <% } %>
+                <% } %>
+
+                <!-- Proof images -->
+                <% if (deposit.transactionproof && deposit.transactionproof.length > 0) { %>
+                <hr class="receipt-section-divider" style="margin:16px 0;" />
+                <div class="receipt-section-label">Payment Proof</div>
+                <div class="proof-grid">
+                  <% deposit.transactionproof.forEach(img => { %>
+                    <a href="<%= img.url %>" target="_blank">
+                      <img src="<%= img.url %>" class="proof-thumb" alt="Proof" />
+                    </a>
+                  <% }) %>
+                </div>
+                <% } %>
+
+                <!-- Footer -->
+                <div style="margin-top:24px;padding-top:16px;border-top:1px dashed var(--border-strong);text-align:center;">
+                  <div style="font-size:0.72rem;color:var(--text-muted);">Deposit record — Admin portal</div>
+                  <div style="font-size:0.7rem;color:var(--text-muted);margin-top:4px;font-family:var(--font-mono);">ID: <%= deposit._id %></div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- Sidebar -->
+          <div class="receipt-sidebar">
+
+            <!-- Depositor -->
+            <div class="info-card">
+              <div class="info-card-header">
+                <i class="accent fa-solid fa-user"></i>
+                <div class="info-card-title">Depositor</div>
+              </div>
+              <div class="info-card-body">
+                <% if (depositor) { %>
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                    <div class="user-avatar-sm" style="width:40px;height:40px;font-size:0.9rem;">
+                      <% if (depositor.profilepicture && depositor.profilepicture.length > 0) { %>
+                        <img src="<%= depositor.profilepicture[depositor.profilepicture.length-1].url %>" alt="" />
+                      <% } else { %>
+                        <%= initials %>
+                      <% } %>
+                    </div>
+                    <div>
+                      <div style="font-weight:700;font-size:0.9rem;color:var(--text-primary);"><%= fullName %></div>
+                      <div style="font-size:0.75rem;color:var(--text-muted);"><%= depositor.email %></div>
+                    </div>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-row-label">Account #</span>
+                    <span class="info-row-value mono"><%= depositor.accountNumber || '—' %></span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-row-label">Country</span>
+                    <span class="info-row-value"><%= depositor.country || '—' %></span>
+                  </div>
+                  <div class="info-row">
+                    <span class="info-row-label">Verified</span>
+                    <span class="info-row-value">
+                      <span class="badge <%= depositor.verificationstatus === 'Verified' ? 'badge-success' : 'badge-warning' %>" style="font-size:0.65rem;">
+                        <%= depositor.verificationstatus %>
+                      </span>
+                    </span>
+                  </div>
+                  <div style="margin-top:8px;">
+                    <a href="/admin/admin.user/<%= depositor._id %>" class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;">
+                      <i class="fa-solid fa-user"></i> View Profile
+                    </a>
+                  </div>
+                <% } else { %>
+                  <div style="color:var(--text-muted);font-size:0.85rem;">Depositor data unavailable.</div>
+                <% } %>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="receipt-actions">
+              <button class="btn btn-outline btn-sm" id="downloadPdfBtn2">
+                <i class="fa-solid fa-file-pdf"></i> Download PDF
+              </button>
+              <button class="btn btn-ghost btn-sm" onclick="window.print()">
+                <i class="fa-solid fa-print"></i> Print
+              </button>
+              <% if (deposit.status === 'Pending') { %>
+                <hr class="divider" />
+                <% if (isUpgrade) { %>
+                  <form action="/admin/upgrade-account/<%= depositor ? depositor._id : '' %>/verify/<%= deposit._id %>?_method=PUT" method="POST">
+                    <button type="submit" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;" onclick="return confirm('Approve upgrade?')">
+                      <i class="fa-solid fa-arrow-up"></i> Approve Upgrade
+                    </button>
+                  </form>
+                <% } else { %>
+                  <form action="/admin/admin.deposit-req/<%= depositor ? depositor._id : '' %>/verify/<%= deposit._id %>?_method=PUT" method="POST">
+                    <button type="submit" class="btn btn-primary btn-sm" style="width:100%;justify-content:center;" onclick="return confirm('Verify deposit?')">
+                      <i class="fa-solid fa-check"></i> Verify Deposit
+                    </button>
+                  </form>
+                <% } %>
+                <form action="/admin/admin.deposit-req/<%= depositor ? depositor._id : '' %>/decline/<%= deposit._id %>?_method=PUT" method="POST">
+                  <button type="submit" class="btn btn-danger btn-sm" style="width:100%;justify-content:center;" onclick="return confirm('Decline?')">
+                    <i class="fa-solid fa-xmark"></i> Decline Deposit
+                  </button>
+                </form>
+              <% } %>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;align-items:center;justify-content:center;cursor:pointer;" onclick="this.style.display='none'">
+    <img id="lightboxImg" src="" style="max-width:90vw;max-height:90vh;border-radius:8px;object-fit:contain;" />
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <script>
+    document.querySelectorAll('.proof-thumb').forEach(img => {
+      img.addEventListener('click', e => {
+        e.preventDefault();
+        document.getElementById('lightboxImg').src = img.src;
+        document.getElementById('lightbox').style.display = 'flex';
+      });
+    });
+
+    async function generatePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageW = doc.internal.pageSize.getWidth();
+      const margin = 20;
+      let y = 20;
+
+      const addLine = (label, value) => {
+        doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(100,100,100);
+        doc.text(label, margin, y);
+        doc.setFont('helvetica','normal'); doc.setTextColor(30,30,30);
+        doc.text(String(value || '—'), margin + 55, y, { maxWidth: pageW - margin - 55 - margin });
+        y += 7;
+        if (y > 270) { doc.addPage(); y = 20; }
+      };
+
+      const addSection = (title) => {
+        y += 4;
+        doc.setDrawColor(200,200,200); doc.line(margin, y, pageW - margin, y); y += 6;
+        doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(120,120,120);
+        doc.text(title.toUpperCase(), margin, y); y += 7;
+      };
+
+      doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.setTextColor(20,20,20);
+      doc.text('<%= typeLabel %> Receipt', margin, y); y += 10;
+
+      doc.setFillColor(240,248,245);
+      doc.roundedRect(margin, y, pageW - margin * 2, 18, 4, 4, 'F');
+      doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.setTextColor(0,168,130);
+      doc.text('+$<%= parseFloat(deposit.amount||0).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}) %>', pageW/2, y+12, { align:'center' });
+      y += 26;
+
+      addSection('Deposit Details');
+      addLine('Date & Time', '<%= txDate %>, <%= txTime %>');
+      addLine('Type', '<%= typeLabel %>');
+      addLine('Status', '<%= deposit.status %>');
+      addLine('Payment Status', '<%= deposit.paymentstatus %>');
+      addLine('Method', '<%= deposit.transactionmethod || "—" %>');
+      addLine('Wallet ID', '<%= deposit.cryptoWalletId || "—" %>');
+
+      addSection('Depositor');
+      addLine('Name', '<%= fullName.replace(/\'/g,"") %>');
+      <% if (depositor) { %>
+      addLine('Email', '<%= depositor.email %>');
+      addLine('Account No.', '<%= depositor.accountNumber || "—" %>');
+      <% } %>
+
+      y += 8;
+      doc.setFont('helvetica','italic'); doc.setFontSize(8); doc.setTextColor(160,160,160);
+      doc.text('ID: <%= deposit._id %>', pageW/2, y, { align:'center' });
+
+      doc.save('deposit-<%= deposit._id %>.pdf');
+    }
+
+    document.getElementById('downloadPdfBtn').addEventListener('click', generatePDF);
+    document.getElementById('downloadPdfBtn2').addEventListener('click', generatePDF);
+  </script>
+
+  <style>
+    @media print {
+      .navbar, .sidebar, .receipt-sidebar, .page-header-right, .receipt-actions { display: none !important; }
+      .main-content { margin-left: 0 !important; padding-top: 0 !important; }
+      .receipt-layout { flex-direction: column; }
+      .receipt-card { border: none; box-shadow: none; }
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deposit Requests | <%= websiteName %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/deposits.css" />
+</head>
+<body>
+
+  <%
+    locals.currentPath = '/admin/admin.deposit-requests';
+  %>
+
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="admin-dashboard fade-in">
+
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Deposit Requests</h1>
+            <p class="page-subtitle">Review and action pending crypto deposit submissions.</p>
+          </div>
+          <div class="page-header-right">
+            <a href="/admin/admin.deposit-history" class="btn btn-ghost btn-sm">
+              <i class="fa-solid fa-clock-rotate-left"></i> History
+            </a>
+            <a href="/admin/admin.depositmethods" class="btn btn-primary btn-sm">
+              <i class="fa-solid fa-wallet"></i> Deposit Methods
+            </a>
+          </div>
+        </div>
+
+        <!-- Tab Nav -->
+        <div class="deposit-tabs">
+          <button class="deposit-tab active" data-tab="deposits">
+            <i class="fa-solid fa-coins"></i> Crypto Deposits
+            <% if (deposits.length > 0) { %>
+              <span class="tab-badge"><%= deposits.length %></span>
+            <% } %>
+          </button>
+          <button class="deposit-tab" data-tab="upgrades">
+            <i class="fa-solid fa-arrow-up-right-dots"></i> Upgrade Fees
+            <% if (upgradefee.length > 0) { %>
+              <span class="tab-badge"><%= upgradefee.length %></span>
+            <% } %>
+          </button>
+        </div>
+
+        <!-- Deposits Tab -->
+        <div class="tab-panel active" id="tab-deposits">
+          <% if (deposits.length === 0) { %>
+            <div class="empty-state">
+              <div class="empty-icon"><i class="fa-solid fa-inbox"></i></div>
+              <h3>No Pending Deposits</h3>
+              <p>All deposit requests have been actioned.</p>
+            </div>
+          <% } else { %>
+            <div class="deposits-list">
+              <% for (let dep of deposits) { %>
+                <%
+                  const depUser = clients.find(c => String(c._id) === String(dep.validateUser));
+                %>
+                <div class="deposit-card">
+                  <div class="deposit-card-left">
+                    <div class="deposit-avatar">
+                      <% if (depUser && depUser.profilepicture && depUser.profilepicture.length > 0) { %>
+                        <img src="<%= depUser.profilepicture[0].url %>" alt="avatar" />
+                      <% } else { %>
+                        <span><%= depUser ? depUser.firstname.charAt(0).toUpperCase() : '?' %></span>
+                      <% } %>
+                    </div>
+                    <div class="deposit-info">
+                      <p class="deposit-user-name"><%= depUser ? `${depUser.firstname} ${depUser.lastname}` : 'Unknown User' %></p>
+                      <p class="deposit-meta">
+                        <span class="deposit-method"><%= dep.transactionmethod || 'Crypto' %></span>
+                        <span class="dot">·</span>
+                        <span class="deposit-date"><%= new Date(dep.transactiondate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) %></span>
+                      </p>
+                      <% if (dep.cryptoWalletId) { %>
+                        <p class="deposit-wallet font-mono"><i class="fa-solid fa-wallet"></i> <%= dep.cryptoWalletId %></p>
+                      <% } %>
+                    </div>
+                  </div>
+
+                  <div class="deposit-card-right">
+                    <div class="deposit-amount">
+                      <span class="amount"><%= depUser ? depUser.basecurrencysymbol || '$' : '$' %><%= parseFloat(dep.amount).toLocaleString(undefined, {minimumFractionDigits: 2}) %></span>
+                      <span class="badge badge-warning">Pending</span>
+                    </div>
+                    <div class="deposit-actions">
+                      <a href="/admin/admin.view-deposit/<%= dep._id %>" class="btn btn-ghost btn-sm">
+                        <i class="fa-solid fa-eye"></i> View
+                      </a>
+                      <button class="btn btn-primary btn-sm" 
+                        onclick="openConfirmModal('verify', '<%= depUser ? depUser._id : '' %>', '<%= dep._id %>', '<%= depUser ? `${depUser.firstname} ${depUser.lastname}` : 'User' %>', '<%= parseFloat(dep.amount).toLocaleString() %>')">
+                        <i class="fa-solid fa-circle-check"></i> Approve
+                      </button>
+                      <button class="btn btn-danger btn-sm"
+                        onclick="openConfirmModal('decline', '<%= depUser ? depUser._id : '' %>', '<%= dep._id %>', '<%= depUser ? `${depUser.firstname} ${depUser.lastname}` : 'User' %>', '<%= parseFloat(dep.amount).toLocaleString() %>')">
+                        <i class="fa-solid fa-circle-xmark"></i> Decline
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Upgrade Fees Tab -->
+        <div class="tab-panel" id="tab-upgrades">
+          <% if (upgradefee.length === 0) { %>
+            <div class="empty-state">
+              <div class="empty-icon"><i class="fa-solid fa-inbox"></i></div>
+              <h3>No Pending Upgrade Fees</h3>
+              <p>All upgrade fee requests have been actioned.</p>
+            </div>
+          <% } else { %>
+            <div class="deposits-list">
+              <% for (let dep of upgradefee) { %>
+                <%
+                  const depUser = clients.find(c => String(c._id) === String(dep.validateUser));
+                %>
+                <div class="deposit-card">
+                  <div class="deposit-card-left">
+                    <div class="deposit-avatar upgrade">
+                      <% if (depUser && depUser.profilepicture && depUser.profilepicture.length > 0) { %>
+                        <img src="<%= depUser.profilepicture[0].url %>" alt="avatar" />
+                      <% } else { %>
+                        <span><%= depUser ? depUser.firstname.charAt(0).toUpperCase() : '?' %></span>
+                      <% } %>
+                    </div>
+                    <div class="deposit-info">
+                      <p class="deposit-user-name"><%= depUser ? `${depUser.firstname} ${depUser.lastname}` : 'Unknown User' %></p>
+                      <p class="deposit-meta">
+                        <span class="deposit-method upgrade-label">Upgrade Fee</span>
+                        <span class="dot">·</span>
+                        <% if (dep.narration) { %><span class="deposit-narration"><%= dep.narration %></span><span class="dot">·</span><% } %>
+                        <span class="deposit-date"><%= new Date(dep.transactiondate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) %></span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="deposit-card-right">
+                    <div class="deposit-amount">
+                      <span class="amount"><%= depUser ? depUser.basecurrencysymbol || '$' : '$' %><%= parseFloat(dep.amount).toLocaleString(undefined, {minimumFractionDigits: 2}) %></span>
+                      <span class="badge badge-warning">Pending</span>
+                    </div>
+                    <div class="deposit-actions">
+                      <a href="/admin/admin.view-deposit/<%= dep._id %>" class="btn btn-ghost btn-sm">
+                        <i class="fa-solid fa-eye"></i> View
+                      </a>
+                      <button class="btn btn-primary btn-sm"
+                        onclick="openUpgradeModal('verify', '<%= depUser ? depUser._id : '' %>', '<%= dep._id %>', '<%= depUser ? `${depUser.firstname} ${depUser.lastname}` : 'User' %>', '<%= dep.narration || '' %>')">
+                        <i class="fa-solid fa-circle-check"></i> Approve
+                      </button>
+                      <button class="btn btn-danger btn-sm"
+                        onclick="openConfirmModal('decline', '<%= depUser ? depUser._id : '' %>', '<%= dep._id %>', '<%= depUser ? `${depUser.firstname} ${depUser.lastname}` : 'User' %>', '<%= parseFloat(dep.amount).toLocaleString() %>')">
+                        <i class="fa-solid fa-circle-xmark"></i> Decline
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          <% } %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Verify/Decline Confirm Modal -->
+  <div class="custom-modal-overlay" id="confirmModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title" id="confirmModalTitle">
+          <i class="fa-solid fa-circle-check" id="confirmModalIcon"></i>
+          Confirm Action
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('confirmModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body">
+        <p id="confirmModalText" style="color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6;"></p>
+      </div>
+      <div class="custom-modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('confirmModal')">Cancel</button>
+        <form id="confirmForm" method="POST" style="margin:0;">
+          <input type="hidden" name="_method" id="confirmMethod" value="PUT" />
+          <button type="submit" class="btn" id="confirmSubmitBtn">Confirm</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upgrade Approve Modal -->
+  <div class="custom-modal-overlay" id="upgradeModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-arrow-up-right-dots" style="background: var(--gold-dim); color: var(--gold);"></i>
+          Approve Account Upgrade
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('upgradeModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body">
+        <p id="upgradeModalText" style="color: var(--text-secondary); font-size: 0.95rem; margin-bottom: 16px;"></p>
+        <div class="form-group">
+          <label class="form-label">Upgrade Tier / Plan</label>
+          <input type="text" class="form-control" id="upgradeNarrationDisplay" readonly style="opacity:0.7;" />
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('upgradeModal')">Cancel</button>
+        <form id="upgradeForm" method="POST" style="margin:0;">
+          <input type="hidden" name="_method" value="PUT" />
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-circle-check"></i> Approve Upgrade</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    // Tab switching
+    document.querySelectorAll('.deposit-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.deposit-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+
+    function openConfirmModal(action, userId, depositId, userName, amount) {
+      const modal = document.getElementById('confirmModal');
+      const form = document.getElementById('confirmForm');
+      const icon = document.getElementById('confirmModalIcon');
+      const title = document.getElementById('confirmModalTitle');
+      const text = document.getElementById('confirmModalText');
+      const btn = document.getElementById('confirmSubmitBtn');
+
+      if (action === 'verify') {
+        form.action = `/admin/admin.deposit-req/${userId}/verify/${depositId}?_method=PUT`;
+        document.getElementById('confirmMethod').value = 'PUT';
+        icon.className = 'fa-solid fa-circle-check';
+        icon.style.cssText = 'background: var(--success-dim); color: var(--success);';
+        text.textContent = `You are about to approve a deposit of ${amount} for ${userName}. This will credit their account. This action cannot be undone.`;
+        btn.className = 'btn btn-primary';
+        btn.textContent = 'Approve Deposit';
+      } else {
+        form.action = `/admin/admin.deposit-req/${userId}/decline/${depositId}?_method=PUT`;
+        document.getElementById('confirmMethod').value = 'PUT';
+        icon.className = 'fa-solid fa-circle-xmark';
+        icon.style.cssText = 'background: var(--danger-dim); color: var(--danger);';
+        text.textContent = `You are about to decline the deposit request for ${userName}. The deposit status will be marked as Unsuccessful.`;
+        btn.className = 'btn btn-danger';
+        btn.innerHTML = '<i class="fa-solid fa-circle-xmark"></i> Decline Deposit';
+      }
+
+      modal.classList.add('open');
+    }
+
+    function openUpgradeModal(action, userId, depositId, userName, narration) {
+      const modal = document.getElementById('upgradeModal');
+      const form = document.getElementById('upgradeForm');
+      form.action = `/admin/upgrade-account/${userId}/verify/${depositId}?_method=PUT`;
+      document.getElementById('upgradeModalText').textContent = `Approve upgrade fee payment for ${userName}. Their account will be upgraded to the tier below.`;
+      document.getElementById('upgradeNarrationDisplay').value = narration || 'N/A';
+      modal.classList.add('open');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+    }
+
+    document.querySelectorAll('.custom-modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay) overlay.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>

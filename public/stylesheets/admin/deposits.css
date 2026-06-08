@@ -1,0 +1,751 @@
+/* ============================================================
+   DEPOSITS.CSS — Deposit Requests, History & Methods
+   Extends theme.css — no theme variables redefined here.
+   ============================================================ */
+
+/* ── Page Header ─────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.page-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-title {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+.page-header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── Tabs ────────────────────────────────────────────────────── */
+.deposit-tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.deposit-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+  margin-bottom: -1px;
+}
+
+.deposit-tab:hover {
+  color: var(--text-primary);
+}
+
+.deposit-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.tab-badge {
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: var(--radius-full);
+  min-width: 18px;
+  text-align: center;
+}
+
+.tab-count {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+/* ── Tab Panels ──────────────────────────────────────────────── */
+.tab-panel {
+  display: none;
+}
+.tab-panel.active {
+  display: block;
+  animation: fadeIn 0.22s ease both;
+}
+
+/* ── Empty State ─────────────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.empty-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.empty-state h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.empty-state p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* ── Deposit Request Cards ───────────────────────────────────── */
+.deposits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.deposit-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  transition: var(--transition);
+  flex-wrap: wrap;
+}
+
+.deposit-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-sm);
+}
+
+.deposit-card-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.deposit-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-inverse);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.deposit-avatar.upgrade {
+  background: linear-gradient(135deg, var(--gold), #b07d00);
+}
+
+.deposit-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.deposit-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.deposit-user-name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deposit-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  flex-wrap: wrap;
+}
+
+.dot { color: var(--border-strong); }
+
+.deposit-method {
+  background: var(--info-dim);
+  color: var(--info);
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.upgrade-label {
+  background: var(--gold-dim);
+  color: var(--gold);
+  padding: 1px 8px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.deposit-wallet {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 2px;
+}
+
+.deposit-card-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.deposit-amount {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.deposit-amount .amount {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--credit);
+  font-family: var(--font-mono);
+}
+
+.deposit-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── History Summary Cards ───────────────────────────────────── */
+.history-summary {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  flex: 1;
+  min-width: 160px;
+  transition: var(--transition);
+}
+
+.summary-card:hover {
+  border-color: var(--border-strong);
+}
+
+.summary-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.summary-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summary-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.summary-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ── History Table ───────────────────────────────────────────── */
+.history-table-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.history-table thead tr {
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+}
+
+.history-table th {
+  padding: 12px 16px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.history-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+}
+
+.history-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.history-table tbody tr:hover {
+  background: var(--bg-card-hover);
+}
+
+.history-table td {
+  padding: 13px 16px;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.table-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 150px;
+}
+
+.table-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-inverse);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.table-avatar.upgrade {
+  background: linear-gradient(135deg, var(--gold), #b07d00);
+}
+
+.table-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.table-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+  display: inline-block;
+}
+
+.method-tag {
+  background: var(--info-dim);
+  color: var(--info);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.tier-tag {
+  background: var(--gold-dim);
+  color: var(--gold);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.wallet-id {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+}
+
+.date-cell {
+  white-space: nowrap;
+  color: var(--text-secondary);
+  font-size: 0.83rem;
+}
+
+/* ── Deposit Methods Grid ────────────────────────────────────── */
+.methods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.method-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  flex: 1;
+  min-width: 280px;
+  max-width: 400px;
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.method-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.method-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.method-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--gold-dim);
+  color: var(--gold);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.method-name-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+
+.method-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.method-actions-top {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.danger-icon:hover {
+  background: var(--danger-dim) !important;
+  color: var(--danger) !important;
+  border-color: var(--danger) !important;
+}
+
+.method-address-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.address-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+
+.address-text {
+  flex: 1;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  word-break: break-all;
+  font-family: var(--font-mono);
+  line-height: 1.5;
+}
+
+.copy-btn {
+  flex-shrink: 0;
+}
+
+.method-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.qr-image {
+  width: 100%;
+  max-width: 160px;
+  height: auto;
+  border-radius: var(--radius-sm);
+  display: block;
+}
+
+.qr-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.no-qr {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  gap: 8px;
+  flex-direction: row;
+  padding: 12px;
+}
+
+.no-qr i {
+  font-size: 1rem;
+}
+
+/* ── File Upload Area ────────────────────────────────────────── */
+.file-upload-area {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.file-upload-area:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.file-upload-area i {
+  font-size: 1.5rem;
+}
+
+.file-upload-area input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+
+.qr-preview {
+  width: 100%;
+  max-width: 140px;
+  height: auto;
+  border-radius: var(--radius-md);
+  margin-top: 10px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border: 1px solid var(--border);
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .deposit-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .deposit-card-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .deposit-amount {
+    align-items: flex-start;
+  }
+
+  .summary-card {
+    min-width: 140px;
+  }
+
+  .method-card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-header-right {
+    width: 100%;
+  }
+
+  .deposit-tabs {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .deposit-tabs::-webkit-scrollbar { display: none; }
+
+  .deposit-tab {
+    padding: 10px 14px;
+    font-size: 0.82rem;
+  }
+
+  .deposit-actions {
+    width: 100%;
+  }
+
+  .history-summary {
+    flex-direction: column;
+  }
+
+  .summary-card {
+    min-width: unset;
+  }
+
+  .methods-grid {
+    flex-direction: column;
+  }
+
+  .method-card {
+    min-width: unset;
+    max-width: 100%;
+  }
+
+  .page-title {
+    font-size: 1.25rem;
+  }
+
+  .history-table th,
+  .history-table td {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .deposit-card {
+    padding: 14px;
+  }
+
+  .deposit-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .deposit-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .custom-modal {
+    margin: 0 8px;
+  }
+}

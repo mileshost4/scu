@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= subject %></title>
+  <meta charset="UTF-8">
+</head>
+
+<body style="margin:0; padding:0; background-color:#0f172a; font-family:Arial, Helvetica, sans-serif;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background-color:#0f172a; padding:40px 15px;">
+    <tr>
+      <td align="center">
+
+        <!-- Main Container -->
+        <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px; background-color:#111827; border-radius:12px; overflow:hidden;">
+
+          <!-- Logo Section -->
+          <tr>
+            <td align="center" style="padding:30px 20px 10px 20px;">
+              <img src="https://<%= websiteLink %>/img/maillogo.png"
+                   alt="<%= websiteName %> Logo"
+                   width="70"
+                   style="display:block;">
+            </td>
+          </tr>
+
+          <!-- Divider -->
+          <tr>
+            <td>
+              <hr style="border:none; border-top:1px solid #1f2937; margin:0 30px;">
+            </td>
+          </tr>
+
+          <!-- Content Section -->
+          <tr>
+            <td style="padding:30px; color:#e5e7eb; font-size:15px; line-height:1.6;">
+
+              <h1 style="color:#3b82f6; font-size:22px; margin-top:0; text-align:center;">
+                <%= subject %>
+              </h1>
+
+              <p style="margin-top:20px;">
+                <%- message.replace(/\n/g,'<br>') %>
+              </p>
+
+              <p style="margin-top:25px;">
+                Thank you for choosing <strong><%= websiteName %></strong>.
+              </p>
+
+              <!-- Button -->
+              <div style="text-align:center; margin:35px 0;">
+                <a href="<%= websiteLink %>"
+                   style="background:linear-gradient(90deg,#2563eb,#1d4ed8);
+                          padding:12px 28px;
+                          color:#ffffff;
+                          text-decoration:none;
+                          border-radius:8px;
+                          font-weight:bold;
+                          font-size:14px;
+                          display:inline-block;">
+                  Visit <%= websiteName %>
+                </a>
+              </div>
+
+            </td>
+          </tr>
+
+          <!-- Footer Divider -->
+          <tr>
+            <td>
+              <hr style="border:none; border-top:1px solid #1f2937; margin:0 30px;">
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="padding:25px; text-align:center; font-size:13px; color:#9ca3af;">
+
+              <p style="margin:5px 0;">
+                📧 <a href="mailto:<%= websiteSupportMail %>" style="color:#3b82f6; text-decoration:none;">
+                  <%= websiteSupportMail %>
+                </a>
+              </p>
+
+              <p style="margin:5px 0;">
+                🌐 <a href="<%= websiteLink %>" style="color:#3b82f6; text-decoration:none;">
+                  <%= websiteLink %>
+                </a>
+              </p>
+
+              <p style="margin-top:20px; font-size:12px; color:#6b7280;">
+                © <%= new Date().getFullYear() %> <%= websiteName %>. All rights reserved.
+              </p>
+
+            </td>
+          </tr>
+
+        </table>
+        <!-- End Container -->
+
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>

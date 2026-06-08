@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= websiteName %> || Admin Sign In</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css">
+  <!-- <link rel="stylesheet" href="/stylesheets/partials/flash.css" /> -->
+
+  <style>
+    /* ── Layout ───────────────────────────────────────────────── */
+    .auth-root {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-root);
+      position: relative;
+      overflow: hidden;
+      padding: 40px 16px;
+    }
+
+    .auth-root::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .auth-root::after {
+      content: '';
+      position: fixed;
+      width: 500px; height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(240,165,0,0.12) 0%, transparent 70%);
+      top: -150px; right: -100px;
+      pointer-events: none; z-index: 0;
+    }
+
+    .glow-blob-2 {
+      position: fixed;
+      width: 350px; height: 350px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(240,165,0,0.07) 0%, transparent 70%);
+      bottom: -80px; left: -80px;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Card ─────────────────────────────────────────────────── */
+    .auth-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-xl);
+      padding: 44px 36px 36px;
+      box-shadow: var(--shadow-lg);
+      animation: fadeIn 0.4s ease both;
+    }
+
+    @media (max-width: 480px) {
+      .auth-card { padding: 32px 20px 28px; }
+    }
+
+    /* ── Logo ─────────────────────────────────────────────────── */
+    .auth-logo-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .auth-logo { height: 44px; width: auto; }
+
+    /* Admin badge */
+    .admin-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: var(--gold-dim);
+      color: var(--gold);
+      border: 1px solid rgba(240,165,0,0.2);
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      margin: 0 auto 24px;
+      width: fit-content;
+    }
+
+    /* Accent bar */
+    .auth-card-accent {
+      width: 40px;
+      height: 3px;
+      background: var(--gold);
+      border-radius: var(--radius-full);
+      margin-bottom: 18px;
+    }
+
+    /* ── Header ───────────────────────────────────────────────── */
+    .auth-header { margin-bottom: 28px; }
+
+    .auth-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .auth-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    /* ── Flash ────────────────────────────────────────────────── */
+    .flash-box { margin-bottom: 16px; }
+
+    .flash-alert {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.84rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .flash-success {
+      background: var(--success-dim);
+      color: var(--success);
+      border: 1px solid rgba(0,212,170,0.2);
+    }
+
+    .flash-error {
+      background: var(--danger-dim);
+      color: var(--danger);
+      border: 1px solid rgba(255,77,106,0.2);
+    }
+
+    .flash-close {
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      font-size: 16px;
+      line-height: 1;
+      opacity: 0.7;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .flash-close:hover { opacity: 1; }
+
+    /* ── Fields ───────────────────────────────────────────────── */
+    .field { margin-bottom: 16px; }
+
+    .field-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .input-wrap { position: relative; }
+
+    .input-wrap .fi {
+      position: absolute;
+      left: 13px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 13px;
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+
+    .field-input {
+      width: 100%;
+      padding: 11px 40px 11px 38px;
+      background: var(--bg-input);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-family: var(--font-ui);
+      font-size: 0.9rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .field-input::placeholder { color: var(--text-muted); }
+
+    .field-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(240,165,0,0.12);
+    }
+
+    .input-wrap:focus-within .fi { color: var(--gold); }
+
+    /* Password eye toggle */
+    .eye-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 2px;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+
+    .eye-btn:hover { color: var(--text-primary); }
+
+    /* ── Submit ───────────────────────────────────────────────── */
+    .auth-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 13px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: var(--gold);
+      color: #1a0e00;
+      font-family: var(--font-ui);
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.03em;
+      transition: var(--transition);
+    }
+
+    .auth-btn:hover:not(:disabled) {
+      background: #d97706;
+      box-shadow: 0 4px 24px rgba(240,165,0,0.25);
+      transform: translateY(-1px);
+    }
+
+    .auth-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Divider ──────────────────────────────────────────────── */
+    .auth-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 22px 0 16px;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    .auth-footer {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: 18px;
+    }
+
+    .auth-footer a {
+      color: var(--gold);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .auth-footer a:hover { text-decoration: underline; }
+
+    /* Security note */
+    .security-note {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      margin-top: 18px;
+    }
+
+    .security-note i { color: var(--gold); font-size: 11px; }
+
+    /* ── Theme toggle ─────────────────────────────────────────── */
+    .theme-fab {
+      position: fixed;
+      top: 18px; right: 18px;
+      z-index: 100;
+      display: flex;
+      gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 4px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .theme-fab button {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .theme-fab button:hover,
+    .theme-fab button.active {
+      background: var(--gold-dim);
+      color: var(--gold);
+    }
+  </style>
+</head>
+<body>
+
+<div class="glow-blob-2"></div>
+
+<div class="theme-fab">
+  <button onclick="setTheme('dark')"  title="Dark"  data-theme-opt="dark"><i class="fa-solid fa-moon"></i></button>
+  <button onclick="setTheme('light')" title="Light" data-theme-opt="light"><i class="fa-solid fa-sun"></i></button>
+</div>
+
+<div class="auth-root">
+  <div class="auth-card">
+
+    <div class="auth-logo-wrap">
+      <a href="/"><img src="/images/logo.png" class="auth-logo" alt="Logo"></a>
+    </div>
+
+    <div class="admin-badge">
+      <i class="fa-solid fa-shield-halved"></i> Admin Portal
+    </div>
+
+    <div class="auth-card-accent"></div>
+
+    <div class="auth-header">
+      <h1 class="auth-title">Admin Sign In</h1>
+      <p class="auth-subtitle">Restricted access — authorised personnel only.</p>
+    </div>
+
+    <!-- Flash -->
+    <div class="flash-box">
+      <% if (success && success.length) { %>
+        <div class="flash-alert flash-success">
+          <span><%= success %></span>
+          <button class="flash-close" onclick="this.parentElement.remove()">&#x2715;</button>
+        </div>
+      <% } %>
+      <% if (error && error.length) { %>
+        <div class="flash-alert flash-error">
+          <span><%= error %></span>
+          <button class="flash-close" onclick="this.parentElement.remove()">&#x2715;</button>
+        </div>
+      <% } %>
+    </div>
+
+    <form action="/secureadmin.login" method="post" id="loginForm">
+
+      <div class="field">
+        <label class="field-label">Email Address</label>
+        <div class="input-wrap">
+          <i class="fas fa-envelope fi"></i>
+          <input class="field-input" type="email" name="email" placeholder="admin@example.com" required autocomplete="email">
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label">Password</label>
+        <div class="input-wrap">
+          <i class="fas fa-lock fi"></i>
+          <input class="field-input" type="password" name="password" id="loginPassword" placeholder="Your password" required autocomplete="current-password">
+          <button type="button" class="eye-btn" onclick="togglePwd('loginPassword', this)" tabindex="-1" aria-label="Toggle password">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <button class="auth-btn" type="submit" id="loginBtn">
+        <i class="fas fa-arrow-right-to-bracket"></i>
+        <span id="btnLabel">Sign In</span>
+      </button>
+
+    </form>
+
+    <div class="security-note">
+      <i class="fas fa-shield-halved"></i>
+      All admin sessions are monitored and logged.
+    </div>
+
+    <div class="auth-divider">or</div>
+
+    <div class="auth-footer">
+      Need an admin account? <a href="/secureadmin.register">Request access</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  /* ── Password toggle ──────────────────────────────────────── */
+  function togglePwd(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const icon  = btn.querySelector('i');
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    icon.className = isHidden ? 'fas fa-eye-slash' : 'fas fa-eye';
+  }
+
+  /* ── Loading state ────────────────────────────────────────── */
+  document.getElementById('loginForm').addEventListener('submit', function () {
+    const btn = document.getElementById('loginBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in…';
+  });
+
+  /* ── Theme ────────────────────────────────────────────────── */
+  function setTheme(mode) {
+    let resolved = mode;
+    if (mode === 'system') {
+      resolved = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+    document.documentElement.setAttribute('data-theme', resolved);
+    localStorage.setItem('theme', mode);
+    document.querySelectorAll('.theme-fab button').forEach(function (btn) {
+      btn.classList.toggle('active', btn.dataset.themeOpt === mode);
+    });
+  }
+
+  (function () { setTheme(localStorage.getItem('theme') || 'dark'); })();
+</script>
+
+</body>
+</html>

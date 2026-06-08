@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= user.firstname %> <%= user.lastname %> — Transactions | Admin</title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/subpages.css" />
+</head>
+<body>
+  <% locals.currentPath = '/admin/admin.users'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+          <a href="/admin/admin.users"><i class="fa-solid fa-users"></i> Users</a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <a href="/admin/admin.user/<%= user._id %>"><%= user.firstname %> <%= user.lastname %></a>
+          <i class="fa-solid fa-chevron-right"></i>
+          <span>Transactions</span>
+        </div>
+
+        <!-- Page Header -->
+        <div class="subpage-header">
+          <div class="subpage-header-left">
+            <div class="subpage-avatar">
+              <% if (user.profilepicture && user.profilepicture.length > 0) { %>
+                <img src="<%= user.profilepicture[user.profilepicture.length - 1].url %>" alt="Profile" />
+              <% } else { %>
+                <%= (user.firstname || '?')[0].toUpperCase() %><%= (user.lastname || '')[0] ? user.lastname[0].toUpperCase() : '' %>
+              <% } %>
+            </div>
+            <div>
+              <h2 class="subpage-title"><%= user.firstname %> <%= user.lastname %></h2>
+              <p class="subpage-subtitle"><i class="fa-solid fa-arrow-right-arrow-left"></i> <%= transactions.length %> transaction<%= transactions.length !== 1 ? 's' : '' %></p>
+            </div>
+          </div>
+          <div class="subpage-header-actions">
+            <a href="/admin/admin.user/<%= user._id %>/delete-transactions" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i> Delete Transactions</a>
+            <a href="/admin/admin.user/<%= user._id %>/statement" class="btn btn-ghost btn-sm"><i class="fa-solid fa-file-pdf"></i> Statement PDF</a>
+            <a href="/admin/admin.user/<%= user._id %>" class="btn btn-ghost btn-sm"><i class="fa-solid fa-arrow-left"></i> Back to Profile</a>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="card filter-bar">
+          <div class="filter-bar-inner">
+            <div class="search-wrap">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="txnSearch" class="form-control" placeholder="Search description, type, ref code…" />
+            </div>
+            <select id="txnTypeFilter" class="form-control" style="max-width:160px;">
+              <option value="">All Types</option>
+              <option value="Credit">Credit</option>
+              <option value="Deposit">Deposit</option>
+              <option value="Debit">Debit</option>
+              <option value="Transfer">Transfer</option>
+            </select>
+            <select id="txnStatusFilter" class="form-control" style="max-width:160px;">
+              <option value="">All Statuses</option>
+              <option value="Successful">Successful</option>
+              <option value="Pending">Pending</option>
+              <option value="Unsuccessful">Unsuccessful</option>
+            </select>
+          </div>
+          <div class="filter-count"><span id="txnCount"><%= transactions.length %></span> transactions</div>
+        </div>
+
+        <!-- Transactions Table -->
+        <div class="card section-card">
+          <% if (transactions.length === 0) { %>
+            <div class="empty-state">
+              <i class="fa-solid fa-inbox"></i>
+              <p>No transactions found for this user.</p>
+            </div>
+          <% } else { %>
+          <div class="txn-table-wrap">
+            <table class="txn-table" id="txnTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>From / To</th>
+                  <th>Ref Code</th>
+                  <th>Status</th>
+                  <th class="text-right">Amount</th>
+                  <th class="text-right">Balance After</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <% transactions.forEach(tx => {
+                  const isCredit = ['Credit','Deposit'].includes(tx.transactionType);
+                %>
+                <tr class="txn-table-row" data-type="<%= tx.transactionType %>" data-status="<%= tx.status %>" data-search="<%= [tx.description, tx.transactionType, tx.transferType, tx.refCode, tx.receiverAccountName, tx.senderAccountName].filter(Boolean).join(' ').toLowerCase() %>">
+                  <td class="txn-td-date">
+                    <div><%= tx.date ? new Date(tx.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—' %></div>
+                    <div class="txn-td-time"><%= tx.date ? new Date(tx.date).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : '' %></div>
+                  </td>
+                  <td>
+                    <div class="txn-type-wrap">
+                      <span class="txn-type-dot <%= isCredit ? 'credit' : 'debit' %>"></span>
+                      <div>
+                        <div class="txn-type-label"><%= tx.transactionType %></div>
+                        <% if(tx.transferType) { %><div class="txn-type-sub"><%= tx.transferType %></div><% } %>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="txn-td-desc"><%= tx.description || '—' %></td>
+                  <td class="txn-td-party">
+                    <% if(isCredit) { %>
+                      <div class="party-from"><span class="party-lbl">From</span> <%= tx.senderAccountName || tx.bankFrom || '—' %></div>
+                      <% if(tx.senderAccountNumber) { %><div class="party-acct mono-text"><%= tx.senderAccountNumber %></div><% } %>
+                    <% } else { %>
+                      <div class="party-from"><span class="party-lbl">To</span> <%= tx.receiverAccountName || tx.bankTo || '—' %></div>
+                      <% if(tx.receiverAccountNumber) { %><div class="party-acct mono-text"><%= tx.receiverAccountNumber %></div><% } %>
+                    <% } %>
+                  </td>
+                  <td class="mono-text txn-td-ref"><%= tx.refCode || '—' %></td>
+                  <td>
+                    <% if(tx.status === 'Successful') { %>
+                      <span class="badge badge-success"><i class="fa-solid fa-check"></i> Successful</span>
+                    <% } else if(tx.status === 'Pending') { %>
+                      <span class="badge badge-warning"><i class="fa-solid fa-clock"></i> Pending</span>
+                    <% } else { %>
+                      <span class="badge badge-danger"><i class="fa-solid fa-xmark"></i> Failed</span>
+                    <% } %>
+                  </td>
+                  <td class="text-right">
+                    <span class="txn-amount <%= isCredit ? 'credit' : 'debit' %>">
+                      <%= isCredit ? '+' : '-' %><%= user.basecurrencysymbol || '$' %><%= (tx.amount||0).toLocaleString('en-US',{minimumFractionDigits:2}) %>
+                    </span>
+                  </td>
+                  <td class="text-right mono-text txn-td-bal">
+                    <% if(tx.newBalance !== undefined && tx.newBalance !== null) { %>
+                      <%= user.basecurrencysymbol || '$' %><%= tx.newBalance.toLocaleString('en-US',{minimumFractionDigits:2}) %>
+                    <% } else { %>—<% } %>
+                  </td>
+                  <td>
+                    <a href="/admin/admin.user/<%= user._id %>/transaction/<%= tx._id %>" class="btn btn-ghost btn-sm" title="View Receipt"><i class="fa-solid fa-receipt"></i> Receipt</a>
+                  </td>
+                </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+          <% } %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    const searchInput = document.getElementById('txnSearch');
+    const typeFilter = document.getElementById('txnTypeFilter');
+    const statusFilter = document.getElementById('txnStatusFilter');
+    const rows = document.querySelectorAll('.txn-table-row');
+    const countEl = document.getElementById('txnCount');
+
+    function filterRows() {
+      const q = searchInput.value.toLowerCase();
+      const type = typeFilter.value;
+      const status = statusFilter.value;
+      let visible = 0;
+      rows.forEach(row => {
+        const matchSearch = !q || row.dataset.search.includes(q);
+        const matchType = !type || row.dataset.type === type;
+        const matchStatus = !status || row.dataset.status === status;
+        const show = matchSearch && matchType && matchStatus;
+        row.style.display = show ? '' : 'none';
+        if(show) visible++;
+      });
+      if(countEl) countEl.textContent = visible;
+    }
+
+    searchInput && searchInput.addEventListener('input', filterRows);
+    typeFilter && typeFilter.addEventListener('change', filterRows);
+    statusFilter && statusFilter.addEventListener('change', filterRows);
+  </script>
+</body>
+</html>

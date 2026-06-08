@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Account Upgrade | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/accountupgrade.css" />
+</head>
+<body>
+  <% locals.currentPath = '/user/upgrade-account'; %>
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="upgrade-page fade-in">
+
+        <!-- Page Header -->
+        <div class="upgrade-header">
+          <h1 class="upgrade-title">Account Upgrade</h1>
+          <p class="upgrade-subtitle">Unlock premium features by upgrading your account tier</p>
+        </div>
+
+        <!-- Plans -->
+        <div class="upgrade-section">
+          <div class="upgrade-section-label">Choose a Plan</div>
+          <div class="upgrade-plans-list">
+            <% if (upgradeplans && upgradeplans.length > 0) { %>
+              <% upgradeplans.forEach(function(plan, idx) { %>
+              <div class="upgrade-plan-card <%= idx === 1 ? 'featured' : '' %>" data-plan-name="<%= plan.name %>">
+                <% if (idx === 1) { %>
+                <div class="upgrade-plan-badge">Most Popular</div>
+                <% } %>
+                <div class="upgrade-plan-top">
+                  <div class="upgrade-plan-icon">
+                    <i class="fa-solid fa-<%= idx === 0 ? 'star' : idx === 1 ? 'crown' : 'gem' %>"></i>
+                  </div>
+                  <div class="upgrade-plan-name"><%= plan.name %></div>
+                </div>
+                <div class="upgrade-plan-price">
+                  <span class="upgrade-price-symbol"><%= user.basecurrencysymbol || '$' %></span>
+                  <span class="upgrade-price-amount font-mono"><%= parseFloat(plan.amount).toLocaleString('en-US', {minimumFractionDigits:2}) %></span>
+                </div>
+                <% if (plan.description) { %>
+                <p class="upgrade-plan-desc"><%= plan.description %></p>
+                <% } %>
+                <button class="btn <%= idx === 1 ? 'btn-primary' : 'btn-outline' %> upgrade-plan-btn w-full"
+                  onclick="selectPlan('<%= plan.name %>', '<%= plan.amount %>')">
+                  <i class="fa-solid fa-bolt"></i> Select Plan
+                </button>
+              </div>
+              <% }) %>
+            <% } else { %>
+              <div class="upgrade-empty">
+                <i class="fa-solid fa-layer-group"></i>
+                <p>No upgrade plans available at the moment.</p>
+              </div>
+            <% } %>
+          </div>
+        </div>
+
+        <!-- Upgrade Form (shown after plan selection) -->
+        <div class="upgrade-form-section" id="upgradeFormSection">
+          <div class="upgrade-form-header">
+            <div class="upgrade-form-icon"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
+            <div>
+              <h2 class="upgrade-form-title">Upgrade to <span id="selectedPlanName">—</span></h2>
+              <p class="upgrade-form-subtitle">Send the required fee and upload proof of payment</p>
+            </div>
+          </div>
+
+          <form action="/dashboard/upgrade-account" method="POST" enctype="multipart/form-data" class="upgrade-form">
+            <input type="hidden" name="accounttype" id="accounttypeInput" />
+
+            <!-- Deposit Method -->
+            <div class="form-group">
+              <label class="form-label">Payment Method</label>
+              <select name="depositmethodname" id="depositMethodSelect" class="form-control" required>
+                <option value="">Select a payment method…</option>
+                <% depositmethods.forEach(function(method) { %>
+                <option value="<%= method.depositmethodname %>"><%= method.depositmethodname %></option>
+                <% }) %>
+              </select>
+            </div>
+
+            <!-- Wallet Address (populated by JS) -->
+            <div class="upgrade-wallet-box" id="walletBox" style="display:none">
+              <div class="upgrade-wallet-label">Send payment to:</div>
+              <div class="upgrade-wallet-inner">
+                <div class="upgrade-wallet-addr font-mono" id="walletAddr"></div>
+                <button type="button" class="btn-icon" id="copyWalletBtn" title="Copy address">
+                  <i class="fa-regular fa-copy"></i>
+                </button>
+              </div>
+              <div class="upgrade-wallet-qr" id="walletQr"></div>
+            </div>
+
+            <!-- Amount -->
+            <div class="form-group">
+              <label class="form-label">Amount (<%= user.basecurrencysymbol || '$' %>)</label>
+              <input type="text" name="amount" id="upgradeAmount" class="form-control" readonly />
+            </div>
+
+            <!-- Proof Upload -->
+            <div class="form-group">
+              <label class="form-label">Proof of Payment</label>
+              <div class="upgrade-upload-zone" id="uploadZone">
+                <input type="file" name="transactionproof" id="proofInput" accept="image/*,.pdf" required class="upload-input" />
+                <div class="upload-placeholder" id="uploadPlaceholder">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                  <span>Click or drag to upload proof</span>
+                  <small>PNG, JPG, PDF — Max 10MB</small>
+                </div>
+                <div class="upload-preview" id="uploadPreview" style="display:none">
+                  <i class="fa-solid fa-file-check"></i>
+                  <span id="uploadFileName"></span>
+                  <button type="button" class="upload-remove" onclick="clearUpload()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+              <i class="fa-solid fa-paper-plane"></i> Submit Upgrade Request
+            </button>
+          </form>
+        </div>
+
+        <!-- Upgrade History -->
+        <% if (deposits && deposits.length > 0) { %>
+        <div class="upgrade-section">
+          <div class="upgrade-section-label">Upgrade History</div>
+          <div class="upgrade-history-list">
+            <% deposits.forEach(function(dep) { %>
+            <div class="upgrade-history-row">
+              <div class="upgrade-hist-icon">
+                <i class="fa-solid fa-receipt"></i>
+              </div>
+              <div class="upgrade-hist-info">
+                <span class="upgrade-hist-name"><%= dep.narration || 'Account Upgrade' %></span>
+                <span class="upgrade-hist-date"><%= new Date(dep.transactiondate).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) %></span>
+              </div>
+              <div class="upgrade-hist-amount font-mono"><%= user.basecurrencysymbol || '$' %><%= parseFloat(dep.amount).toLocaleString('en-US', {minimumFractionDigits:2}) %></div>
+              <span class="badge badge-<%= dep.status === 'Successful' ? 'success' : dep.status === 'Pending' ? 'warning' : 'danger' %>"><%= dep.status %></span>
+            </div>
+            <% }) %>
+          </div>
+        </div>
+        <% } %>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    // Deposit method → wallet address
+    const methodSelect = document.getElementById('depositMethodSelect');
+    const walletBox    = document.getElementById('walletBox');
+    const walletAddr   = document.getElementById('walletAddr');
+    const walletQr     = document.getElementById('walletQr');
+
+    methodSelect.addEventListener('change', async function() {
+      const methodName = this.value;
+      if (!methodName) { walletBox.style.display = 'none'; return; }
+      try {
+        const res  = await fetch(`/api/depositmethods/${encodeURIComponent(methodName)}`);
+        const data = await res.json();
+        walletBox.style.display = 'block';
+        walletAddr.textContent  = data.depositaddress || '—';
+        document.querySelector('[name="depositaddress"]')?.remove();
+        const inp = document.createElement('input');
+        inp.type = 'hidden'; inp.name = 'depositaddress';
+        inp.value = data.depositaddress || '';
+        methodSelect.parentElement.appendChild(inp);
+        if (data.depositqrcode && data.depositqrcode.length > 0) {
+          walletQr.innerHTML = `<img src="${data.depositqrcode[0].url}" alt="QR Code" class="upgrade-qr-img" />`;
+        } else {
+          walletQr.innerHTML = '';
+        }
+      } catch(e) { console.error(e); }
+    });
+
+    // Copy wallet address
+    document.getElementById('copyWalletBtn').addEventListener('click', function() {
+      const addr = walletAddr.textContent;
+      if (addr && addr !== '—') {
+        navigator.clipboard.writeText(addr).then(() => {
+          this.innerHTML = '<i class="fa-solid fa-check"></i>';
+          setTimeout(() => this.innerHTML = '<i class="fa-regular fa-copy"></i>', 2000);
+        });
+      }
+    });
+
+    // Select plan
+    function selectPlan(name, amount) {
+      document.getElementById('selectedPlanName').textContent = name;
+      document.getElementById('accounttypeInput').value       = name;
+      document.getElementById('upgradeAmount').value          = amount;
+      const section = document.getElementById('upgradeFormSection');
+      section.classList.add('visible');
+      section.scrollIntoView({behavior: 'smooth', block: 'start'});
+      // Highlight selected card
+      document.querySelectorAll('.upgrade-plan-card').forEach(c => c.classList.remove('selected'));
+      event.target.closest('.upgrade-plan-card').classList.add('selected');
+    }
+
+    // File upload
+    const proofInput = document.getElementById('proofInput');
+    const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+    const uploadPreview = document.getElementById('uploadPreview');
+    const uploadFileName = document.getElementById('uploadFileName');
+    const uploadZone = document.getElementById('uploadZone');
+
+    proofInput.addEventListener('change', function() {
+      if (this.files && this.files[0]) {
+        uploadPlaceholder.style.display = 'none';
+        uploadPreview.style.display = 'flex';
+        uploadFileName.textContent = this.files[0].name;
+      }
+    });
+    uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+    uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('drag-over');
+      if (e.dataTransfer.files[0]) {
+        proofInput.files = e.dataTransfer.files;
+        uploadPlaceholder.style.display = 'none';
+        uploadPreview.style.display = 'flex';
+        uploadFileName.textContent = e.dataTransfer.files[0].name;
+      }
+    });
+    function clearUpload() {
+      proofInput.value = '';
+      uploadPlaceholder.style.display = 'flex';
+      uploadPreview.style.display = 'none';
+      uploadFileName.textContent = '';
+    }
+  </script>
+</body>
+</html>

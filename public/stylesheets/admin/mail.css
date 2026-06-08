@@ -1,0 +1,396 @@
+/* ============================================================
+   ADMIN SEND MAIL PAGE — mail.css
+   Extends theme.css. Do not redefine any variable already set.
+   ============================================================ */
+
+/* ── Page header ─────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ── Two-column layout ───────────────────────────────────────── */
+.mail-layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+/* Main compose column */
+.compose-card {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.tips-panel {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Compose header ──────────────────────────────────────────── */
+.compose-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.compose-header i {
+  color: var(--accent);
+  font-size: 1rem;
+}
+
+/* ── Form layout inside compose card ────────────────────────── */
+.compose-card form {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.compose-card .form-group {
+  margin-bottom: 22px;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.form-label i {
+  font-size: 0.78rem;
+  color: var(--accent);
+  width: 14px;
+  text-align: center;
+}
+
+.form-label-optional {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-muted);
+  font-size: 0.77rem;
+  margin-left: 2px;
+}
+
+/* ── Recipients ──────────────────────────────────────────────── */
+.recipients-wrap {
+  margin-bottom: 8px;
+}
+
+.field-hint {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 5px;
+}
+
+/* Quick fill row */
+.quick-fill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.quick-label {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.quick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.quick-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.quick-btn i { font-size: 0.75rem; }
+
+/* ── Textarea ────────────────────────────────────────────────── */
+.mail-textarea {
+  resize: vertical;
+  min-height: 180px;
+  font-family: var(--font-ui);
+  line-height: 1.65;
+}
+
+.char-count {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  text-align: right;
+  margin-top: 5px;
+}
+
+/* ── File drop zone ──────────────────────────────────────────── */
+.file-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 28px 20px;
+  border: 2px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.file-drop:hover,
+.file-drop.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.file-drop input[type="file"] {
+  display: none;
+}
+
+.file-drop i {
+  font-size: 1.8rem;
+  color: var(--text-muted);
+  transition: color 0.2s;
+}
+
+.file-drop:hover i,
+.file-drop.drag-over i {
+  color: var(--accent);
+}
+
+.drop-title {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.drop-link {
+  color: var(--accent);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.drop-hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* File list */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.file-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.file-item i {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.file-item span {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-item small {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ── Form actions ────────────────────────────────────────────── */
+.form-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+  flex-wrap: wrap;
+}
+
+/* ── Tips panel ──────────────────────────────────────────────── */
+.tip-card,
+.preview-card {
+  padding: 0;
+  overflow: hidden;
+}
+
+.tip-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.tip-header i { color: var(--accent); }
+
+.tip-list {
+  list-style: none;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tip-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.tip-list li i {
+  font-size: 0.75rem;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.tip-list li i.fa-check-circle { color: var(--success); }
+.tip-list li i.fa-triangle-exclamation { color: var(--warning); }
+
+/* ── Live preview ────────────────────────────────────────────── */
+.preview-subject {
+  padding: 12px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+  font-style: italic;
+  min-height: 44px;
+  word-break: break-word;
+}
+
+.preview-body {
+  padding: 14px 18px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 90px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .tips-panel {
+    width: 240px;
+  }
+}
+
+@media (max-width: 820px) {
+  .mail-layout {
+    flex-direction: column;
+  }
+
+  .tips-panel {
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .tip-card,
+  .preview-card {
+    flex: 1;
+    min-width: 240px;
+  }
+}
+
+@media (max-width: 540px) {
+  .compose-card form {
+    padding: 16px;
+  }
+
+  .compose-header {
+    padding: 14px 16px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .form-actions .btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .page-title {
+    font-size: 1.3rem;
+  }
+
+  .tips-panel {
+    flex-direction: column;
+  }
+}

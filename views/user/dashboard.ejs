@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | <%= websiteName %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/dashboard.css" />
+
+  <style>
+    /* ── Balance visibility toggle ───────────────────────── */
+    .balance-hidden { filter: blur(6px) !important; user-select: none; pointer-events: none; }
+
+    .balance-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px; height: 32px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+    .balance-toggle-btn:hover { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+
+    /* ── Custom modals (no Bootstrap modal JS dependency issues) ── */
+    .custom-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px);
+      z-index: 9000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .custom-modal-overlay.open { display: flex; }
+
+    .custom-modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 460px;
+      animation: fadeIn 0.25s ease both;
+    }
+
+    .custom-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 24px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .custom-modal-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .custom-modal-title i {
+      width: 32px; height: 32px;
+      border-radius: var(--radius-md);
+      background: var(--accent-dim);
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+
+    .custom-modal-close {
+      width: 30px; height: 30px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      transition: var(--transition);
+    }
+    .custom-modal-close:hover { background: var(--danger-dim); color: var(--danger); border-color: var(--danger); }
+
+    .custom-modal-body { padding: 20px 24px; }
+    .custom-modal-footer {
+      padding: 14px 24px 20px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── Logout confirm modal ── */
+    .logout-modal .custom-modal-title i { background: var(--danger-dim); color: var(--danger); }
+  </style>
+</head>
+<body>
+
+  <%
+    locals.currentPath = '/dashboard';
+  %>
+
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <!-- ═══════════════════════ MAIN CONTENT ═══════════════════════ -->
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="dashboard-page fade-in">
+
+        <!-- ── WELCOME BANNER ─────────────────────────────────── -->
+        <div class="welcome-banner">
+          <div class="welcome-text">
+            <h1>
+              Good <%= (function() {
+                const h = new Date().getHours();
+                if (h < 12) return 'Morning';
+                if (h < 17) return 'Afternoon';
+                return 'Evening';
+              })() %>, <span><%= user.firstname %></span> 👋
+            </h1>
+            <p>
+              Here's your financial overview for
+              <strong><%= currentDate.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }) %></strong>.
+              <% if (user.verificationstatus !== 'Verified') { %>
+                &nbsp;·&nbsp;
+                <a href="/user/kyc" style="color:var(--warning); font-weight:600; text-decoration:none;">
+                  <i class="fa-solid fa-triangle-exclamation"></i> Complete KYC verification
+                </a>
+              <% } %>
+            </p>
+          </div>
+          <div class="welcome-actions">
+            <a href="/user/transactions"       class="btn btn-primary"><i class="fa-solid fa-paper-plane"></i> Send Money</a>
+            <a href="/user/deposit-crypto"     class="btn btn-ghost"><i class="fa-solid fa-circle-down"></i> Deposit</a>
+            <a href="/user/statement/download" class="btn btn-ghost"><i class="fa-solid fa-file-pdf"></i> Statement</a>
+          </div>
+        </div>
+
+        <!-- ── STATS ROW ──────────────────────────────────────── -->
+        <div class="stats-row">
+
+          <!-- Total Balance -->
+          <div class="stat-card" style="--stat-color: var(--accent); --stat-bg: var(--accent-dim);">
+            <div class="stat-header">
+              <span class="stat-label">Total Balance</span>
+              <div style="display:flex;align-items:center;gap:8px">
+                <button class="balance-toggle-btn" id="balanceToggleBtn" title="Show/hide balances" onclick="toggleBalances()">
+                  <i class="fa-solid fa-eye" id="balanceToggleIcon"></i>
+                </button>
+                <div class="stat-icon"><i class="fa-solid fa-wallet"></i></div>
+              </div>
+            </div>
+            <div class="stat-value balance-value">
+              <span style="font-size:1rem; opacity:0.6; margin-right:2px"><%= user.basecurrencysymbol || '$' %></span><%= totalBalance %>
+            </div>
+            <div class="stat-footer">
+              <span><%= allaccounts.length %> account<%= allaccounts.length !== 1 ? 's' : '' %></span>
+            </div>
+          </div>
+
+          <!-- Account Number -->
+          <div class="stat-card" style="--stat-color: var(--info); --stat-bg: var(--info-dim);">
+            <div class="stat-header">
+              <span class="stat-label">Account No.</span>
+              <div class="stat-icon"><i class="fa-solid fa-hashtag"></i></div>
+            </div>
+            <div class="stat-value" style="font-size:1.1rem; letter-spacing:0.05em;">
+              <%= user.accountNumber ? String(user.accountNumber).replace(/(\d{4})(?=\d)/g, '$1 ') : '—' %>
+            </div>
+            <div class="stat-footer">
+              Routing: <span style="font-family:var(--font-mono); margin-left:4px"><%= user.routingNumber || '—' %></span>
+            </div>
+          </div>
+
+          <!-- Credit Score -->
+          <div class="stat-card" style="--stat-color: var(--gold); --stat-bg: var(--gold-dim);">
+            <div class="stat-header">
+              <span class="stat-label">Credit Score</span>
+              <div class="stat-icon"><i class="fa-solid fa-star"></i></div>
+            </div>
+            <div class="stat-value" style="color:var(--gold)"><%= user.creditscore || 850 %></div>
+            <div class="stat-footer">
+              <span class="stat-change up">
+                <i class="fa-solid fa-caret-up"></i>
+                <%= user.creditscore >= 750 ? 'Excellent' : user.creditscore >= 670 ? 'Good' : user.creditscore >= 580 ? 'Fair' : 'Poor' %>
+              </span>
+            </div>
+          </div>
+
+          <!-- Account Status -->
+          <% const isActive = user.accountStatus === 'Active'; %>
+          <div class="stat-card" style="--stat-color: var(<%= isActive ? '--success' : '--danger' %>); --stat-bg: var(<%= isActive ? '--success-dim' : '--danger-dim' %>);">
+            <div class="stat-header">
+              <span class="stat-label">Account Status</span>
+              <div class="stat-icon"><i class="fa-solid fa-<%= isActive ? 'circle-check' : 'circle-xmark' %>"></i></div>
+            </div>
+            <div class="stat-value" style="font-size:1.1rem; color:var(<%= isActive ? '--success' : '--danger' %>)">
+              <%= user.accountStatus || 'Not Active' %>
+            </div>
+            <div class="stat-footer">
+              <span class="status-dot <%= isActive ? 'active' : 'danger' %>"></span>
+              KYC:
+              <span style="margin-left:4px; color:var(<%= user.verificationstatus === 'Verified' ? '--success' : '--warning' %>); font-weight:600">
+                <%= user.verificationstatus %>
+              </span>
+            </div>
+          </div>
+
+          <!-- Recent Transactions -->
+          <div class="stat-card" style="--stat-color: var(--info); --stat-bg: var(--info-dim);">
+            <div class="stat-header">
+              <span class="stat-label">Transactions</span>
+              <div class="stat-icon"><i class="fa-solid fa-arrow-right-arrow-left"></i></div>
+            </div>
+            <div class="stat-value"><%= recentransactions ? recentransactions.length : 0 %></div>
+            <div class="stat-footer">
+              Recent activity
+              <a href="/user/transaction-history" style="color:var(--accent); margin-left:4px; font-size:0.75rem; font-weight:600">View all →</a>
+            </div>
+          </div>
+
+        </div><!-- /.stats-row -->
+
+        <!-- ── MY ACCOUNTS STRIP ──────────────────────────────── -->
+        <div class="section-card">
+          <div class="section-head">
+            <div class="section-title"><i class="fa-solid fa-building-columns"></i> My Accounts</div>
+            <!-- Changed: links to all accounts page -->
+            <a href="/user/my-accounts" class="section-action">All accounts <i class="fa-solid fa-arrow-right"></i></a>
+          </div>
+          <div class="accounts-strip" id="accountsStrip">
+            <% const acctClasses = ['primary','secondary','tertiary']; %>
+            <% allaccounts.forEach(function(acct, idx) { %>
+              <div class="acct-card <%= acctClasses[idx % acctClasses.length] %>">
+                <div class="acct-chip">
+                  <div class="acct-chip-icon"><i class="fa-solid fa-microchip"></i></div>
+                  <span class="acct-type-badge"><%= acct.accountType %></span>
+                </div>
+                <div>
+                  <div class="acct-balance balance-value">
+                    <span class="currency"><%= user.basecurrencysymbol || '$' %></span>
+                    <%= parseFloat(acct.accountWallet).toLocaleString(undefined, { minimumFractionDigits:2, maximumFractionDigits:2 }) %>
+                  </div>
+                  <div style="font-size:0.72rem; color:rgba(255,255,255,0.4); margin-top:3px"><%= acct.displayName || 'Account' %></div>
+                </div>
+                <div class="acct-footer">
+                  <span class="acct-number">•••• <%= String(acct.accountNumber).slice(-4) %></span>
+                  <% if (acct.isDefault) { %><div class="acct-default-dot" title="Primary Account"></div><% } %>
+                </div>
+              </div>
+            <% }); %>
+
+            <!-- Changed: Add account opens modal -->
+            <button type="button" class="acct-card acct-add" onclick="openModal('addAccountModal')">
+              <div class="acct-add-icon"><i class="fa-solid fa-plus"></i></div>
+              <span class="acct-add-label">Add Account</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- ── QUICK ACTIONS ──────────────────────────────────── -->
+        <div class="section-card">
+          <div class="section-head">
+            <div class="section-title"><i class="fa-solid fa-bolt"></i> Quick Actions</div>
+          </div>
+          <div class="quick-actions">
+            <a href="/user/intrabank-transfer"    class="quick-action-btn"><div class="qa-icon"><i class="fa-solid fa-building-columns"></i></div><span class="qa-label">Intra-Bank</span></a>
+            <a href="/user/interbank-transfer"    class="quick-action-btn"><div class="qa-icon"><i class="fa-solid fa-right-left"></i></div><span class="qa-label">Inter-Bank</span></a>
+            <a href="/user/international-transfer" class="quick-action-btn"><div class="qa-icon"><i class="fa-solid fa-earth-americas"></i></div><span class="qa-label">Wire Transfer</span></a>
+            <a href="/user/deposit-crypto"        class="quick-action-btn"><div class="qa-icon"><i class="fa-brands fa-bitcoin"></i></div><span class="qa-label">Crypto Deposit</span></a>
+            <a href="/user/deposit"               class="quick-action-btn"><div class="qa-icon"><i class="fa-solid fa-piggy-bank"></i></div><span class="qa-label">Bank Deposit</span></a>
+            <a href="/user/investments"           class="quick-action-btn"><div class="qa-icon"><i class="fa-solid fa-chart-line"></i></div><span class="qa-label">Invest</span></a>
+            <a href="/user/cards"                 class="quick-action-btn"><div class="qa-icon"><i class="fa-regular fa-credit-card"></i></div><span class="qa-label">My Cards</span></a>
+            <a href="/user/loan"                  class="quick-action-btn"><div class="qa-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div><span class="qa-label">Loans</span></a>
+            <a href="/user/pay-bills"             class="quick-action-btn"><div class="qa-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div><span class="qa-label">Pay Bills</span></a>
+            <a href="/user/statement/download"    class="quick-action-btn"><div class="qa-icon" style="background:var(--danger-dim);color:var(--danger)"><i class="fa-solid fa-file-pdf"></i></div><span class="qa-label">Statement</span></a>
+          </div>
+        </div>
+
+        <!-- ── DASHBOARD BODY ─────────────────────────────────── -->
+        <div class="dashboard-body">
+
+          <div class="dashboard-main">
+
+            <!-- Cash flow chart -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-title"><i class="fa-solid fa-chart-area"></i> Cash Flow</div>
+                <a href="/user/transaction-history" class="section-action">View history <i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+              <div class="chart-controls">
+                <% [['7d','7D'],['1m','1M'],['3m','3M'],['6m','6M'],['1y','1Y']].forEach(function(r) { %>
+                  <a href="/dashboard?range=<%= r[0] %>" class="range-btn <%= selectedRange === r[0] ? 'active' : '' %>"><%= r[1] %></a>
+                <% }); %>
+              </div>
+              <div class="chart-wrapper">
+                <canvas id="cashflowChart" height="240"></canvas>
+              </div>
+            </div>
+
+            <!-- Recent transactions -->
+            <div class="section-card">
+              <div class="section-head">
+                <div class="section-title"><i class="fa-solid fa-clock-rotate-left"></i> Recent Transactions</div>
+                <a href="/user/transaction-history" class="section-action">All transactions <i class="fa-solid fa-arrow-right"></i></a>
+              </div>
+              <div class="tx-list">
+                <% if (recentransactions && recentransactions.length > 0) { %>
+                  <% recentransactions.forEach(function(tx) {
+                    const isCredit   = ['Credit','Deposit'].includes(tx.transactionType);
+                    const iconClass  = tx.transactionType === 'Credit'  ? 'credit'   :
+                                       tx.transactionType === 'Deposit' ? 'deposit'  :
+                                       tx.transactionType === 'Debit'   ? 'debit'    : 'transfer';
+                    const iconName   = tx.transactionType === 'Credit'  ? 'arrow-down'  :
+                                       tx.transactionType === 'Deposit' ? 'circle-down' :
+                                       tx.transactionType === 'Debit'   ? 'arrow-up'    : 'right-left';
+                    const amtClass   = isCredit ? 'credit' : tx.status === 'Pending' ? 'pending' : 'debit';
+                    const amtPrefix  = isCredit ? '+' : '-';
+                    const displayName = tx.receiverAccountName || tx.senderAccountName || tx.description || tx.transactionType;
+                    const txDate     = new Date(tx.date);
+                  %>
+                  <a href="/user/transaction/<%= tx._id %>/receipt" class="tx-item">
+                    <div class="tx-icon <%= iconClass %>">
+                      <i class="fa-solid fa-<%= iconName %>"></i>
+                    </div>
+                    <div class="tx-info">
+                      <div class="tx-name"><%= displayName.substring(0,32) %></div>
+                      <div class="tx-meta">
+                        <span class="badge badge-<%= tx.status === 'Successful' ? 'success' : tx.status === 'Pending' ? 'warning' : 'danger' %>" style="padding:1px 6px; font-size:0.65rem">
+                          <%= tx.status %>
+                        </span>
+                        <% if (tx.transferType) { %><span>· <%= tx.transferType %></span><% } %>
+                        <span class="tx-ref">· <%= tx.refCode ? tx.refCode.substring(0,8) : '—' %></span>
+                      </div>
+                    </div>
+                    <div class="tx-right">
+                      <div class="tx-amount <%= amtClass %>">
+                        <%= amtPrefix %><%= user.basecurrencysymbol || '$' %><%= parseFloat(tx.amount).toLocaleString(undefined, { minimumFractionDigits:2 }) %>
+                      </div>
+                      <div class="tx-date">
+                        <%= txDate.toLocaleDateString('en-US', { month:'short', day:'numeric' }) %> · <%= txDate.toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' }) %>
+                      </div>
+                    </div>
+                  </a>
+                  <% }); %>
+                <% } else { %>
+                  <div class="tx-empty">
+                    <i class="fa-solid fa-inbox"></i>
+                    No recent transactions
+                  </div>
+                <% } %>
+              </div>
+            </div>
+
+          </div><!-- /.dashboard-main -->
+
+          <!-- RIGHT: widgets -->
+          <div class="dashboard-aside">
+
+            <div class="widget total-balance-widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-wallet"></i> Total Portfolio</span>
+              </div>
+              <div class="widget-body">
+                <div class="tbw-label">Combined balance</div>
+                <div class="tbw-amount balance-value"><%= user.basecurrencysymbol || '$' %><%= totalBalance %></div>
+                <div class="tbw-accounts">
+                  <% allaccounts.slice(0,3).forEach(function(acct) { %>
+                    <div class="tbw-acct-pill">
+                      <div class="dot"></div>
+                      <%= acct.displayName || acct.accountType %>
+                    </div>
+                  <% }); %>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-star"></i> Credit Score</span>
+                <span class="badge badge-<%= user.creditscore >= 750 ? 'success' : user.creditscore >= 670 ? 'warning' : 'danger' %>">
+                  <%= user.creditscore >= 750 ? 'Excellent' : user.creditscore >= 670 ? 'Good' : user.creditscore >= 580 ? 'Fair' : 'Poor' %>
+                </span>
+              </div>
+              <div class="widget-body">
+                <div class="credit-score-wrap">
+                  <div class="score-ring">
+                    <svg viewBox="0 0 100 100">
+                      <circle class="score-ring-bg"   cx="50" cy="50" r="40" />
+                      <circle class="score-ring-fill" cx="50" cy="50" r="40" id="scoreRingFill"
+                        stroke="<%= user.creditscore >= 750 ? 'var(--accent)' : user.creditscore >= 670 ? 'var(--gold)' : 'var(--danger)' %>" />
+                    </svg>
+                    <div class="score-ring-text">
+                      <span class="score-number"><%= user.creditscore || 850 %></span>
+                      <span class="score-label-sm">/ 850</span>
+                    </div>
+                  </div>
+                  <span class="score-rating badge badge-<%= user.creditscore >= 750 ? 'success' : user.creditscore >= 670 ? 'warning' : 'danger' %>">
+                    <%= user.creditscore >= 750 ? 'Excellent' : user.creditscore >= 670 ? 'Good' : user.creditscore >= 580 ? 'Fair' : 'Poor' %>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-id-card"></i> Account Details</span>
+                <a href="/user/profile" style="font-size:0.75rem; color:var(--accent); text-decoration:none; font-weight:600">Edit</a>
+              </div>
+              <div class="widget-body">
+                <div class="acct-status-row">
+                  <span class="asr-label">Account Type</span>
+                  <span class="asr-value"><%= mainaccount ? mainaccount.accountType : '—' %></span>
+                </div>
+                <div class="acct-status-row">
+                  <span class="asr-label">Account No.</span>
+                  <span class="asr-value" style="font-size:0.75rem"><%= user.accountNumber %></span>
+                </div>
+                <div class="acct-status-row">
+                  <span class="asr-label">Routing No.</span>
+                  <span class="asr-value" style="font-size:0.75rem"><%= user.routingNumber %></span>
+                </div>
+                <div class="acct-status-row">
+                  <span class="asr-label">Currency</span>
+                  <span class="asr-value"><%= user.basecurrency || '—' %> (<%= user.basecurrencysymbol || '—' %>)</span>
+                </div>
+                <div class="acct-status-row">
+                  <span class="asr-label">KYC Status</span>
+                  <span class="badge badge-<%= user.verificationstatus === 'Verified' ? 'success' : user.verificationstatus === 'Pending' ? 'warning' : 'danger' %>" style="font-size:0.68rem">
+                    <%= user.verificationstatus %>
+                  </span>
+                </div>
+                <div class="acct-status-row">
+                  <span class="asr-label">Transactions</span>
+                  <span class="badge badge-<%= user.allowTransactions === 'Yes' ? 'success' : 'danger' %>" style="font-size:0.68rem">
+                    <%= user.allowTransactions === 'Yes' ? 'Enabled' : 'Disabled' %>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-chart-line"></i> Investments</span>
+                <a href="/user/investments" style="font-size:0.75rem; color:var(--accent); text-decoration:none; font-weight:600">View all</a>
+              </div>
+              <div class="widget-body">
+                <div style="text-align:center; padding:12px 0;">
+                  <a href="/user/investments" class="btn btn-outline btn-sm" style="width:100%; justify-content:center;">
+                    <i class="fa-solid fa-chart-line"></i> Manage Investments
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div class="widget">
+              <div class="widget-head">
+                <span class="widget-title"><i class="fa-solid fa-file-invoice"></i> Statement</span>
+              </div>
+              <div class="widget-body">
+                <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:12px">
+                  Download a PDF of your transaction history with date filters.
+                </p>
+                <div style="display:flex; flex-direction:column; gap:8px;">
+                  <div class="form-group" style="margin-bottom:0">
+                    <label class="form-label">From</label>
+                    <input type="date" class="form-control" id="stmtFrom" />
+                  </div>
+                  <div class="form-group" style="margin-bottom:0">
+                    <label class="form-label">To</label>
+                    <input type="date" class="form-control" id="stmtTo" />
+                  </div>
+                  <button onclick="downloadStatement()" class="btn btn-primary btn-sm" style="width:100%; justify-content:center; margin-top:4px">
+                    <i class="fa-solid fa-download"></i> Download PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /.dashboard-aside -->
+
+        </div><!-- /.dashboard-body -->
+
+        <!-- KYC ALERT -->
+        <% if (user.verificationstatus !== 'Verified') { %>
+          <div class="kyc-alert">
+            <div class="kyc-alert-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <div class="kyc-alert-body">
+              <div class="kyc-alert-title">
+                <% if (user.verificationstatus === 'Pending') { %>KYC Verification Pending Review<% } else { %>Account Verification Required<% } %>
+              </div>
+              <div class="kyc-alert-msg">
+                <% if (user.verificationstatus === 'Pending') { %>Your documents are under review. You'll be notified once approved.<% } else { %>Submit your identity documents to unlock full banking features.<% } %>
+              </div>
+            </div>
+            <% if (user.verificationstatus !== 'Pending') { %>
+              <a href="/user/kyc" class="btn btn-sm" style="background:var(--warning); color:#000; flex-shrink:0;">Verify Now</a>
+            <% } %>
+          </div>
+        <% } %>
+
+      </div><!-- /.dashboard-page -->
+    </div><!-- /.page-inner -->
+  </div><!-- /.main-content -->
+
+
+  <!-- ═══════════════════════ MODALS ═══════════════════════════ -->
+
+  <!-- Add Account Modal -->
+  <div class="custom-modal-overlay" id="addAccountModal" onclick="handleOverlayClick(event, 'addAccountModal')">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-plus"></i>
+          Add New Account
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('addAccountModal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <form action="/dashboard/create-account" method="POST">
+        <div class="custom-modal-body">
+          <div class="form-group">
+            <label class="form-label">Account Name / Label</label>
+            <input type="text" class="form-control" name="displayName" placeholder="e.g. Savings, Business" required />
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label class="form-label">Account Type</label>
+            <select class="form-control" name="accountType" required>
+              <option value="Savings">Savings</option>
+              <option value="Current">Current</option>
+              <option value="Checking">Checking</option>
+              <option value="Fixed Deposit">Fixed Deposit</option>
+            </select>
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('addAccountModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            <i class="fa-solid fa-plus"></i> Create Account
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Logout Confirmation Modal -->
+  <div class="custom-modal-overlay logout-modal" id="logoutModal" onclick="handleOverlayClick(event, 'logoutModal')">
+    <div class="custom-modal" style="max-width:400px">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+          Sign Out
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('logoutModal')">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="custom-modal-body" style="text-align:center; padding:28px 24px;">
+        <div style="width:60px;height:60px;border-radius:50%;background:var(--danger-dim);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.5rem;color:var(--danger)">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i>
+        </div>
+        <p style="font-size:0.95rem;font-weight:600;color:var(--text-primary);margin-bottom:6px">Are you sure you want to sign out?</p>
+        <p style="font-size:0.82rem;color:var(--text-secondary)">You'll need to log in again to access your account.</p>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('logoutModal')">Stay Logged In</button>
+        <a href="/logout" class="btn btn-danger btn-sm">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Yes, Sign Out
+        </a>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════════════════ SCRIPTS ══════════════════════════ -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="/script/partials/navbar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+<script>
+  /* ── Modal helpers ─────────────────────────────────────────── */
+  function openModal(id) {
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function handleOverlayClick(e, id) {
+    if (e.target === e.currentTarget) closeModal(id);
+  }
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.custom-modal-overlay.open').forEach(function(m) {
+        m.classList.remove('open');
+      });
+      document.body.style.overflow = '';
+    }
+  });
+
+  /* ── Balance visibility toggle ─────────────────────────────── */
+  var balancesVisible = localStorage.getItem('balancesVisible') !== 'false';
+
+  function applyBalanceVisibility() {
+    var els  = document.querySelectorAll('.balance-value');
+    var icon = document.getElementById('balanceToggleIcon');
+    els.forEach(function(el) {
+      el.classList.toggle('balance-hidden', !balancesVisible);
+    });
+    if (icon) {
+      icon.className = balancesVisible ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash';
+    }
+  }
+
+  function toggleBalances() {
+    balancesVisible = !balancesVisible;
+    localStorage.setItem('balancesVisible', balancesVisible);
+    applyBalanceVisibility();
+  }
+
+  applyBalanceVisibility();
+
+  /* ── Cash flow chart ───────────────────────────────────────── */
+  var rawData = <%- cashflowData %>;
+
+  function isDark() {
+    return document.documentElement.getAttribute('data-theme') !== 'light';
+  }
+  function getChartColors() {
+    return {
+      grid:    isDark() ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)',
+      tick:    isDark() ? '#8892a4' : '#6b7280',
+      tooltip: isDark() ? '#131b2e' : '#ffffff'
+    };
+  }
+
+  var ctx   = document.getElementById('cashflowChart').getContext('2d');
+  var chart = new Chart(ctx, {
+    type: 'line',
+    data: rawData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          position: 'top',
+          labels: { color: getChartColors().tick, font: { family: "'DM Sans', sans-serif", size: 12 }, usePointStyle: true, pointStyleWidth: 8, padding: 18 }
+        },
+        tooltip: {
+          backgroundColor: getChartColors().tooltip,
+          titleColor: isDark() ? '#e8eaf2' : '#111827',
+          bodyColor:  isDark() ? '#8892a4'  : '#4b5563',
+          borderColor: isDark() ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+          borderWidth: 1, cornerRadius: 10, padding: 12,
+          titleFont: { family: "'DM Sans', sans-serif", weight: '700', size: 12 },
+          bodyFont:  { family: "'DM Mono', monospace", size: 12 },
+          callbacks: {
+            label: function(ctx) {
+              return ' ' + ctx.dataset.label + ': <%- user.basecurrencysymbol || "$" %>' +
+                ctx.parsed.y.toLocaleString(undefined, { minimumFractionDigits: 2 });
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid:  { color: getChartColors().grid, drawBorder: false },
+          ticks: { color: getChartColors().tick, font: { family: "'DM Sans', sans-serif", size: 11 }, maxTicksLimit: 10 }
+        },
+        y: {
+          grid:  { color: getChartColors().grid, drawBorder: false },
+          ticks: {
+            color: getChartColors().tick,
+            font:  { family: "'DM Mono', monospace", size: 11 },
+            callback: function(v) {
+              return '<%- user.basecurrencysymbol || "$" %>' + (v >= 1000 ? (v / 1000).toFixed(1) + 'k' : v);
+            }
+          }
+        }
+      }
+    }
+  });
+
+  window.__charts = window.__charts || [];
+  window.__charts.push(chart);
+
+  new MutationObserver(function() {
+    var c = getChartColors();
+    chart.options.plugins.legend.labels.color = c.tick;
+    chart.options.scales.x.grid.color  = c.grid;
+    chart.options.scales.x.ticks.color = c.tick;
+    chart.options.scales.y.grid.color  = c.grid;
+    chart.options.scales.y.ticks.color = c.tick;
+    chart.update();
+  }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  /* ── Credit score ring ─────────────────────────────────────── */
+  (function() {
+    var score = <%= user.creditscore || 850 %>;
+    var circumference = 2 * Math.PI * 40;
+    var fill = document.getElementById('scoreRingFill');
+    if (fill) {
+      fill.style.strokeDasharray  = circumference;
+      fill.style.strokeDashoffset = circumference * (1 - Math.min(score / 850, 1));
+    }
+  })();
+
+  /* ── Statement download ────────────────────────────────────── */
+  function downloadStatement() {
+    var from = document.getElementById('stmtFrom').value;
+    var to   = document.getElementById('stmtTo').value;
+    var url  = '/user/statement/download';
+    var p    = [];
+    if (from) p.push('from=' + from);
+    if (to)   p.push('to='   + to);
+    if (p.length) url += '?' + p.join('&');
+    window.open(url, '_blank');
+  }
+  </script>
+
+</body>
+</html>

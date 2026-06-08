@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Investment Details | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/investments.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/admin/admin.active-investments'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <!-- Back + Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <a href="/admin/admin.<%= investment.status === 'Active' ? 'active' : 'inactive' %>-investments" class="inv-back-link">
+              <i class="fa-solid fa-arrow-left"></i> Back to <%= investment.status === 'Active' ? 'Active' : 'Closed' %> Investments
+            </a>
+            <h1 class="page-title mt-8">Investment Details</h1>
+            <p class="page-subtitle">
+              <%= client.firstname %> <%= client.lastname %> &mdash; <span class="inv-package-badge"><%= investment.packagetype || 'N/A' %></span>
+            </p>
+          </div>
+          <div class="page-header-right">
+            <span class="badge <%= investment.status === 'Active' ? 'badge-success' : 'badge-info' %>" style="font-size:0.85rem;padding:8px 16px;">
+              <% if (investment.status === 'Active') { %><i class="fa-solid fa-circle-dot"></i><% } else { %><i class="fa-solid fa-check-circle"></i><% } %>
+              <%= investment.status %>
+            </span>
+          </div>
+        </div>
+
+        <div class="inv-show-layout">
+
+          <!-- Left: Investment Info -->
+          <div class="inv-show-main">
+
+            <!-- Stat Cards -->
+            <div class="inv-stat-row">
+              <div class="inv-stat-card">
+                <span class="inv-stat-label">Invested Amount</span>
+                <span class="inv-stat-value amount">${<%= (parseFloat(investment.investedamount)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %>}</span>
+              </div>
+              <div class="inv-stat-card accent-border">
+                <span class="inv-stat-label">Current Profit</span>
+                <span class="inv-stat-value amount text-accent">${<%= (parseFloat(investment.investmentprofit)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %>}</span>
+              </div>
+              <div class="inv-stat-card">
+                <span class="inv-stat-label">ROI</span>
+                <span class="inv-stat-value"><%= investment.roi || '—' %></span>
+              </div>
+              <div class="inv-stat-card">
+                <span class="inv-stat-label">Duration</span>
+                <span class="inv-stat-value"><%= investment.duration || '—' %></span>
+              </div>
+            </div>
+
+            <!-- Details Card -->
+            <div class="card inv-details-card">
+              <div class="inv-details-grid">
+                <div class="inv-detail-row">
+                  <span class="inv-detail-label"><i class="fa-solid fa-box"></i> Package</span>
+                  <span class="inv-detail-value"><%= investment.packagetype || '—' %></span>
+                </div>
+                <div class="inv-detail-row">
+                  <span class="inv-detail-label"><i class="fa-solid fa-calendar-plus"></i> Start Date</span>
+                  <span class="inv-detail-value"><%= investment.startDate ? new Date(investment.startDate).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : '—' %></span>
+                </div>
+                <div class="inv-detail-row">
+                  <span class="inv-detail-label"><i class="fa-solid fa-calendar-check"></i> End Date</span>
+                  <span class="inv-detail-value"><%= investment.endDate ? new Date(investment.endDate).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}) : 'Still Running' %></span>
+                </div>
+                <div class="inv-detail-row">
+                  <span class="inv-detail-label"><i class="fa-solid fa-circle-info"></i> Status</span>
+                  <span class="inv-detail-value">
+                    <span class="badge <%= investment.status === 'Active' ? 'badge-success' : investment.status === 'Pending' ? 'badge-warning' : 'badge-info' %>">
+                      <%= investment.status %>
+                    </span>
+                  </span>
+                </div>
+                <div class="inv-detail-row">
+                  <span class="inv-detail-label"><i class="fa-solid fa-id-card"></i> Investment ID</span>
+                  <span class="inv-detail-value font-mono" style="font-size:0.8rem;"><%= investment._id %></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions (only for active investments) -->
+            <% if (investment.status === 'Active') { %>
+            <div class="card inv-actions-card">
+              <h3 class="inv-actions-title"><i class="fa-solid fa-sliders"></i> Investment Actions</h3>
+              <div class="inv-actions-row">
+
+                <!-- Add Profit -->
+                <button class="btn btn-primary" onclick="openModal('addProfitModal')">
+                  <i class="fa-solid fa-plus-circle"></i> Add Profit
+                </button>
+
+                <!-- End Investment -->
+                <button class="btn btn-danger" onclick="openModal('endInvestModal')">
+                  <i class="fa-solid fa-flag-checkered"></i> End Investment
+                </button>
+
+              </div>
+            </div>
+            <% } %>
+
+          </div>
+
+          <!-- Right: Investor Info -->
+          <div class="inv-show-side">
+            <div class="card inv-investor-card">
+              <div class="inv-investor-header">
+                <div class="inv-investor-avatar">
+                  <% if (client.profilepicture && client.profilepicture.length > 0) { %>
+                    <img src="<%= client.profilepicture[0].url %>" alt="" />
+                  <% } else { %>
+                    <%= (client.firstname||'?')[0].toUpperCase() %>
+                  <% } %>
+                </div>
+                <div>
+                  <div class="inv-investor-name"><%= client.firstname %> <%= client.lastname %></div>
+                  <div class="inv-investor-email"><%= client.email %></div>
+                </div>
+              </div>
+              <div class="inv-investor-details">
+                <div class="inv-detail-row">
+                  <span class="inv-detail-label">Account #</span>
+                  <span class="inv-detail-value font-mono"><%= client.accountNumber || '—' %></span>
+                </div>
+                <div class="inv-detail-row">
+                  <span class="inv-detail-label">Country</span>
+                  <span class="inv-detail-value"><%= client.country || '—' %></span>
+                </div>
+                <div class="inv-detail-row">
+                  <span class="inv-detail-label">Acc. Status</span>
+                  <span class="inv-detail-value">
+                    <span class="badge <%= client.accountStatus === 'Active' ? 'badge-success' : 'badge-warning' %>"><%= client.accountStatus %></span>
+                  </span>
+                </div>
+              </div>
+              <a href="/admin/admin.user/<%= client._id %>" class="btn btn-ghost btn-sm w-full" style="margin-top:16px;justify-content:center;">
+                <i class="fa-solid fa-external-link-alt"></i> View Profile
+              </a>
+            </div>
+          </div>
+
+        </div><!-- /.inv-show-layout -->
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════ ADD PROFIT MODAL ══════════════ -->
+  <div class="custom-modal-overlay" id="addProfitModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title">
+          <i class="fa-solid fa-plus-circle"></i>
+          Add Investment Profit
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('addProfitModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form action="/admin/admin.investment/<%= client._id %>/<%= investment._id %>/increase?_method=PUT" method="POST">
+        <div class="custom-modal-body">
+          <p style="color:var(--text-secondary);margin-bottom:16px;font-size:0.9rem;">
+            Current profit: <strong class="text-accent amount">$<%= (parseFloat(investment.investmentprofit)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+          </p>
+          <div class="form-group">
+            <label class="form-label">Amount to Add (USD)</label>
+            <input type="number" name="addprofits" class="form-control" placeholder="e.g. 500.00" step="0.01" min="0.01" required />
+          </div>
+        </div>
+        <div class="custom-modal-footer">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('addProfitModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm"><i class="fa-solid fa-plus"></i> Add Profit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ══════════════ END INVESTMENT MODAL ══════════════ -->
+  <div class="custom-modal-overlay" id="endInvestModal">
+    <div class="custom-modal">
+      <div class="custom-modal-header">
+        <div class="custom-modal-title" style="color:var(--danger);">
+          <i class="fa-solid fa-flag-checkered" style="background:var(--danger-dim);color:var(--danger);"></i>
+          End Investment
+        </div>
+        <button class="custom-modal-close" onclick="closeModal('endInvestModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="custom-modal-body">
+        <p style="color:var(--text-secondary);font-size:0.9rem;">
+          You are about to <strong style="color:var(--danger)">end this investment</strong>. The current profit of
+          <strong class="text-accent amount">$<%= (parseFloat(investment.investmentprofit)||0).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) %></strong>
+          will be credited to the investor's account. This cannot be undone.
+        </p>
+        <div class="inv-confirm-box">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+          <span>The investment will be marked as <strong>Completed</strong>.</span>
+        </div>
+      </div>
+      <div class="custom-modal-footer">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('endInvestModal')">Cancel</button>
+        <form action="/admin/admin.investment/<%= client._id %>/<%= investment._id %>/endinvestment?_method=PUT" method="POST" style="margin:0;">
+          <button type="submit" class="btn btn-danger btn-sm"><i class="fa-solid fa-flag-checkered"></i> End Investment</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    document.querySelectorAll('.custom-modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>

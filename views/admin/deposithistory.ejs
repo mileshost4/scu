@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deposit History | <%= websiteName %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/deposits.css" />
+</head>
+<body>
+
+  <%
+    locals.currentPath = '/admin/admin.deposit-history';
+  %>
+
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="admin-dashboard fade-in">
+
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Deposit History</h1>
+            <p class="page-subtitle">All confirmed crypto deposits and account upgrade payments.</p>
+          </div>
+          <div class="page-header-right">
+            <a href="/admin/admin.deposit-requests" class="btn btn-ghost btn-sm">
+              <i class="fa-solid fa-circle-dot"></i> Pending Requests
+            </a>
+            <a href="/admin/admin.depositmethods" class="btn btn-primary btn-sm">
+              <i class="fa-solid fa-wallet"></i> Deposit Methods
+            </a>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="history-summary">
+          <div class="summary-card">
+            <div class="summary-icon" style="background: var(--success-dim); color: var(--success);">
+              <i class="fa-solid fa-coins"></i>
+            </div>
+            <div class="summary-info">
+              <span class="summary-label">Crypto Deposits</span>
+              <span class="summary-value"><%= deposits.length %></span>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon" style="background: var(--gold-dim); color: var(--gold);">
+              <i class="fa-solid fa-arrow-up-right-dots"></i>
+            </div>
+            <div class="summary-info">
+              <span class="summary-label">Upgrade Payments</span>
+              <span class="summary-value"><%= upgradefee.length %></span>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon" style="background: var(--info-dim); color: var(--info);">
+              <i class="fa-solid fa-money-bill-wave"></i>
+            </div>
+            <div class="summary-info">
+              <span class="summary-label">Total Volume</span>
+              <span class="summary-value amount">
+                $<%= [...deposits, ...upgradefee].reduce((sum, d) => sum + parseFloat(d.amount || 0), 0).toLocaleString(undefined, {minimumFractionDigits: 2}) %>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Nav -->
+        <div class="deposit-tabs">
+          <button class="deposit-tab active" data-tab="hist-deposits">
+            <i class="fa-solid fa-coins"></i> Crypto Deposits
+            <span class="tab-count">(<%= deposits.length %>)</span>
+          </button>
+          <button class="deposit-tab" data-tab="hist-upgrades">
+            <i class="fa-solid fa-arrow-up-right-dots"></i> Upgrade Fees
+            <span class="tab-count">(<%= upgradefee.length %>)</span>
+          </button>
+        </div>
+
+        <!-- Deposits History -->
+        <div class="tab-panel active" id="tab-hist-deposits">
+          <% if (deposits.length === 0) { %>
+            <div class="empty-state">
+              <div class="empty-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+              <h3>No Deposit History</h3>
+              <p>No confirmed crypto deposits found.</p>
+            </div>
+          <% } else { %>
+            <div class="history-table-wrap">
+              <table class="history-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                    <th>Wallet / Tracker</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for (let dep of deposits) { %>
+                    <%
+                      const depUser = clients.find(c => String(c._id) === String(dep.validateUser));
+                    %>
+                    <tr>
+                      <td>
+                        <div class="table-user">
+                          <div class="table-avatar">
+                            <% if (depUser && depUser.profilepicture && depUser.profilepicture.length > 0) { %>
+                              <img src="<%= depUser.profilepicture[0].url %>" alt="avatar" />
+                            <% } else { %>
+                              <span><%= depUser ? depUser.firstname.charAt(0).toUpperCase() : '?' %></span>
+                            <% } %>
+                          </div>
+                          <span class="table-name"><%= depUser ? `${depUser.firstname} ${depUser.lastname}` : 'Unknown' %></span>
+                        </div>
+                      </td>
+                      <td><span class="method-tag"><%= dep.transactionmethod || 'Crypto' %></span></td>
+                      <td>
+                        <span class="amount text-credit">
+                          +<%= depUser ? depUser.basecurrencysymbol || '$' : '$' %><%= parseFloat(dep.amount).toLocaleString(undefined, {minimumFractionDigits: 2}) %>
+                        </span>
+                      </td>
+                      <td>
+                        <span class="wallet-id font-mono">
+                          <%= dep.cryptoWalletId ? dep.cryptoWalletId.substring(0, 16) + '…' : '—' %>
+                        </span>
+                      </td>
+                      <td class="date-cell"><%= new Date(dep.transactiondate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
+                      <td>
+                        <% if (dep.status === 'Successful') { %>
+                          <span class="badge badge-success">Successful</span>
+                        <% } else if (dep.status === 'Unsuccessful') { %>
+                          <span class="badge badge-danger">Declined</span>
+                        <% } else { %>
+                          <span class="badge badge-warning">Pending</span>
+                        <% } %>
+                      </td>
+                      <td>
+                        <a href="/admin/admin.view-deposit/<%= dep._id %>" class="btn btn-ghost btn-sm">
+                          <i class="fa-solid fa-eye"></i> View
+                        </a>
+                      </td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+
+        <!-- Upgrade Fees History -->
+        <div class="tab-panel" id="tab-hist-upgrades">
+          <% if (upgradefee.length === 0) { %>
+            <div class="empty-state">
+              <div class="empty-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+              <h3>No Upgrade History</h3>
+              <p>No confirmed upgrade fee payments found.</p>
+            </div>
+          <% } else { %>
+            <div class="history-table-wrap">
+              <table class="history-table">
+                <thead>
+                  <tr>
+                    <th>User</th>
+                    <th>Upgrade Tier</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% for (let dep of upgradefee) { %>
+                    <%
+                      const depUser = clients.find(c => String(c._id) === String(dep.validateUser));
+                    %>
+                    <tr>
+                      <td>
+                        <div class="table-user">
+                          <div class="table-avatar upgrade">
+                            <% if (depUser && depUser.profilepicture && depUser.profilepicture.length > 0) { %>
+                              <img src="<%= depUser.profilepicture[0].url %>" alt="avatar" />
+                            <% } else { %>
+                              <span><%= depUser ? depUser.firstname.charAt(0).toUpperCase() : '?' %></span>
+                            <% } %>
+                          </div>
+                          <span class="table-name"><%= depUser ? `${depUser.firstname} ${depUser.lastname}` : 'Unknown' %></span>
+                        </div>
+                      </td>
+                      <td><span class="tier-tag"><%= dep.narration || '—' %></span></td>
+                      <td>
+                        <span class="amount text-gold">
+                          +<%= depUser ? depUser.basecurrencysymbol || '$' : '$' %><%= parseFloat(dep.amount).toLocaleString(undefined, {minimumFractionDigits: 2}) %>
+                        </span>
+                      </td>
+                      <td class="date-cell"><%= new Date(dep.transactiondate).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
+                      <td>
+                        <% if (dep.status === 'Successful') { %>
+                          <span class="badge badge-success">Approved</span>
+                        <% } else if (dep.status === 'Unsuccessful') { %>
+                          <span class="badge badge-danger">Declined</span>
+                        <% } else { %>
+                          <span class="badge badge-warning">Pending</span>
+                        <% } %>
+                      </td>
+                      <td>
+                        <a href="/admin/admin.view-deposit/<%= dep._id %>" class="btn btn-ghost btn-sm">
+                          <i class="fa-solid fa-eye"></i> View
+                        </a>
+                      </td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+          <% } %>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    document.querySelectorAll('.deposit-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.deposit-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>

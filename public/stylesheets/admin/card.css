@@ -1,0 +1,340 @@
+/* ============================================================
+   ADMIN CARDS PAGE — cards.css
+   Extends theme.css. Do not redefine any variable already set.
+   ============================================================ */
+
+/* ── Page header ─────────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.page-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* ── Stats row ───────────────────────────────────────────────── */
+.cards-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.stat-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+}
+
+.stat-pill i {
+  color: var(--accent);
+  font-size: 0.9rem;
+}
+
+.stat-pill strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* ── Table card ──────────────────────────────────────────────── */
+.table-card {
+  overflow: hidden;
+}
+
+.table-toolbar {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.search-wrap {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 360px;
+}
+
+.search-wrap i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
+.search-input {
+  padding-left: 36px;
+}
+
+/* ── Table scroll ────────────────────────────────────────────── */
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Cards table ─────────────────────────────────────────────── */
+.cards-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 780px;
+}
+
+.cards-table thead th {
+  padding: 11px 16px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+  text-align: left;
+}
+
+.cards-table tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s ease;
+}
+
+.cards-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.cards-table tbody tr:hover {
+  background: var(--bg-card-hover);
+}
+
+.cards-table td {
+  padding: 13px 16px;
+  font-size: 0.87rem;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.row-num {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  width: 36px;
+}
+
+/* ── Card brand cell ─────────────────────────────────────────── */
+.card-brand-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* brand colour tints */
+.brand-icon.brand-visa { color: #1a56f0; }
+.brand-icon.brand-mastercard { color: #eb5c1e; }
+.brand-icon.brand-americanexpress,
+.brand-icon.brand-amex { color: #4d9fff; }
+.brand-icon.brand-discover { color: #f0a500; }
+.brand-icon.brand-default { color: var(--text-muted); }
+
+.brand-name {
+  display: block;
+  font-weight: 600;
+  font-size: 0.86rem;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.card-type-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ── Card number ─────────────────────────────────────────────── */
+.card-number {
+  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* ── Bank name ───────────────────────────────────────────────── */
+.bank-name {
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+/* ── Expiry badge ────────────────────────────────────────────── */
+.expiry-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ── Owner cell ──────────────────────────────────────────────── */
+.owner-link {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+}
+
+.owner-link:hover .owner-name {
+  color: var(--accent);
+}
+
+.owner-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-inverse);
+  flex-shrink: 0;
+}
+
+.owner-name {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+  transition: color 0.15s ease;
+}
+
+.owner-email {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Date text ───────────────────────────────────────────────── */
+.date-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+/* ── Empty states ────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px !important;
+  color: var(--text-muted);
+}
+
+.empty-state i {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 12px;
+  opacity: 0.35;
+}
+
+.no-results {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px 20px;
+  color: var(--text-muted);
+  gap: 10px;
+}
+
+.no-results i {
+  font-size: 2rem;
+  opacity: 0.3;
+}
+
+.no-results p {
+  font-size: 0.88rem;
+}
+
+/* ── Modal message ───────────────────────────────────────────── */
+.modal-message {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .cards-stats {
+    gap: 8px;
+  }
+
+  .stat-pill {
+    padding: 6px 12px;
+    font-size: 0.78rem;
+  }
+
+  .table-toolbar {
+    padding: 12px 16px;
+  }
+
+  .search-wrap {
+    max-width: 100%;
+  }
+
+  .cards-table td,
+  .cards-table thead th {
+    padding: 10px 12px;
+  }
+
+  .owner-email { display: none; }
+}
+
+@media (max-width: 480px) {
+  .page-title { font-size: 1.3rem; }
+}

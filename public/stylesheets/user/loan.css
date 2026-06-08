@@ -1,0 +1,408 @@
+/* ============================================================
+   LOAN.CSS — Loan application page
+   Extends theme.css — no overrides to theme variables
+   ============================================================ */
+
+/* Re-use deposit layout base for shared components */
+@import url('/stylesheets/user/deposit.css');
+
+/* ── Page Header ─────────────────────────────────────────────── */
+.loan-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.loan-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.loan-icon-wrap {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius-lg);
+  background: var(--gold-dim);
+  border: 1px solid var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  color: var(--gold);
+  flex-shrink: 0;
+}
+
+.loan-title {
+  font-family: var(--font-display);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 2px;
+  letter-spacing: -0.02em;
+}
+
+.loan-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* ── Credit Score Banner ─────────────────────────────────────── */
+.credit-banner {
+  margin-bottom: 24px;
+  padding: 22px 26px;
+}
+
+.credit-score-wrap {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.credit-score-circle {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+.score-ring {
+  width: 110px;
+  height: 110px;
+  transform: rotate(-90deg);
+}
+
+.ring-track {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 8;
+}
+
+.ring-fill {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 8;
+  stroke-linecap: round;
+  stroke-dashoffset: 0;
+  transition: stroke-dasharray 1s ease;
+}
+
+.score-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-num {
+  font-family: var(--font-mono);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.score-text {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 3px;
+}
+
+.credit-meta h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.credit-meta p {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+  line-height: 1.55;
+  max-width: 460px;
+}
+
+.credit-tags {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── Layout ──────────────────────────────────────────────────── */
+.loan-layout {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.loan-form-col {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.loan-info-col {
+  width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Card inner header ───────────────────────────────────────── */
+.loan-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.loan-card-head i {
+  color: var(--gold);
+  font-size: 0.95rem;
+}
+
+.loan-card {
+  overflow: hidden;
+}
+
+.loan-form {
+  padding: 20px 22px;
+}
+
+/* ── Loan type grid ──────────────────────────────────────────── */
+.loan-type-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.loan-type-option input[type="radio"] {
+  display: none;
+}
+
+.loan-type-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-strong);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.loan-type-pill i {
+  font-size: 0.85rem;
+}
+
+.loan-type-option input:checked + .loan-type-pill {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+  color: var(--gold);
+}
+
+.loan-type-pill:hover {
+  border-color: var(--border-focus);
+  color: var(--text-primary);
+}
+
+/* ── Row helper ──────────────────────────────────────────────── */
+.loan-row {
+  display: flex;
+  gap: 16px;
+}
+
+.loan-row .form-group {
+  min-width: 0;
+}
+
+/* ── Radio row ───────────────────────────────────────────────── */
+.radio-row {
+  display: flex;
+  gap: 20px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+}
+
+.radio-option input[type="radio"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* ── Agreement checkbox ──────────────────────────────────────── */
+.loan-agree-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.loan-agree-label input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+/* ── Submit row ──────────────────────────────────────────────── */
+.loan-submit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.loan-estimate {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.loan-estimate i {
+  color: var(--accent);
+}
+
+.loan-submit-btn {
+  padding: 12px 28px;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+/* ── Info card: rate table ───────────────────────────────────── */
+.loan-info-card {
+  overflow: hidden;
+}
+
+.rate-table {
+  padding: 8px 0;
+}
+
+.rate-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.83rem;
+}
+
+.rate-row:last-child {
+  border-bottom: none;
+}
+
+.rate-label {
+  color: var(--text-secondary);
+}
+
+.rate-value {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+.rate-value.accent {
+  color: var(--accent);
+}
+
+/* ── Eligibility list ────────────────────────────────────────── */
+.eligibility-list {
+  list-style: none;
+  padding: 10px 20px 14px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.eligibility-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.eligibility-list li.pass {
+  color: var(--success);
+}
+
+.eligibility-list li.warn {
+  color: var(--danger);
+}
+
+.eligibility-list i {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .loan-layout {
+    flex-direction: column;
+  }
+  .loan-info-col {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .loan-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .loan-row {
+    flex-direction: column;
+    gap: 0;
+  }
+  .loan-submit-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .loan-submit-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .credit-score-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+}

@@ -1,0 +1,132 @@
+/* ══════════════════════════════════════════════════════════
+   STERLING CREST UNION — footer.css
+   ══════════════════════════════════════════════════════════ */
+
+.scu-footer {
+  background: #1a2e4a;
+  border-top: 3px solid #1a8f82;
+  position: relative; overflow: hidden;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+
+.footer-body {
+  padding: 4rem 2rem 0;
+  max-width: 1300px; margin: 0 auto;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.5fr;
+  gap: 3rem; padding-bottom: 3rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+@media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; } }
+@media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; gap: 2rem; } }
+
+/* Brand */
+.footer-logo {
+  display: flex; align-items: center; gap: 0.75rem;
+  margin-bottom: 1.25rem; text-decoration: none;
+}
+.footer-logo-img { height: 36px; width: auto; }
+.footer-brand-name {
+  display: block; font-size: 0.95rem; font-weight: 700;
+  color: #fff; letter-spacing: 0.01em;
+}
+.footer-brand-sub {
+  display: block; font-size: 0.58rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: #1a8f82; font-weight: 500;
+}
+
+.footer-desc {
+  font-size: 0.84rem; color: rgba(255,255,255,0.55);
+  line-height: 1.75; margin-bottom: 1.5rem;
+}
+
+.footer-socials { display: flex; gap: 0.65rem; }
+.footer-socials a {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.12);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; color: rgba(255,255,255,0.5);
+  transition: all 0.22s ease; text-decoration: none;
+}
+.footer-socials a:hover {
+  border-color: rgba(26,143,130,0.5); color: #22b5a5;
+  background: rgba(26,143,130,0.1);
+}
+
+/* Columns */
+.footer-heading {
+  font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255,255,255,0.4); margin-bottom: 1.25rem; font-weight: 600;
+}
+
+.footer-col ul { display: flex; flex-direction: column; gap: 0.55rem; list-style: none; margin: 0; padding: 0; }
+.footer-col a {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.84rem; color: rgba(255,255,255,0.6);
+  transition: all 0.22s ease; text-decoration: none;
+}
+.footer-col a i { font-size: 0.48rem; color: #1a8f82; }
+.footer-col a:hover { color: #fff; padding-left: 3px; }
+
+/* Contact */
+.footer-contact { gap: 0.75rem !important; }
+.footer-contact li { display: flex; align-items: flex-start; gap: 0.65rem; }
+.footer-contact i { color: #1a8f82; font-size: 0.85rem; margin-top: 3px; flex-shrink: 0; }
+.footer-contact a, .footer-contact span {
+  font-size: 0.84rem; color: rgba(255,255,255,0.6); text-decoration: none;
+}
+.footer-contact a:hover { color: #fff; }
+
+/* Newsletter */
+.footer-newsletter { margin-top: 1.5rem; }
+.footer-newsletter p { font-size: 0.78rem; color: rgba(255,255,255,0.4); margin-bottom: 0.65rem; }
+.newsletter-row {
+  display: flex;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px; overflow: hidden;
+}
+.newsletter-row input {
+  flex: 1; padding: 0.65rem 0.9rem;
+  background: rgba(255,255,255,0.05);
+  border: none; color: #fff; font-size: 0.82rem;
+  outline: none; font-family: 'IBM Plex Sans', sans-serif;
+}
+.newsletter-row input::placeholder { color: rgba(255,255,255,0.3); }
+.newsletter-row button {
+  padding: 0 1rem; background: #1a8f82; border: none;
+  color: #fff; cursor: pointer; font-size: 0.85rem;
+  transition: all 0.22s ease;
+}
+.newsletter-row button:hover { background: #22b5a5; }
+
+/* Bottom Bar */
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem; padding: 1.5rem 0;
+}
+.footer-bottom-left span { font-size: 0.74rem; color: rgba(255,255,255,0.3); }
+.footer-bottom-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+.footer-bottom-links a {
+  font-size: 0.74rem; color: rgba(255,255,255,0.35);
+  transition: all 0.22s ease; text-decoration: none;
+}
+.footer-bottom-links a:hover { color: rgba(255,255,255,0.75); }
+
+.footer-trust-badges { display: flex; gap: 0.65rem; }
+.badge {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.68rem; color: rgba(255,255,255,0.35);
+  padding: 0.3rem 0.7rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50px;
+}
+.badge i { color: #1a8f82; }
+
+@media (max-width: 768px) {
+  .footer-bottom { justify-content: center; text-align: center; }
+  .footer-bottom-links { justify-content: center; }
+  .footer-body { padding: 3rem 1.5rem 0; }
+}

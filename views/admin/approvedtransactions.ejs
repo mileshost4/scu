@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Approved Transactions | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/transactions.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/admin/admin.approved-transactions'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <!-- Flash -->
+        <%- include('../partials/flash') %>
+
+        <!-- Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Approved Transactions</h1>
+            <p class="page-subtitle">All successfully completed transactions across all users.</p>
+          </div>
+          <div class="page-header-right">
+            <a href="/admin/admin.pending-transactions" class="btn btn-ghost btn-sm">
+              <i class="fa-solid fa-clock"></i> Pending
+            </a>
+            <a href="/admin/admin.declined-transactions" class="btn btn-ghost btn-sm">
+              <i class="fa-solid fa-xmark"></i> Declined
+            </a>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon success"><i class="fa-solid fa-check-double"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="statTotal"><%= approvedTrans.length %></div>
+              <div class="stat-label">Total Approved</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon accent"><i class="fa-solid fa-arrow-down-to-bracket"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="statCredit">0</div>
+              <div class="stat-label">Credits / Deposits</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon danger"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
+            <div class="stat-body">
+              <div class="stat-value" id="statDebit">0</div>
+              <div class="stat-label">Debits / Transfers</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon gold"><i class="fa-solid fa-coins"></i></div>
+            <div class="stat-body">
+              <div class="stat-value amount" id="statVolume">$0</div>
+              <div class="stat-label">Total Volume</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by user name, ref code, account…" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Type</span>
+            <select id="filterType">
+              <option value="">All types</option>
+              <option value="Credit">Credit</option>
+              <option value="Debit">Debit</option>
+              <option value="Transfer">Transfer</option>
+              <option value="Deposit">Deposit</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">From</span>
+            <input type="date" id="filterFrom" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">To</span>
+            <input type="date" id="filterTo" />
+          </div>
+          <button class="btn btn-ghost btn-sm" id="clearFilters">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </button>
+        </div>
+
+        <!-- Table -->
+        <div class="table-card">
+          <div class="table-card-header">
+            <div>
+              <div class="table-card-title">Successful Transactions</div>
+              <div class="table-card-meta" id="visibleCount">Showing all records</div>
+            </div>
+            <div class="table-actions">
+              <button class="btn btn-ghost btn-sm" id="exportBtn">
+                <i class="fa-solid fa-file-csv"></i> Export CSV
+              </button>
+            </div>
+          </div>
+
+          <div class="tx-table-wrap">
+            <table class="tx-table" id="txTable">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>User</th>
+                  <th>Ref Code</th>
+                  <th>Type</th>
+                  <th>Description</th>
+                  <th>From</th>
+                  <th>To</th>
+                  <th class="col-amount">Amount</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="txBody">
+                <% if (approvedTrans && approvedTrans.length > 0) { %>
+                  <% approvedTrans.forEach(function(tx) { %>
+                    <%
+                      const isCredit = ['Credit','Deposit'].includes(tx.transactionType);
+                      const userObj = users.find(u => u._id.toString() === (tx.validateUser ? tx.validateUser.toString() : ''));
+                      const fullName = userObj ? userObj.firstname + ' ' + userObj.lastname : (tx.senderAccountName || 'Unknown');
+                      const userId = userObj ? userObj._id : '';
+                      const initials = fullName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+                      const txDate = tx.date ? new Date(tx.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+                      const txTime = tx.date ? new Date(tx.date).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : '';
+                      const typeClass = tx.transactionType === 'Credit' ? 'credit' : tx.transactionType === 'Deposit' ? 'deposit' : tx.transactionType === 'Transfer' ? 'transfer' : 'debit';
+                      const amtClass = isCredit ? 'credit' : 'debit';
+                      const amtPrefix = isCredit ? '+' : '-';
+                    %>
+                    <tr data-user="<%= fullName.toLowerCase() %>"
+                        data-type="<%= tx.transactionType %>"
+                        data-date="<%= tx.date ? new Date(tx.date).toISOString().split('T')[0] : '' %>"
+                        data-ref="<%= (tx.refCode||'').toLowerCase() %>"
+                        data-amount="<%= tx.amount || 0 %>">
+                      <td>
+                        <div style="font-size:0.85rem;font-weight:600;color:var(--text-primary)"><%= txDate %></div>
+                        <div style="font-size:0.72rem;color:var(--text-muted)"><%= txTime %></div>
+                      </td>
+                      <td>
+                        <div class="user-cell">
+                          <div class="user-avatar-sm"><%= initials %></div>
+                          <div class="user-cell-info">
+                            <% if (userId) { %>
+                              <a href="/admin/admin.user/<%= userId %>" class="user-name" style="text-decoration:none;color:inherit;"><%= fullName %></a>
+                            <% } else { %>
+                              <div class="user-name"><%= fullName %></div>
+                            <% } %>
+                            <div class="user-acct"><%= tx.senderAccountNumber || '—' %></div>
+                          </div>
+                        </div>
+                      </td>
+                      <td><span class="ref-code"><%= tx.refCode || '—' %></span></td>
+                      <td>
+                        <span class="tx-type <%= typeClass %>">
+                          <%= tx.transactionType %><% if (tx.transferType) { %> · <%= tx.transferType %><% } %>
+                        </span>
+                      </td>
+                      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary);font-size:0.82rem;">
+                        <%= tx.description || (tx.receiverAccountName ? 'To: '+tx.receiverAccountName : '—') %>
+                      </td>
+                      <td style="font-size:0.82rem;color:var(--text-secondary);white-space:nowrap;">
+                        <%= tx.bankFrom || tx.senderAccountName || '—' %>
+                      </td>
+                      <td style="font-size:0.82rem;color:var(--text-secondary);white-space:nowrap;">
+                        <%= tx.bankTo || tx.receiverAccountName || '—' %>
+                      </td>
+                      <td class="col-amount">
+                        <span class="amount-cell <%= amtClass %>">
+                          <%= amtPrefix %>$<%= parseFloat(tx.amount||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+                        </span>
+                      </td>
+                      <td>
+                        <div class="tx-actions">
+                          <a href="/admin/<%= tx._id %>/admin.receipt" class="tx-action-btn" title="View Receipt">
+                            <i class="fa-solid fa-eye"></i>
+                          </a>
+                          <% if (userId) { %>
+                            <a href="/admin/admin.user/<%= userId %>" class="tx-action-btn" title="View User">
+                              <i class="fa-solid fa-user"></i>
+                            </a>
+                          <% } %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr id="emptyRow">
+                    <td colspan="9">
+                      <div class="empty-state">
+                        <div class="empty-icon"><i class="fa-solid fa-check-double"></i></div>
+                        <div class="empty-title">No approved transactions</div>
+                        <div class="empty-sub">There are no successful transactions to display yet.</div>
+                      </div>
+                    </td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination info -->
+          <div class="pagination-bar">
+            <div class="pagination-info" id="paginationInfo"></div>
+            <div class="pagination-controls" id="paginationControls"></div>
+          </div>
+        </div>
+
+      </div><!-- /.fade-in -->
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    // ── Data from server ──
+    const rows = Array.from(document.querySelectorAll('#txBody tr[data-user]'));
+    const PAGE_SIZE = 25;
+    let currentPage = 1;
+    let filteredRows = [...rows];
+
+    // ── Stats ──
+    function computeStats(rowSet) {
+      let credit = 0, debit = 0, volume = 0;
+      rowSet.forEach(r => {
+        const type = r.dataset.type;
+        const amt = parseFloat(r.dataset.amount) || 0;
+        if (['Credit','Deposit'].includes(type)) credit++;
+        else debit++;
+        volume += amt;
+      });
+      document.getElementById('statCredit').textContent = credit;
+      document.getElementById('statDebit').textContent = debit;
+      document.getElementById('statVolume').textContent = '$' + volume.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+    }
+
+    // ── Filter ──
+    function applyFilters() {
+      const q = document.getElementById('searchInput').value.toLowerCase().trim();
+      const type = document.getElementById('filterType').value;
+      const from = document.getElementById('filterFrom').value;
+      const to   = document.getElementById('filterTo').value;
+
+      filteredRows = rows.filter(r => {
+        const matchQ    = !q    || r.dataset.user.includes(q) || r.dataset.ref.includes(q);
+        const matchType = !type || r.dataset.type === type;
+        const matchFrom = !from || r.dataset.date >= from;
+        const matchTo   = !to   || r.dataset.date <= to;
+        return matchQ && matchType && matchFrom && matchTo;
+      });
+      currentPage = 1;
+      render();
+    }
+
+    // ── Render ──
+    function render() {
+      rows.forEach(r => r.style.display = 'none');
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const pageRows = filteredRows.slice(start, start + PAGE_SIZE);
+      pageRows.forEach(r => r.style.display = '');
+
+      const emptyRow = document.getElementById('emptyRow');
+      if (emptyRow) emptyRow.style.display = filteredRows.length === 0 ? '' : 'none';
+
+      document.getElementById('visibleCount').textContent =
+        `Showing ${Math.min(start + 1, filteredRows.length)}–${Math.min(start + PAGE_SIZE, filteredRows.length)} of ${filteredRows.length} records`;
+
+      computeStats(filteredRows);
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const total = Math.ceil(filteredRows.length / PAGE_SIZE);
+      const ctrl = document.getElementById('paginationControls');
+      const info = document.getElementById('paginationInfo');
+      ctrl.innerHTML = '';
+      info.textContent = `Page ${currentPage} of ${Math.max(total,1)}`;
+      if (total <= 1) return;
+
+      const mkBtn = (label, pg) => {
+        const b = document.createElement('button');
+        b.className = 'page-btn' + (pg === currentPage ? ' active' : '');
+        b.textContent = label;
+        b.onclick = () => { currentPage = pg; render(); };
+        return b;
+      };
+
+      if (currentPage > 1) ctrl.appendChild(mkBtn('‹', currentPage - 1));
+      let pages = [];
+      for (let i = 1; i <= total; i++) {
+        if (i === 1 || i === total || Math.abs(i - currentPage) <= 1) pages.push(i);
+        else if (pages[pages.length-1] !== '…') pages.push('…');
+      }
+      pages.forEach(p => {
+        if (p === '…') {
+          const s = document.createElement('span');
+          s.textContent = '…'; s.style.padding = '0 4px'; s.style.color = 'var(--text-muted)';
+          ctrl.appendChild(s);
+        } else ctrl.appendChild(mkBtn(p, p));
+      });
+      if (currentPage < total) ctrl.appendChild(mkBtn('›', currentPage + 1));
+    }
+
+    // ── CSV Export ──
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const headers = ['Date','User','Ref','Type','Transfer Type','Description','From','To','Amount','Status'];
+      const csvRows = [headers.join(',')];
+      filteredRows.forEach(r => {
+        const cells = r.querySelectorAll('td');
+        const row = [
+          cells[0]?.innerText.replace(/\n/,' '),
+          cells[1]?.querySelector('.user-name')?.innerText || '',
+          cells[2]?.innerText,
+          cells[3]?.innerText,
+          '',
+          cells[4]?.innerText,
+          cells[5]?.innerText,
+          cells[6]?.innerText,
+          cells[7]?.innerText,
+          'Successful'
+        ].map(v => '"' + (v||'').replace(/"/g,'""') + '"');
+        csvRows.push(row.join(','));
+      });
+      const blob = new Blob([csvRows.join('\n')], {type:'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url;
+      a.download = 'approved-transactions.csv'; a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // ── Listeners ──
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('filterType').addEventListener('change', applyFilters);
+    document.getElementById('filterFrom').addEventListener('change', applyFilters);
+    document.getElementById('filterTo').addEventListener('change', applyFilters);
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('filterType').value = '';
+      document.getElementById('filterFrom').value = '';
+      document.getElementById('filterTo').value = '';
+      applyFilters();
+    });
+
+    render();
+  </script>
+</body>
+</html>

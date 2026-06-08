@@ -1,0 +1,244 @@
+/* ============================================================
+   ACCOUNTSTATUS.CSS — Account status / suspended page
+   Follows theme.css variables strictly.
+   ============================================================ */
+
+/* ── Page wrapper ────────────────────────────────────────────── */
+.status-page {
+  min-height: calc(100vh - var(--nav-height) - 56px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 0;
+}
+
+/* ── Centered content ────────────────────────────────────────── */
+.status-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  max-width: 520px;
+  width: 100%;
+  gap: 0;
+}
+
+/* ── Icon ────────────────────────────────────────────────────── */
+.status-icon-wrap {
+  width: 88px;
+  height: 88px;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  margin-bottom: 20px;
+  border: 1px solid;
+  position: relative;
+}
+
+.status-icon-wrap::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  border-radius: calc(var(--radius-xl) + 6px);
+  border: 1px dashed;
+  opacity: 0.3;
+  animation: spin-slow 12s linear infinite;
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.icon--danger {
+  background: var(--danger-dim);
+  border-color: rgba(255, 77, 106, 0.3);
+  color: var(--danger);
+}
+
+.icon--danger::after {
+  border-color: var(--danger);
+}
+
+.icon--warning {
+  background: var(--warning-dim);
+  border-color: rgba(255, 176, 32, 0.3);
+  color: var(--warning);
+}
+
+.icon--warning::after {
+  border-color: var(--warning);
+}
+
+.icon--info {
+  background: var(--info-dim);
+  border-color: rgba(77, 159, 255, 0.3);
+  color: var(--info);
+}
+
+.icon--info::after {
+  border-color: var(--info);
+}
+
+.icon--success {
+  background: var(--success-dim);
+  border-color: rgba(0, 212, 170, 0.3);
+  color: var(--success);
+}
+
+.icon--success::after {
+  border-color: var(--success);
+}
+
+/* ── Status badge ────────────────────────────────────────────── */
+.status-badge {
+  font-size: 0.78rem;
+  padding: 5px 14px;
+  margin-bottom: 18px;
+}
+
+/* ── Text ────────────────────────────────────────────────────── */
+.status-headline {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.25;
+  margin: 0 0 12px;
+}
+
+.status-description {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+  max-width: 420px;
+  margin: 0 0 28px;
+}
+
+/* ── User info strip ─────────────────────────────────────────── */
+.status-user-strip {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+.strip-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 14px 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.strip-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.strip-value {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.strip-divider {
+  width: 1px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+/* ── Actions ─────────────────────────────────────────────────── */
+.status-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+
+/* ── Help block ──────────────────────────────────────────────── */
+.status-help {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 18px 22px;
+  text-align: left;
+  width: 100%;
+}
+
+.help-title {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.help-title i {
+  color: var(--info);
+}
+
+.help-list {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.help-list li {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+
+/* ── Responsive ──────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .status-user-strip {
+    flex-direction: column;
+  }
+
+  .strip-divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .strip-item {
+    align-items: flex-start;
+    padding: 12px 16px;
+  }
+
+  .status-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .status-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .status-headline {
+    font-size: 1.3rem;
+  }
+}

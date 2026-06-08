@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delete Transactions | <%= websiteName %></title>
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/transactions.css" />
+</head>
+<body>
+
+  <% locals.currentPath = '/admin/admin.delete-transactions'; %>
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="fade-in">
+
+        <%- include('../partials/flash') %>
+
+        <!-- Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Delete Transactions</h1>
+            <p class="page-subtitle">Select transactions to permanently remove from the system.</p>
+          </div>
+          <div class="page-header-right">
+            <a href="/admin/admin.approved-transactions" class="btn btn-ghost btn-sm">
+              <i class="fa-solid fa-arrow-left"></i> Back
+            </a>
+          </div>
+        </div>
+
+        <!-- Bulk action bar (shown when items selected) -->
+        <div class="bulk-bar" id="bulkBar">
+          <div class="bulk-bar-text">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span id="bulkCount">0</span> transaction(s) selected — this action is permanent.
+          </div>
+          <button type="button" class="btn btn-danger btn-sm" id="submitDelete">
+            <i class="fa-solid fa-trash"></i> Delete Selected
+          </button>
+        </div>
+
+        <!-- Filter bar -->
+        <div class="filter-bar">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="searchInput" class="form-control" placeholder="Search by user name, ref code, account…" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Type</span>
+            <select id="filterType">
+              <option value="">All types</option>
+              <option value="Credit">Credit</option>
+              <option value="Debit">Debit</option>
+              <option value="Transfer">Transfer</option>
+              <option value="Deposit">Deposit</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">Status</span>
+            <select id="filterStatus">
+              <option value="">All statuses</option>
+              <option value="Successful">Successful</option>
+              <option value="Pending">Pending</option>
+              <option value="Unsuccessful">Unsuccessful</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">From</span>
+            <input type="date" id="filterFrom" />
+          </div>
+          <div class="filter-group">
+            <span class="filter-label">To</span>
+            <input type="date" id="filterTo" />
+          </div>
+          <button class="btn btn-ghost btn-sm" id="clearFilters">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </button>
+        </div>
+
+        <!-- Delete form -->
+        <form id="deleteForm" action="/admin/admin.delete-transactions" method="POST">
+          <input type="hidden" name="_method" value="DELETE" />
+
+          <div class="table-card">
+            <div class="table-card-header">
+              <div>
+                <div class="table-card-title">All Transactions</div>
+                <div class="table-card-meta" id="visibleCount"></div>
+              </div>
+              <div class="table-actions">
+                <button type="button" class="btn btn-ghost btn-sm" id="selectVisibleBtn">
+                  <i class="fa-solid fa-check-double"></i> Select Visible
+                </button>
+                <button type="button" class="btn btn-ghost btn-sm" id="deselectAllBtn">
+                  <i class="fa-solid fa-square"></i> Deselect All
+                </button>
+              </div>
+            </div>
+
+            <!-- Select all visible row -->
+            <div class="select-all-wrap">
+              <input type="checkbox" id="selectAll" class="tx-checkbox" />
+              <label for="selectAll">Select all on this page</label>
+            </div>
+
+            <div class="tx-table-wrap">
+              <table class="tx-table" id="txTable">
+                <thead>
+                  <tr>
+                    <th class="col-check"></th>
+                    <th>Date</th>
+                    <th>User</th>
+                    <th>Ref Code</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                    <th class="col-amount">Amount</th>
+                    <th>View</th>
+                  </tr>
+                </thead>
+                <tbody id="txBody">
+                  <% if (transactions && transactions.length > 0) { %>
+                    <% transactions.forEach(function(tx) { %>
+                      <%
+                        const isCredit = ['Credit','Deposit'].includes(tx.transactionType);
+                        const userObj = users.find(u => u._id.toString() === (tx.validateUser ? tx.validateUser.toString() : '') || u._id.toString() === (tx.userId||''));
+                        const fullName = userObj ? userObj.firstname + ' ' + userObj.lastname : (tx.senderAccountName || 'Unknown');
+                        const userId = userObj ? userObj._id : '';
+                        const initials = fullName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+                        const txDate = tx.date ? new Date(tx.date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}) : '—';
+                        const txTime = tx.date ? new Date(tx.date).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'}) : '';
+                        const typeClass = tx.transactionType === 'Credit' ? 'credit' : tx.transactionType === 'Deposit' ? 'deposit' : tx.transactionType === 'Transfer' ? 'transfer' : 'debit';
+                        const statusClass = (tx.status||'').toLowerCase();
+                        const amtClass = isCredit ? 'credit' : 'debit';
+                        const amtPrefix = isCredit ? '+' : '-';
+                      %>
+                      <tr data-user="<%= fullName.toLowerCase() %>"
+                          data-type="<%= tx.transactionType %>"
+                          data-status="<%= tx.status %>"
+                          data-date="<%= tx.date ? new Date(tx.date).toISOString().split('T')[0] : '' %>"
+                          data-ref="<%= (tx.refCode||'').toLowerCase() %>"
+                          data-id="<%= tx._id %>">
+                        <td class="col-check">
+                          <input type="checkbox" name="selectedData" value="<%= tx._id %>"
+                            class="tx-checkbox row-check" data-id="<%= tx._id %>" />
+                        </td>
+                        <td>
+                          <div style="font-size:0.85rem;font-weight:600;color:var(--text-primary)"><%= txDate %></div>
+                          <div style="font-size:0.72rem;color:var(--text-muted)"><%= txTime %></div>
+                        </td>
+                        <td>
+                          <div class="user-cell">
+                            <div class="user-avatar-sm"><%= initials %></div>
+                            <div class="user-cell-info">
+                              <% if (userId) { %>
+                                <a href="/admin/admin.user/<%= userId %>" class="user-name" style="text-decoration:none;color:inherit;"><%= fullName %></a>
+                              <% } else { %>
+                                <div class="user-name"><%= fullName %></div>
+                              <% } %>
+                              <div class="user-acct"><%= tx.senderAccountNumber || '—' %></div>
+                            </div>
+                          </div>
+                        </td>
+                        <td><span class="ref-code"><%= tx.refCode || '—' %></span></td>
+                        <td>
+                          <span class="tx-type <%= typeClass %>">
+                            <%= tx.transactionType %><% if (tx.transferType) { %> · <%= tx.transferType %><% } %>
+                          </span>
+                        </td>
+                        <td><span class="status-pill <%= statusClass %>"><%= tx.status %></span></td>
+                        <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-secondary);font-size:0.82rem;">
+                          <%= tx.description || (tx.receiverAccountName ? 'To: '+tx.receiverAccountName : '—') %>
+                        </td>
+                        <td class="col-amount">
+                          <span class="amount-cell <%= amtClass %>">
+                            <%= amtPrefix %>$<%= parseFloat(tx.amount||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}) %>
+                          </span>
+                        </td>
+                        <td>
+                          <a href="/admin/<%= tx._id %>/admin.receipt" class="tx-action-btn" title="View">
+                            <i class="fa-solid fa-eye"></i>
+                          </a>
+                        </td>
+                      </tr>
+                    <% }) %>
+                  <% } else { %>
+                    <tr id="emptyRow">
+                      <td colspan="9">
+                        <div class="empty-state">
+                          <div class="empty-icon"><i class="fa-solid fa-trash"></i></div>
+                          <div class="empty-title">No transactions found</div>
+                          <div class="empty-sub">There are no transactions in the system.</div>
+                        </div>
+                      </td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pagination-bar">
+              <div class="pagination-info" id="paginationInfo"></div>
+              <div class="pagination-controls" id="paginationControls"></div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    const allRows = Array.from(document.querySelectorAll('#txBody tr[data-user]'));
+    const PAGE_SIZE = 30;
+    let currentPage = 1;
+    let filteredRows = [...allRows];
+    let selected = new Set();
+
+    // ── Bulk bar update ──
+    function updateBulkBar() {
+      const bar = document.getElementById('bulkBar');
+      document.getElementById('bulkCount').textContent = selected.size;
+      bar.classList.toggle('visible', selected.size > 0);
+    }
+
+    // ── Submit delete ──
+    document.getElementById('submitDelete').addEventListener('click', () => {
+      if (selected.size === 0) return;
+      if (!confirm(`Permanently delete ${selected.size} transaction(s)? This cannot be undone.`)) return;
+
+      // Remove existing hidden inputs and add freshly-checked ones from selected set
+      const form = document.getElementById('deleteForm');
+      form.querySelectorAll('input[name="selectedData"]').forEach(el => el.remove());
+      selected.forEach(id => {
+        const input = document.createElement('input');
+        input.type  = 'hidden';
+        input.name  = 'selectedData';
+        input.value = id;
+        form.appendChild(input);
+      });
+      form.submit();
+    });
+
+    // ── Row checkbox ──
+    function bindCheckboxes() {
+      document.querySelectorAll('.row-check').forEach(cb => {
+        cb.addEventListener('change', () => {
+          if (cb.checked) selected.add(cb.dataset.id);
+          else selected.delete(cb.dataset.id);
+          const row = cb.closest('tr');
+          row.classList.toggle('selected', cb.checked);
+          updateBulkBar();
+          updateSelectAllState();
+        });
+      });
+    }
+
+    // ── Select all on page ──
+    document.getElementById('selectAll').addEventListener('change', (e) => {
+      const visibleRows = getPageRows();
+      visibleRows.forEach(r => {
+        const cb = r.querySelector('.row-check');
+        if (cb) {
+          cb.checked = e.target.checked;
+          if (e.target.checked) selected.add(cb.dataset.id);
+          else selected.delete(cb.dataset.id);
+          r.classList.toggle('selected', e.target.checked);
+        }
+      });
+      updateBulkBar();
+    });
+
+    function updateSelectAllState() {
+      const visibleRows = getPageRows();
+      const all = visibleRows.every(r => {
+        const cb = r.querySelector('.row-check');
+        return cb && cb.checked;
+      });
+      document.getElementById('selectAll').checked = all && visibleRows.length > 0;
+    }
+
+    function getPageRows() {
+      const start = (currentPage - 1) * PAGE_SIZE;
+      return filteredRows.slice(start, start + PAGE_SIZE);
+    }
+
+    // ── Select visible / deselect all ──
+    document.getElementById('selectVisibleBtn').addEventListener('click', () => {
+      getPageRows().forEach(r => {
+        const cb = r.querySelector('.row-check');
+        if (cb) { cb.checked = true; selected.add(cb.dataset.id); r.classList.add('selected'); }
+      });
+      document.getElementById('selectAll').checked = true;
+      updateBulkBar();
+    });
+
+    document.getElementById('deselectAllBtn').addEventListener('click', () => {
+      document.querySelectorAll('.row-check').forEach(cb => {
+        cb.checked = false; selected.delete(cb.dataset.id);
+        cb.closest('tr').classList.remove('selected');
+      });
+      document.getElementById('selectAll').checked = false;
+      updateBulkBar();
+    });
+
+    // ── Filters ──
+    function applyFilters() {
+      const q      = document.getElementById('searchInput').value.toLowerCase().trim();
+      const type   = document.getElementById('filterType').value;
+      const status = document.getElementById('filterStatus').value;
+      const from   = document.getElementById('filterFrom').value;
+      const to     = document.getElementById('filterTo').value;
+      filteredRows = allRows.filter(r =>
+        (!q      || r.dataset.user.includes(q) || r.dataset.ref.includes(q))
+     && (!type   || r.dataset.type === type)
+     && (!status || r.dataset.status === status)
+     && (!from   || r.dataset.date >= from)
+     && (!to     || r.dataset.date <= to)
+      );
+      currentPage = 1;
+      render();
+    }
+
+    function render() {
+      allRows.forEach(r => r.style.display = 'none');
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const pageRows = filteredRows.slice(start, start + PAGE_SIZE);
+      pageRows.forEach(r => r.style.display = '');
+
+      // Restore checked state on visible rows
+      pageRows.forEach(r => {
+        const cb = r.querySelector('.row-check');
+        if (cb) { cb.checked = selected.has(cb.dataset.id); }
+        r.classList.toggle('selected', selected.has(r.dataset.id));
+      });
+
+      const emptyRow = document.getElementById('emptyRow');
+      if (emptyRow) emptyRow.style.display = filteredRows.length === 0 ? '' : 'none';
+
+      document.getElementById('visibleCount').textContent =
+        `Showing ${Math.min(start+1,filteredRows.length)}–${Math.min(start+PAGE_SIZE,filteredRows.length)} of ${filteredRows.length}`;
+
+      renderPagination();
+      updateSelectAllState();
+    }
+
+    function renderPagination() {
+      const total = Math.ceil(filteredRows.length / PAGE_SIZE);
+      const ctrl  = document.getElementById('paginationControls');
+      ctrl.innerHTML = '';
+      document.getElementById('paginationInfo').textContent = `Page ${currentPage} of ${Math.max(total,1)}`;
+      if (total <= 1) return;
+      const mkBtn = (l, p) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'page-btn' + (p === currentPage ? ' active' : '');
+        b.textContent = l;
+        b.onclick = () => { currentPage = p; render(); };
+        return b;
+      };
+      if (currentPage > 1) ctrl.appendChild(mkBtn('‹', currentPage - 1));
+      for (let i = 1; i <= Math.min(total, 10); i++) ctrl.appendChild(mkBtn(i, i));
+      if (currentPage < total) ctrl.appendChild(mkBtn('›', currentPage + 1));
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('filterType').addEventListener('change', applyFilters);
+    document.getElementById('filterStatus').addEventListener('change', applyFilters);
+    document.getElementById('filterFrom').addEventListener('change', applyFilters);
+    document.getElementById('filterTo').addEventListener('change', applyFilters);
+    document.getElementById('clearFilters').addEventListener('click', () => {
+      ['searchInput','filterType','filterStatus','filterFrom','filterTo'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+      applyFilters();
+    });
+
+    bindCheckboxes();
+    render();
+  </script>
+</body>
+</html>

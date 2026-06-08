@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Crypto Deposit | <%= websiteName %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/user/deposit.css" />
+</head>
+<body>
+
+  <%
+    locals.currentPath = '/user/deposit-crypto';
+  %>
+
+  <%- include('../partials/navbar') %>
+  <%- include('../partials/flash') %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="deposit-page fade-in">
+
+        <!-- Page Header -->
+        <div class="dep-header">
+          <div class="dep-header-left">
+            <div class="dep-icon-wrap crypto">
+              <i class="fa-brands fa-bitcoin"></i>
+            </div>
+            <div>
+              <h1 class="dep-title">Crypto Deposit</h1>
+              <p class="dep-subtitle">Deposit cryptocurrency directly into your account</p>
+            </div>
+          </div>
+          <a href="/user/deposit" class="btn btn-ghost btn-sm">
+            <i class="fa-solid fa-money-check"></i> Cheque Deposit
+          </a>
+        </div>
+
+        <div class="dep-layout">
+
+          <!-- Left: Form -->
+          <div class="dep-form-col">
+            <div class="card dep-card">
+              <div class="dep-card-head">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Crypto Transfer Details</span>
+              </div>
+
+              <form action="/dashboard/deposit" method="POST" enctype="multipart/form-data" class="dep-form">
+
+                <!-- Deposit Into -->
+                <div class="form-group">
+                  <label class="form-label" for="account">Credit To Account</label>
+                  <div class="select-wrap">
+                    <select name="account" id="account" class="form-control" required>
+                      <option value="" disabled selected>— Select account —</option>
+                      <% if (allaccounts && allaccounts.length > 0) { %>
+                        <% for (let acc of allaccounts) { %>
+                          <option value="<%= acc._id %>">
+                            <%= acc.displayName || acc.accountType %> — ****<%= String(acc.accountNumber).slice(-4) %>
+                            (<%= user.basecurrencysymbol %><%= (parseFloat(acc.accountWallet) || 0).toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2}) %>)
+                          </option>
+                        <% } %>
+                      <% } %>
+                    </select>
+                    <i class="fa-solid fa-chevron-down select-caret"></i>
+                  </div>
+                </div>
+
+                <!-- Coin / Method -->
+                <div class="form-group">
+                  <label class="form-label" for="depositmethodname">Select Cryptocurrency</label>
+                  <div class="crypto-coins" id="cryptoCoins">
+                    <% if (depositmethods && depositmethods.length > 0) { %>
+                      <% depositmethods.forEach((method, i) => { %>
+                        <label class="crypto-coin-option">
+                          <input type="radio" name="depositmethodname" value="<%= method.depositmethodname %>"
+                            data-id="<%= method.depositmethodname %>" <%= i === 0 ? 'checked' : '' %> required />
+                          <span class="coin-pill">
+                            <i class="fa-brands fa-<%= method.depositmethodname.toLowerCase().replace(' ','') === 'bitcoin' ? 'bitcoin' : method.depositmethodname.toLowerCase().includes('eth') ? 'ethereum' : 'coins' %>"></i>
+                            <%= method.depositmethodname %>
+                          </span>
+                        </label>
+                      <% }) %>
+                    <% } else { %>
+                      <p class="text-muted" style="font-size:0.85rem;">No crypto methods configured. Contact support.</p>
+                    <% } %>
+                  </div>
+                  <!-- Hidden for fallback -->
+                  <select name="depositmethodname" id="depositmethodSelect" class="form-control" style="display:none;">
+                    <% if (depositmethods) { %>
+                      <% depositmethods.forEach(m => { %>
+                        <option value="<%= m.depositmethodname %>"><%= m.depositmethodname %></option>
+                      <% }) %>
+                    <% } %>
+                  </select>
+                </div>
+
+                <!-- Wallet Address display -->
+                <div class="form-group" id="walletDisplay" style="display:none;">
+                  <label class="form-label">Send To This Wallet Address</label>
+                  <div class="wallet-address-box">
+                    <span class="wallet-qr-wrap">
+                      <img id="walletQR" src="" alt="QR Code" />
+                    </span>
+                    <div class="wallet-addr-right">
+                      <code id="walletAddress" class="wallet-addr-code"></code>
+                      <button type="button" class="btn btn-ghost btn-sm copy-btn" id="copyBtn">
+                        <i class="fa-regular fa-copy"></i> Copy
+                      </button>
+                    </div>
+                  </div>
+                  <input type="hidden" name="depositaddress" id="depositaddress" />
+                </div>
+
+                <!-- Amount -->
+                <div class="form-group">
+                  <label class="form-label" for="amount">Amount Sent (<%= user.basecurrencysymbol || '$' %> equivalent)</label>
+                  <div class="amount-input-wrap">
+                    <span class="amount-prefix"><%= user.basecurrencysymbol || '$' %></span>
+                    <input type="number" name="amount" id="amount" class="form-control amount-input"
+                      placeholder="0.00" min="1" step="0.01" required />
+                  </div>
+                </div>
+
+                <!-- Crypto Wallet Tracker / TxID -->
+                <div class="form-group">
+                  <label class="form-label" for="cryptoWalletTrackerId">Transaction Hash / TxID <span class="form-optional">(optional)</span></label>
+                  <input type="text" name="cryptoWalletTrackerId" id="cryptoWalletTrackerId" class="form-control font-mono"
+                    placeholder="e.g. 0xabc123..." />
+                </div>
+
+                <!-- Narration -->
+                <div class="form-group">
+                  <label class="form-label" for="narration">Note / Narration <span class="form-optional">(optional)</span></label>
+                  <textarea name="narration" id="narration" class="form-control" rows="2"
+                    placeholder="Any additional notes about this deposit"></textarea>
+                </div>
+
+                <!-- Proof Upload -->
+                <div class="form-group">
+                  <label class="form-label">Upload Payment Proof</label>
+                  <div class="upload-zone" id="uploadZone">
+                    <input type="file" name="transactionproof" id="transactionproof"
+                      multiple accept="image/*,.pdf" class="upload-input" />
+                    <div class="upload-placeholder" id="uploadPlaceholder">
+                      <i class="fa-solid fa-cloud-arrow-up"></i>
+                      <span>Click or drag screenshot / receipt here</span>
+                      <small>PNG, JPG, PDF — max 10MB each</small>
+                    </div>
+                    <div class="upload-preview" id="uploadPreview" style="display:none;"></div>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary dep-submit-btn" id="submitBtn" disabled>
+                  <i class="fa-solid fa-lock" id="submitIcon"></i>
+                  <span id="submitText">Select a cryptocurrency first</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Right: Info + History -->
+          <div class="dep-info-col">
+
+            <div class="card dep-info-card">
+              <div class="dep-card-head">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>How To Deposit Crypto</span>
+              </div>
+              <ul class="dep-steps">
+                <li class="dep-step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <strong>Choose Coin</strong>
+                    <span>Select the cryptocurrency you're sending from your external wallet.</span>
+                  </div>
+                </li>
+                <li class="dep-step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <strong>Copy Address</strong>
+                    <span>Send the exact amount to the wallet address shown. Double-check before sending.</span>
+                  </div>
+                </li>
+                <li class="dep-step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <strong>Enter Amount</strong>
+                    <span>Enter the USD equivalent of what you sent.</span>
+                  </div>
+                </li>
+                <li class="dep-step">
+                  <div class="step-num">4</div>
+                  <div class="step-body">
+                    <strong>Upload Proof</strong>
+                    <span>Attach a screenshot of your transaction for faster verification.</span>
+                  </div>
+                </li>
+              </ul>
+              <div class="dep-notice warning">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <p>Only send the selected cryptocurrency to this address. Sending a different coin may result in permanent loss.</p>
+              </div>
+            </div>
+
+            <!-- Recent deposits -->
+            <div class="card dep-history-card">
+              <div class="dep-card-head">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>Recent Deposits</span>
+              </div>
+              <% if (deposits && deposits.length > 0) { %>
+                <ul class="dep-history-list">
+                  <% deposits.slice(0,5).forEach(dep => { %>
+                    <li class="dep-history-item">
+                      <div class="dhi-left">
+                        <div class="dhi-icon crypto">
+                          <i class="fa-brands fa-bitcoin"></i>
+                        </div>
+                        <div class="dhi-info">
+                          <span class="dhi-method"><%= dep.transactionmethod || 'Crypto' %></span>
+                          <span class="dhi-date">
+                            <%= new Date(dep.transactiondate).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) %>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="dhi-right">
+                        <span class="dhi-amount"><%= user.basecurrencysymbol %><%= dep.amount.toLocaleString(undefined,{minimumFractionDigits:2}) %></span>
+                        <span class="badge badge-<%= dep.status === 'Successful' ? 'success' : dep.status === 'Unsuccessful' ? 'danger' : 'warning' %>">
+                          <%= dep.status %>
+                        </span>
+                      </div>
+                    </li>
+                  <% }) %>
+                </ul>
+              <% } else { %>
+                <div class="dep-empty">
+                  <i class="fa-regular fa-folder-open"></i>
+                  <span>No deposit history yet</span>
+                </div>
+              <% } %>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    const radios          = document.querySelectorAll('input[name="depositmethodname"]');
+    const walletDisplay   = document.getElementById('walletDisplay');
+    const walletAddressEl = document.getElementById('walletAddress');
+    const walletQR        = document.getElementById('walletQR');
+    const depositAddrInput= document.getElementById('depositaddress');
+    const copyBtn         = document.getElementById('copyBtn');
+    const submitBtn       = document.getElementById('submitBtn');
+    const submitIcon      = document.getElementById('submitIcon');
+    const submitText      = document.getElementById('submitText');
+
+    // Track whether a valid wallet has been loaded
+    let walletReady = false;
+
+    function setSubmitReady(ready) {
+      walletReady = ready;
+      submitBtn.disabled = !ready;
+      if (ready) {
+        submitIcon.className = 'fa-solid fa-paper-plane';
+        submitText.textContent = 'Submit Deposit';
+      } else {
+        submitIcon.className = 'fa-solid fa-lock';
+        submitText.textContent = 'Select a cryptocurrency first';
+      }
+    }
+
+    async function fetchWallet(name) {
+      // Reset state while fetching
+      setSubmitReady(false);
+      walletDisplay.style.display = 'none';
+      walletAddressEl.textContent = '';
+      depositAddrInput.value = '';
+
+      try {
+        const res  = await fetch(`/api/depositmethods/${encodeURIComponent(name)}`);
+        const data = await res.json();
+
+        if (data && data.depositaddress) {
+          walletAddressEl.textContent = data.depositaddress;
+          depositAddrInput.value      = data.depositaddress;
+
+          if (data.depositqrcode && data.depositqrcode.length > 0) {
+            walletQR.src           = data.depositqrcode[0].url;
+            walletQR.style.display = 'block';
+          } else {
+            walletQR.style.display = 'none';
+          }
+
+          walletDisplay.style.display = 'block';
+          setSubmitReady(true);
+        } else {
+          // Method exists but has no address configured
+          walletDisplay.style.display = 'none';
+          submitIcon.className  = 'fa-solid fa-triangle-exclamation';
+          submitText.textContent = 'No wallet address configured for this coin';
+          submitBtn.disabled = true;
+        }
+      } catch (e) {
+        walletDisplay.style.display = 'none';
+        submitIcon.className  = 'fa-solid fa-triangle-exclamation';
+        submitText.textContent = 'Failed to load wallet address';
+        submitBtn.disabled = true;
+      }
+    }
+
+    radios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (radio.checked) fetchWallet(radio.value);
+      });
+    });
+
+    // Auto-load first option on page load
+    if (radios.length > 0) fetchWallet(radios[0].value);
+
+    // ── Copy address ──────────────────────────────────────────
+    copyBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(depositAddrInput.value).then(() => {
+        copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+        setTimeout(() => { copyBtn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy'; }, 2000);
+      });
+    });
+
+    // ── Loading state on submit ───────────────────────────────
+    const form = document.querySelector('.dep-form');
+    form.addEventListener('submit', function (e) {
+      // Extra guard: block if wallet still not ready (shouldn't happen, belt-and-suspenders)
+      if (!walletReady) {
+        e.preventDefault();
+        return;
+      }
+      submitBtn.disabled   = true;
+      submitIcon.className = 'fa-solid fa-spinner fa-spin';
+      submitText.textContent = 'Submitting…';
+    });
+
+    // ── File upload preview ───────────────────────────────────
+    const input       = document.getElementById('transactionproof');
+    const placeholder = document.getElementById('uploadPlaceholder');
+    const preview     = document.getElementById('uploadPreview');
+    const zone        = document.getElementById('uploadZone');
+
+    input.addEventListener('change', function () {
+      if (this.files.length > 0) {
+        placeholder.style.display = 'none';
+        preview.style.display     = 'flex';
+        preview.innerHTML         = '';
+        Array.from(this.files).forEach(file => {
+          const tag       = document.createElement('div');
+          tag.className   = 'upload-file-tag';
+          tag.innerHTML   = `<i class="fa-solid fa-file"></i><span>${file.name}</span>`;
+          preview.appendChild(tag);
+        });
+      } else {
+        placeholder.style.display = 'flex';
+        preview.style.display     = 'none';
+      }
+    });
+
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      input.files = e.dataTransfer.files;
+      input.dispatchEvent(new Event('change'));
+    });
+  </script>
+</body>
+</html>

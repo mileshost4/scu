@@ -1,0 +1,227 @@
+/* receipt.css — Transaction Receipt Page */
+
+.receipt-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding-bottom: 40px;
+}
+
+.receipt-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+  transition: var(--transition);
+}
+.receipt-back:hover { color: var(--accent); }
+
+/* ── Receipt Card ─────────────────────────────────────── */
+.receipt-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+/* Header */
+.receipt-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-surface);
+  flex-wrap: wrap;
+}
+.receipt-logo img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+}
+.receipt-header-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.receipt-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+.receipt-date {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+.receipt-status-badge {
+  font-size: 0.78rem;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Amount Hero */
+.receipt-amount-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 28px 28px;
+  gap: 6px;
+  background: var(--bg-card);
+}
+.receipt-amount-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+.receipt-amount-value {
+  font-family: var(--font-mono);
+  font-size: 2.6rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+.receipt-amount-value.credit { color: var(--credit); }
+.receipt-amount-value.debit  { color: var(--debit);  }
+.receipt-balance-note {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Dashed divider */
+.receipt-dashed-divider {
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding: 0 -1px;
+  overflow: visible;
+}
+.dashed-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg-root);
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.dashed-circle.left  { margin-left: -10px; }
+.dashed-circle.right { margin-right: -10px; }
+.dashed-line {
+  flex: 1;
+  border-top: 2px dashed var(--border-strong);
+  margin: 0 4px;
+}
+
+/* Details */
+.receipt-details {
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.receipt-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--border);
+}
+.receipt-row:last-child { border-bottom: none; }
+.rd-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.rd-value {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  text-align: right;
+  word-break: break-word;
+}
+
+/* Type badge (reuse from table but scoped) */
+.receipt-wrap .tx-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.receipt-wrap .tx-type-credit  { background: var(--success-dim); color: var(--success); }
+.receipt-wrap .tx-type-debit   { background: var(--danger-dim);  color: var(--danger);  }
+.receipt-wrap .tx-type-transfer{ background: var(--info-dim);    color: var(--info);    }
+.receipt-wrap .tx-type-deposit { background: var(--gold-dim);    color: var(--gold);    }
+
+/* Footer note */
+.receipt-footer-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 28px;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.receipt-footer-note i { color: var(--accent); flex-shrink: 0; }
+
+/* ── Actions ──────────────────────────────────────────── */
+.receipt-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+/* ── Print styles ─────────────────────────────────────── */
+@media print {
+  body { background: #fff !important; color: #111 !important; }
+  .navbar, .sidebar, .receipt-back, .receipt-actions, #mainContent > .page-inner > .receipt-page > *:not(.receipt-wrap) {
+    display: none !important;
+  }
+  .main-content { margin: 0 !important; padding: 0 !important; }
+  .page-inner { padding: 0 !important; }
+  .receipt-wrap {
+    border: 1px solid #ddd !important;
+    box-shadow: none !important;
+    background: #fff !important;
+  }
+  .receipt-amount-value.credit { color: #007a5a !important; }
+  .receipt-amount-value.debit  { color: #cc2200 !important; }
+  .receipt-footer-note, .receipt-header { background: #f5f5f5 !important; }
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .receipt-page { max-width: 100%; }
+  .receipt-header { padding: 16px 20px; }
+  .receipt-amount-hero { padding: 28px 20px 20px; }
+  .receipt-amount-value { font-size: 2rem; }
+  .receipt-details { padding: 16px 20px; }
+  .receipt-row { flex-direction: column; gap: 4px; }
+  .rd-value { text-align: left; }
+  .receipt-footer-note { padding: 14px 20px; }
+  .receipt-actions { flex-direction: column; }
+  .receipt-actions .btn { width: 100%; justify-content: center; }
+}

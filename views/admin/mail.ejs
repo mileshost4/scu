@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Send Mail | <%= websiteName %></title>
+
+  <link rel="icon" type="image/png" href="/images/logo.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="/stylesheets/partials/theme.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/navbar.css" />
+  <link rel="stylesheet" href="/stylesheets/partials/flash.css" />
+  <link rel="stylesheet" href="/stylesheets/admin/mail.css" />
+</head>
+<body>
+
+  <%
+    locals.currentPath = '/admin/admin.send-mail';
+  %>
+
+  <%- include('../partials/adminnav', { admin: admin }) %>
+
+  <div class="main-content" id="mainContent">
+    <div class="page-inner">
+      <div class="admin-mail fade-in">
+
+        <!-- Page Header -->
+        <div class="page-header">
+          <div class="page-header-left">
+            <h1 class="page-title">Send Mail</h1>
+            <p class="page-subtitle">Compose and send emails to one or more users</p>
+          </div>
+        </div>
+
+        <div class="mail-layout">
+
+          <!-- ── Compose Form ── -->
+          <div class="compose-card card">
+            <div class="compose-header">
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Compose Email</span>
+            </div>
+
+            <form action="/admin/admin.send-mail" method="POST" enctype="multipart/form-data" id="mailForm">
+
+              <!-- Recipients -->
+              <div class="form-group">
+                <label class="form-label" for="email">
+                  <i class="fa-solid fa-at"></i> Recipients
+                </label>
+                <div class="recipients-wrap">
+                  <input
+                    type="text"
+                    id="email"
+                    name="email"
+                    class="form-control"
+                    placeholder="user@example.com, another@example.com"
+                    autocomplete="off"
+                    required
+                  />
+                  <p class="field-hint">Separate multiple addresses with commas.</p>
+                </div>
+
+                <!-- Quick-fill buttons -->
+                <div class="quick-fill">
+                  <span class="quick-label">Quick fill:</span>
+                  <button type="button" class="quick-btn" id="fillAllUsers">
+                    <i class="fa-solid fa-users"></i> All Users
+                  </button>
+                </div>
+              </div>
+
+              <!-- Subject -->
+              <div class="form-group">
+                <label class="form-label" for="subject">
+                  <i class="fa-solid fa-tag"></i> Subject
+                </label>
+                <input
+                  type="text"
+                  id="subject"
+                  name="subject"
+                  class="form-control"
+                  placeholder="Email subject line…"
+                  required
+                />
+              </div>
+
+              <!-- Message -->
+              <div class="form-group">
+                <label class="form-label" for="message">
+                  <i class="fa-solid fa-align-left"></i> Message
+                </label>
+                <textarea
+                  id="message"
+                  name="message"
+                  class="form-control mail-textarea"
+                  placeholder="Write your message here…"
+                  rows="10"
+                  required
+                ></textarea>
+                <div class="char-count" id="charCount">0 characters</div>
+              </div>
+
+              <!-- Attachments -->
+              <div class="form-group">
+                <label class="form-label" for="files">
+                  <i class="fa-solid fa-paperclip"></i> Attachments
+                  <span class="form-label-optional">— optional</span>
+                </label>
+                <label class="file-drop" id="fileDrop" for="files">
+                  <i class="fa-solid fa-cloud-arrow-up"></i>
+                  <span class="drop-title">Drop files here or <span class="drop-link">browse</span></span>
+                  <span class="drop-hint">PDF, DOCX, PNG, JPG, TXT, PPTX — max 10 MB each</span>
+                  <input type="file" id="files" name="files" multiple accept=".pdf,.docx,.txt,.pptx,.jpeg,.png,.jpg" />
+                </label>
+                <div class="file-list" id="fileList"></div>
+              </div>
+
+              <!-- Submit -->
+              <div class="form-actions">
+                <button type="button" class="btn btn-ghost" id="resetBtn">
+                  <i class="fa-solid fa-rotate-left"></i> Clear
+                </button>
+                <button type="submit" class="btn btn-primary" id="sendBtn">
+                  <i class="fa-solid fa-paper-plane"></i> Send Email
+                </button>
+              </div>
+
+            </form>
+          </div>
+
+          <!-- ── Tips Panel ── -->
+          <aside class="tips-panel">
+            <div class="tip-card card">
+              <div class="tip-header">
+                <i class="fa-solid fa-circle-info"></i>
+                Tips
+              </div>
+              <ul class="tip-list">
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Separate multiple recipient emails with a <strong>comma</strong>.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Attachments are uploaded to Cloudinary before sending.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check-circle"></i>
+                  Keep subject lines short and descriptive for better open rates.
+                </li>
+                <li>
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                  Sending to <em>All Users</em> will queue a message to every registered user.
+                </li>
+              </ul>
+            </div>
+
+            <!-- Preview stub -->
+            <div class="preview-card card">
+              <div class="tip-header">
+                <i class="fa-solid fa-eye"></i>
+                Live Preview
+              </div>
+              <div class="preview-subject" id="previewSubject">Subject will appear here</div>
+              <div class="preview-body" id="previewBody">Your message will appear here…</div>
+            </div>
+          </aside>
+
+        </div><!-- /.mail-layout -->
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/script/partials/navbar.js"></script>
+  <script>
+    // ── Character counter ──
+    const msgArea = document.getElementById('message');
+    const charCount = document.getElementById('charCount');
+    const previewBody = document.getElementById('previewBody');
+    const previewSubject = document.getElementById('previewSubject');
+    const subjectInput = document.getElementById('subject');
+
+    msgArea.addEventListener('input', () => {
+      const len = msgArea.value.length;
+      charCount.textContent = `${len.toLocaleString()} character${len !== 1 ? 's' : ''}`;
+      previewBody.textContent = msgArea.value || 'Your message will appear here…';
+    });
+
+    subjectInput.addEventListener('input', () => {
+      previewSubject.textContent = subjectInput.value || 'Subject will appear here';
+    });
+
+    // ── File drop zone ──
+    const fileDrop = document.getElementById('fileDrop');
+    const fileInput = document.getElementById('files');
+    const fileList = document.getElementById('fileList');
+
+    fileInput.addEventListener('change', renderFiles);
+
+    ['dragenter','dragover'].forEach(ev => {
+      fileDrop.addEventListener(ev, e => { e.preventDefault(); fileDrop.classList.add('drag-over'); });
+    });
+    ['dragleave','drop'].forEach(ev => {
+      fileDrop.addEventListener(ev, e => { e.preventDefault(); fileDrop.classList.remove('drag-over'); });
+    });
+    fileDrop.addEventListener('drop', e => {
+      fileInput.files = e.dataTransfer.files;
+      renderFiles();
+    });
+
+    function renderFiles() {
+      fileList.innerHTML = '';
+      Array.from(fileInput.files).forEach(file => {
+        const item = document.createElement('div');
+        item.className = 'file-item';
+        item.innerHTML = `<i class="fa-solid fa-file"></i><span>${file.name}</span><small>${(file.size/1024).toFixed(1)} KB</small>`;
+        fileList.appendChild(item);
+      });
+    }
+
+    // ── Reset ──
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      document.getElementById('mailForm').reset();
+      fileList.innerHTML = '';
+      charCount.textContent = '0 characters';
+      previewSubject.textContent = 'Subject will appear here';
+      previewBody.textContent = 'Your message will appear here…';
+    });
+
+    // ── Quick-fill All Users ──
+    // This requires a small AJAX call or you can prefill via EJS server-side.
+    // Here we insert a placeholder indicating "all users" for the backend to handle.
+    document.getElementById('fillAllUsers').addEventListener('click', () => {
+      document.getElementById('email').value = '<%- (typeof allUserEmails !== "undefined" ? allUserEmails.join(", ") : "") %>';
+      if (!document.getElementById('email').value) {
+        alert('No user emails available. Make sure allUserEmails is passed from the route.');
+      }
+    });
+
+    // ── Send button loading state ──
+    document.getElementById('mailForm').addEventListener('submit', () => {
+      const btn = document.getElementById('sendBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+    });
+  </script>
+</body>
+</html>
