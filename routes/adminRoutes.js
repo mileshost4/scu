@@ -35,10 +35,10 @@ const isAdminLoggedIn = (req, res, next) => {
 }
 
 const isAdmin = async(req, res, next) => {
-    const { username, password } = req.body;
-    const user = await Users.findOne({username});
+    const { email, password } = req.body;
+    const user = await Users.findOne({email});
     if (!user) {
-        req.flash('error', 'Incorrect Username or Password!')
+        req.flash('error', 'Incorrect Email or Password!')
         return res.redirect('/secureadmin.login');
     } else if (user.role !== 'admin') {
         req.flash('error', 'You do not have permission to access this route!')
@@ -98,7 +98,7 @@ router.get('/secureadmin.login', async(req, res) => {
 router.post('/secureadmin.login', isAdmin, passport.authenticate('adminauth', {failureFlash: true, failureRedirect: '/secureadmin.login'}), (req, res) => {
     req.flash('success', 'Successfully Logged In!');
     // const admin = req.user;
-    // console.log(admin.id)
+    // console.log(admin.role)
 
 res.redirect('/admin/admin.dashboard');
 })
